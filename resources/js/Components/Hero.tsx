@@ -3,7 +3,7 @@ import "@fontsource/rubik/600.css";
 
 export default function Hero() {
     return (
-        <section className="relative bg-gray-100 py-16 font-rubik ">
+        <section className="relative bg-[#e7e7e3] py-16 font-rubik ">
             <div className="container mx-auto my-10 px-4">
                 <motion.h1
                     className="text-7xl font-bold mb-8 text-center"
