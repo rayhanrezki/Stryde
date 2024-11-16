@@ -1,30 +1,30 @@
-import React from "react";
-import { Link } from "@inertiajs/react";
 import { motion } from "framer-motion";
+import { Button } from "@/Components/ui/button";
+import { cn } from "@/lib/utils";
 
 const products = [
     {
         id: 1,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "$129",
+        price: "125",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 2,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "$129",
+        price: "125",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 3,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "$129",
+        price: "125",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 4,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "$129",
+        price: "125",
         image: "/images/AIR-MAX-DN.png",
     },
 ];
@@ -32,56 +32,61 @@ const products = [
 export default function NewDrops() {
     return (
         <section className="py-16 bg-[#e7e7e3]">
-            <div className="container mx-auto px-4">
-                <div className="flex justify-between items-center mb-8">
+            <div className="container mx-auto px-4 max-w-[1600px]">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                     <motion.h2
-                        className="text-4xl font-bold"
+                        className="text-4xl md:text-5xl lg:text-6xl font-bold font-rubik"
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.5 }}
                     >
                         DON'T MISS OUT NEW DROPS
                     </motion.h2>
-                    <motion.button
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                    <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        SHOP NEW DROPS
-                    </motion.button>
+                        <Button
+                            className={cn(
+                                "bg-blue-600 hover:bg-blue-700 text-white font-rubik",
+                                "text-sm md:text-base px-6 py-3 h-auto"
+                            )}
+                        >
+                            SHOP NEW DROPS
+                        </Button>
+                    </motion.div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 justify-items-center">
                     {products.map((product, index) => (
                         <motion.div
                             key={product.id}
-                            className="bg-gray-100 rounded-xl p-4"
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
+                            className="w-full max-w-[400px]"
                         >
-                            <div className="relative aspect-square mb-4">
+                            <div className="aspect-square relative bg-neutral-50 rounded-[32px] overflow-hidden">
                                 <img
                                     src={product.image}
                                     alt={product.name}
-                                    className="w-full h-full object-cover rounded-lg"
+                                    className="absolute inset-0 w-full h-full object-cover"
                                 />
-                                <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded">
-                                    New
-                                </span>
+                                <div className="inline-flex items-start gap-2.5 px-5 py-3 absolute top-3 left-3 bg-blue-600 rounded-[28px_0px_28px_0px]">
+                                    <div className="font-rubik text-white text-sm whitespace-nowrap">
+                                        New
+                                    </div>
+                                </div>
                             </div>
-                            <h3 className="text-sm font-bold mb-2">
-                                {product.name}
-                            </h3>
-                            <div className="flex justify-between items-center">
-                                <span className="font-bold">
-                                    {product.price}
-                                </span>
-                                <Link
-                                    href={`/product/${product.id}`}
-                                    className="text-sm text-blue-600 hover:underline"
-                                >
-                                    VIEW PRODUCT
-                                </Link>
+                            <div className="w-full px-3 space-y-4 mt-4">
+                                <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik">
+                                    {product.name}w
+                                </h3>
+                                <div className="w-full">
+                                    <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
+                                        VIEW PRODUCT - ${product.price}
+                                    </Button>
+                                </div>
                             </div>
                         </motion.div>
                     ))}
