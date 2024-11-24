@@ -1,11 +1,12 @@
-import Checkbox from '@/Components/Checkbox';
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import GuestLayout from '@/Layouts/GuestLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { motion } from "framer-motion";
+import {
+    Apple,
+    Facebook,
+    ArrowRight,
+    ChromeIcon as Google,
+} from "lucide-react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import InputError from "@/Components/InputError";
 
 export default function Login({
     status,
@@ -15,93 +16,223 @@ export default function Login({
     canResetPassword: boolean;
 }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: '',
-        password: '',
+        email: "",
+        password: "",
         remember: false,
     });
 
-    const submit: FormEventHandler = (e) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        post(route('login'), {
-            onFinish: () => reset('password'),
+        post(route("login"), {
+            onFinish: () => reset("password"),
         });
     };
 
+    const fadeIn = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 },
+    };
+
+    const slideUp = {
+        hidden: { y: 20, opacity: 0 },
+        visible: { y: 0, opacity: 1 },
+    };
+
     return (
-        <GuestLayout>
+        <div className="flex min-h-screen bg-gray-100">
             <Head title="Log in" />
 
-            {status && (
-                <div className="mb-4 text-sm font-medium text-green-600">
-                    {status}
-                </div>
-            )}
+            {/* Left Section - Hero Image */}
+            <motion.div
+                className="relative hidden w-1/2 lg:block"
+                initial="hidden"
+                animate="visible"
+                variants={fadeIn}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="absolute inset-0 bg-black/20" />
+                <img
+                    src="/images/HeroAstronaut.jpg"
+                    alt="Stryde"
+                    className="h-full w-full object-cover"
+                />
+                <motion.h1
+                    className="absolute left-8 top-8 text-4xl font-black font-rubik text-white"
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                >
+                    Stryde
+                </motion.h1>
+            </motion.div>
 
-            <form onSubmit={submit}>
-                <div>
-                    <InputLabel htmlFor="email" value="Email" />
+            {/* Right Section - Login Form */}
+            <div className="flex w-full flex-col justify-center px-8 lg:w-1/2 lg:px-12">
+                <motion.div
+                    className="mx-auto w-full max-w-md"
+                    initial="hidden"
+                    animate="visible"
+                    variants={fadeIn}
+                    transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                    <div className="lg:hidden">
+                        <h1 className="mb-8 text-4xl font-black font-rubik">
+                            Stryde
+                        </h1>
+                    </div>
 
-                    <TextInput
-                        id="email"
-                        type="email"
-                        name="email"
-                        value={data.email}
-                        className="mt-1 block w-full"
-                        autoComplete="username"
-                        isFocused={true}
-                        onChange={(e) => setData('email', e.target.value)}
-                    />
-
-                    <InputError message={errors.email} className="mt-2" />
-                </div>
-
-                <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
-
-                    <TextInput
-                        id="password"
-                        type="password"
-                        name="password"
-                        value={data.password}
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                        onChange={(e) => setData('password', e.target.value)}
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div className="mt-4 block">
-                    <label className="flex items-center">
-                        <Checkbox
-                            name="remember"
-                            checked={data.remember}
-                            onChange={(e) =>
-                                setData('remember', e.target.checked)
-                            }
-                        />
-                        <span className="ms-2 text-sm text-gray-600">
-                            Remember me
-                        </span>
-                    </label>
-                </div>
-
-                <div className="mt-4 flex items-center justify-end">
-                    {canResetPassword && (
-                        <Link
-                            href={route('password.request')}
-                            className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            Forgot your password?
-                        </Link>
+                    {status && (
+                        <div className="mb-4 text-sm font-medium text-green-600">
+                            {status}
+                        </div>
                     )}
 
-                    <PrimaryButton className="ms-4" disabled={processing}>
-                        Log in
-                    </PrimaryButton>
-                </div>
-            </form>
-        </GuestLayout>
+                    <motion.h2
+                        className="mb-6 text-2xl font-semibold"
+                        variants={slideUp}
+                        transition={{ delay: 0.3 }}
+                    >
+                        Login
+                    </motion.h2>
+
+                    {canResetPassword && (
+                        <motion.div
+                            className="mb-2"
+                            variants={slideUp}
+                            transition={{ delay: 0.4 }}
+                        >
+                            <Link
+                                href={route("password.request")}
+                                className="text-sm text-gray-600 hover:underline"
+                            >
+                                Forgot your password?
+                            </Link>
+                        </motion.div>
+                    )}
+
+                    <motion.form
+                        onSubmit={handleSubmit}
+                        className="space-y-4"
+                        variants={slideUp}
+                        transition={{ delay: 0.5 }}
+                    >
+                        <div>
+                            <input
+                                type="email"
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData("email", e.target.value)
+                                }
+                                placeholder="Email"
+                                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-gray-400 focus:outline-none"
+                                required
+                            />
+                            <InputError
+                                message={errors.email}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div>
+                            <input
+                                type="password"
+                                value={data.password}
+                                onChange={(e) =>
+                                    setData("password", e.target.value)
+                                }
+                                placeholder="Password"
+                                className="w-full rounded-md border border-gray-300 px-4 py-2 focus:border-gray-400 focus:outline-none"
+                                required
+                            />
+                            <InputError
+                                message={errors.password}
+                                className="mt-2"
+                            />
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                checked={data.remember}
+                                onChange={(e) =>
+                                    setData("remember", e.target.checked)
+                                }
+                                className="h-4 w-4 rounded border-gray-300"
+                            />
+                            <label
+                                htmlFor="remember"
+                                className="text-sm text-gray-600"
+                            >
+                                Keep me logged in
+                            </label>
+                        </div>
+
+                        <motion.button
+                            type="submit"
+                            disabled={processing}
+                            className="flex w-full items-center justify-between rounded-md bg-black px-4 py-2 text-white transition-colors hover:bg-black/90 disabled:opacity-75"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <span>EMAIL LOGIN</span>
+                            <ArrowRight className="h-5 w-5" />
+                        </motion.button>
+                    </motion.form>
+
+                    <motion.div
+                        className="mt-6 grid grid-cols-3 gap-4"
+                        variants={slideUp}
+                        transition={{ delay: 0.6 }}
+                    >
+                        <motion.button
+                            className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Google className="h-6 w-6" />
+                        </motion.button>
+                        <motion.button
+                            className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Apple className="h-6 w-6" />
+                        </motion.button>
+                        <motion.button
+                            className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                        >
+                            <Facebook className="h-6 w-6 text-blue-600" />
+                        </motion.button>
+                    </motion.div>
+
+                    <motion.p
+                        className="mt-6 text-xs text-gray-600"
+                        variants={slideUp}
+                        transition={{ delay: 0.7 }}
+                    >
+                        By clicking 'Log In' you agree to our website KicksClub
+                        Terms & Conditions, Kicks Privacy Notice and Terms &
+                        Conditions.
+                    </motion.p>
+
+                    <motion.p
+                        className="mt-4 text-center text-sm text-gray-600"
+                        variants={slideUp}
+                        transition={{ delay: 0.8 }}
+                    >
+                        Don't have an account?{" "}
+                        <Link
+                            href={route("register")}
+                            className="font-semibold text-black hover:underline"
+                        >
+                            Register
+                        </Link>
+                    </motion.p>
+                </motion.div>
+            </div>
+        </div>
     );
 }

@@ -1,15 +1,22 @@
-import React from "react";
 import Navbar from "../Components/Navbar";
 import Hero from "../Components/Hero";
 import NewDrops from "../Components/NewDrops";
+import Categories from "@/Components/Categories";
+import Reviews from "@/Components/Reviews";
+import { Head } from "@inertiajs/react";
 
 function Main() {
     return (
-        <div>
-            <Navbar />
-            <Hero />
-            <NewDrops />
-        </div>
+        <>
+            <Head title="Home" />
+            <div>
+                <Navbar />
+                <Hero />
+                <NewDrops />
+                <Categories />
+                <Reviews />
+            </div>
+        </>
     );
 }
 
