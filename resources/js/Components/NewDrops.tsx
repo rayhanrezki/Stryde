@@ -6,25 +6,25 @@ const products = [
     {
         id: 1,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125",
+        price: "125.000",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 2,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125",
+        price: "125.000",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 3,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125",
+        price: "125.000",
         image: "/images/AIR-MAX-DN.png",
     },
     {
         id: 4,
         name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125",
+        price: "125.000",
         image: "/images/AIR-MAX-DN.png",
     },
 ];
@@ -80,11 +80,11 @@ export default function NewDrops() {
                             </div>
                             <div className="w-full px-3 space-y-4 mt-4">
                                 <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik">
-                                    {product.name}w
+                                    {product.name}
                                 </h3>
                                 <div className="w-full">
                                     <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
-                                        VIEW PRODUCT - ${product.price}
+                                        VIEW PRODUCT - Rp{product.price}
                                     </Button>
                                 </div>
                             </div>
