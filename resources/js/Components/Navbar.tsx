@@ -26,14 +26,14 @@ export default function Navbar() {
             transition={{ duration: 0.5 }}
         >
             <motion.nav
-                className={`flex items-center justify-between p-1 sm:p-4 bg-white rounded-full shadow-lg max-w-7xl mx-auto transition-all duration-300 ease-in-out ${
+                className={`flex items-center justify-between p-1 sm:p-4 bg-white rounded-xl shadow-lg max-w-7xl mx-auto transition-all duration-300 ease-in-out ${
                     isScrolled ? "py-1 sm:py-2" : "py-1 sm:py-4"
                 }`}
                 layout
             >
                 {/* Mobile Menu Button */}
                 <motion.button
-                    className="lg:hidden p-0.5 hover:bg-gray-100 rounded-full transition-colors"
+                    className="lg:hidden p-0.5 hover:bg-gray-100 rounded-xl transition-colors"
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsOpen(!isOpen)}
@@ -48,7 +48,7 @@ export default function Navbar() {
 
                 {/* Desktop Navigation */}
                 <div className="hidden lg:flex items-center space-x-6 font-rubik">
-                    <NavLink href="/new-drops">New Drops</NavLink>
+                    <NavLink href="/products">New Drops</NavLink>
                     <NavLink href="/men">Men</NavLink>
                     <NavLink href="/women">Women</NavLink>
                 </div>
@@ -59,8 +59,11 @@ export default function Navbar() {
                     whileTap={{ scale: 0.9 }}
                     className="mx-2"
                 >
-                    <Link href="/" className="text-base sm:text-2xl font-bold">
-                        KICKS
+                    <Link
+                        href="/"
+                        className="text-base sm:text-2xl font-bold font-rubik"
+                    >
+                        Stryde.
                     </Link>
                 </motion.div>
 
@@ -121,7 +124,7 @@ export default function Navbar() {
                             className="p-3 sm:p-4 space-y-2 sm:space-y-4"
                         >
                             <MobileNavLink
-                                href="/new-drops"
+                                href="/products"
                                 onClick={() => setIsOpen(false)}
                             >
                                 New Drops
