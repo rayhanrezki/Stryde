@@ -1,6 +1,12 @@
 import Navbar from "@/Components/Navbar";
+import { Product } from "@/types/product";
 
-export default function ProductList() {
+interface Props {
+    products: Product[];
+    totalItems: number;
+}
+
+export default function ProductList({ products, totalItems }: Props) {
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Navbar />
@@ -28,7 +34,7 @@ export default function ProductList() {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h2 className="text-2xl font-bold">Life Style Shoes</h2>
-                        <p className="text-gray-600">122 items</p>
+                        <p className="text-gray-600">{totalItems} items</p>
                     </div>
                     <div className="relative">
                         <select
@@ -139,56 +145,34 @@ export default function ProductList() {
                     {/* Product Grid */}
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {[
-                                {
-                                    id: 1,
-                                    name: "ULTRABOOST 1.0 MIAMI",
-                                    subtitle: "Green",
-                                    price: 125,
-                                    image: "/shoes/ultraboost-miami.jpg",
-                                    isNew: true,
-                                },
-                                {
-                                    id: 2,
-                                    name: "ADIDAS OZELIA SHOES",
-                                    subtitle: "Green",
-                                    price: 125,
-                                    image: "/shoes/ozelia-green.jpg",
-                                    isNew: true,
-                                },
-                                {
-                                    id: 3,
-                                    name: "ADIDAS 4DFWD 2 RUNNING SHOES",
-                                    subtitle: "",
-                                    price: 125,
-                                    image: "/shoes/4dfwd-running.jpg",
-                                    isNew: true,
-                                },
-                            ].map((product) => (
+                            {products.map((product) => (
                                 <div
                                     key={product.id}
                                     className="bg-gray-50 rounded-lg p-4"
                                 >
-                                    {product.isNew && (
-                                        <span className="inline-block bg-orange-400 text-white text-xs px-2 py-1 rounded mb-2">
-                                            New
-                                        </span>
-                                    )}
                                     <img
                                         src={product.image}
-                                        alt={product.name}
+                                        alt={product.title}
                                         className="w-full h-48 object-cover rounded-lg mb-4"
                                     />
                                     <h3 className="font-bold mb-1">
-                                        {product.name}
+                                        {product.title}
                                     </h3>
-                                    {product.subtitle && (
+                                    {product.Description && (
                                         <p className="text-gray-600 mb-4">
-                                            {product.subtitle}
+                                            {product.Description}
                                         </p>
                                     )}
+                                    <div className="flex justify-between items-center mb-2">
+                                        <span className="text-sm text-gray-600">
+                                            Size: {product.size}
+                                        </span>
+                                        <span className="text-sm text-gray-600">
+                                            Stock: {product.Stock}
+                                        </span>
+                                    </div>
                                     <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800">
-                                        VIEW PRODUCT - ${product.price}
+                                        VIEW PRODUCT - ${product.Price}
                                     </button>
                                 </div>
                             ))}

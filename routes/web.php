@@ -10,9 +10,7 @@ Route::get('/', function () {
     return Inertia::render('Main');
 });
 
-Route::get('/products', function () {
-    return Inertia::render('ProductList');
-});
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

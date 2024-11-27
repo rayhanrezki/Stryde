@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ProductController extends Controller
 {
@@ -11,7 +13,26 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
+        $products = Product::query()
+            ->select([
+                'id',
+                'title',
+                'Description',
+                'Price',
+                'Stock',
+                'size',
+                'Slug',
+                'image',
+                'created_at',
+                'updated_at'
+            ])
+            ->latest()
+            ->get();
+
+        return Inertia::render('ProductList', [
+            'products' => $products,
+            'totalItems' => $products->count(),
+        ]);
     }
 
     /**
