@@ -1,32 +1,15 @@
-import { useState } from "react";
-import type { Product, FilterState } from "../types/product";
 import Navbar from "@/Components/Navbar";
 
-interface ProductListingProps {
-    products: Product[];
-}
-
-export default function ProductListing({ products }: ProductListingProps) {
-    const [filters, setFilters] = useState<FilterState>({
-        categories: [],
-        sizes: [],
-        colors: [],
-        types: [],
-    });
-
+export default function ProductList() {
     return (
-        <div className="min-h-screen bg-[#e7e7e3]">
-            {/* Hero Banner */}
+        <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Navbar />
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 mt-20">
+            {/* Hero Banner */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative overflow-hidden bg-black text-white rounded-lg mb-8">
                     <div className="container mx-auto px-6 py-16 relative z-10">
-                        <p className="text-sm mb-2 font-rubik">
-                            Snicker Of The Year
-                        </p>
-                        <h1 className="text-5xl font-bold mb-4 font-rubik">
-                            Get 30% off
-                        </h1>
+                        <p className="text-sm mb-2">Sneaker Of The Year</p>
+                        <h1 className="text-5xl font-bold mb-4">Get 30% off</h1>
                         <p className="max-w-md">
                             Sneakers made with your comfort in mind so you can
                             put all of your focus into your next session.
@@ -86,14 +69,11 @@ export default function ProductListing({ products }: ProductListingProps) {
                                     (size) => (
                                         <button
                                             key={size}
-                                            className={`
-                      p-2 text-sm border rounded-md
-                      ${
-                          size === 38
-                              ? "bg-black text-white"
-                              : "hover:bg-gray-50"
-                      }
-                    `}
+                                            className={`p-2 text-sm border rounded-md ${
+                                                size === 38
+                                                    ? "bg-black text-white"
+                                                    : "hover:bg-gray-50"
+                                            }`}
                                         >
                                             {size}
                                         </button>
@@ -119,10 +99,11 @@ export default function ProductListing({ products }: ProductListingProps) {
                                 ].map((color) => (
                                     <button
                                         key={color}
-                                        className={`
-                      w-8 h-8 rounded-md border
-                      ${color === "blue" ? "ring-2 ring-blue-500" : ""}
-                    `}
+                                        className={`w-8 h-8 rounded-md border ${
+                                            color === "blue"
+                                                ? "ring-2 ring-blue-500"
+                                                : ""
+                                        }`}
                                         style={{ backgroundColor: color }}
                                     />
                                 ))}
