@@ -18,7 +18,7 @@ export default function ProductList({ products, totalItems }: Props) {
                         <h1 className="text-5xl font-bold mb-4">Get 30% off</h1>
                         <p className="max-w-md">
                             Sneakers made with your comfort in mind so you can
-                            put all of your focus into your next session.
+                            put all of your focus into your next session
                         </p>
                     </div>
                     <img
