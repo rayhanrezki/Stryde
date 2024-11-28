@@ -40,7 +40,7 @@ class ProductController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('Products/Create');
     }
 
     /**
@@ -48,38 +48,71 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'Description' => 'nullable|string',
+            'Price' => 'required|numeric|min:0',
+            'Stock' => 'required|integer|min:0',
+            'size' => 'required|integer|min:0',
+            'Slug' => 'required|unique:products,Slug',
+            'image' => 'required|string|max:255',
+        ]);
+
+        Product::create($validatedData);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product created successfully.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Product $product)
     {
-        //
+        return Inertia::render('Products/Show', [
+            'product' => $product
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Product $product)
     {
-        //
+        return Inertia::render('Products/Edit', [
+            'product' => $product
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $validatedData = $request->validate([
+            'title' => 'required|string|max:255',
+            'Description' => 'nullable|string',
+            'Price' => 'required|numeric|min:0',
+            'Stock' => 'required|integer|min:0',
+            'size' => 'required|integer|min:0',
+            'Slug' => 'required|unique:products,Slug,' . $product->id,
+            'image' => 'required|string|max:255',
+        ]);
+
+        $product->update($validatedData);
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully.');
     }
 }
