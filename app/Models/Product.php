@@ -9,17 +9,36 @@ class Product extends Model
 {
     use HasFactory;
 
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'products';
 
-    protected $primaryKey = 'ProductID';
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
+        'category_id',
         'title',
         'Description',
         'Price',
         'Stock',
         'size',
         'Slug',
-        'image'
-
+        'image',
     ];
+
+    /**
+     * The relationship with the Category model.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
