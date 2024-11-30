@@ -29,9 +29,16 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
+        // Get unique sizes from all products
+        $availableSizes = Product::distinct()
+            ->pluck('size')
+            ->sort()
+            ->values();
+
         return Inertia::render('ProductList', [
             'products' => $products,
             'totalItems' => $products->count(),
+            'availableSizes' => $availableSizes,
         ]);
     }
 
@@ -54,9 +61,14 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug)
     {
-        //
+        $product = Product::where('Slug', $slug)
+            ->firstOrFail();
+
+        return Inertia::render('ProductDetails', [
+            'product' => $product
+        ]);
     }
 
     /**
