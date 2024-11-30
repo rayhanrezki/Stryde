@@ -94,4 +94,28 @@ class ProductController extends Controller
     {
         //
     }
+
+    public function dashboard()
+    {
+        $products = Product::query()
+            ->select([
+                'id',
+                'title',
+                'Description',
+                'Price',
+                'Stock',
+                'size',
+                'Slug',
+                'image',
+                'created_at',
+                'updated_at'
+            ])
+            ->latest()
+            ->paginate(12);
+
+        return Inertia::render('ProductDashboard', [
+            'products' => $products,
+            'totalProducts' => Product::count(),
+        ]);
+    }
 }

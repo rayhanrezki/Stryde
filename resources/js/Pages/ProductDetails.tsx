@@ -9,10 +9,10 @@ interface Props {
     product: Product;
 }
 
-const defaultColors = [
-    { name: "Shadow Navy", value: "#1a237e" },
-    { name: "Army Green", value: "#4b5320" },
-];
+// const defaultColors = [
+//     { name: "Shadow Navy", value: "#1a237e" },
+//     { name: "Army Green", value: "#4b5320" },
+// ];
 
 // Available sizes array
 const availableSizes = ["38", "39", "40", "41", "42", "43", "44", "45"];
@@ -26,7 +26,7 @@ export default function ProductDetails({ product }: Props) {
     ];
 
     const [selectedImage, setSelectedImage] = useState(0);
-    const [selectedColor, setSelectedColor] = useState(defaultColors[0].value);
+    // const [selectedColor, setSelectedColor] = useState(defaultColors[0].value);
     const [selectedSize, setSelectedSize] = useState<string | null>(
         product.size?.toString() ?? null
     );
