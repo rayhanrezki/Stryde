@@ -29,9 +29,16 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
+        // Get unique sizes from all products
+        $availableSizes = Product::distinct()
+            ->pluck('size')
+            ->sort()
+            ->values();
+
         return Inertia::render('ProductList', [
             'products' => $products,
             'totalItems' => $products->count(),
+            'availableSizes' => $availableSizes,
         ]);
     }
 
@@ -67,9 +74,12 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show(string $slug)
     {
-        return Inertia::render('Products/Show', [
+        $product = Product::where('Slug', $slug)
+            ->firstOrFail();
+
+        return Inertia::render('ProductDetails', [
             'product' => $product
         ]);
     }
@@ -108,11 +118,32 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy(string $id)
     {
-        $product->delete();
+        //
+    }
 
-        return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully.');
+    public function dashboard()
+    {
+        $products = Product::query()
+            ->select([
+                'id',
+                'title',
+                'Description',
+                'Price',
+                'Stock',
+                'size',
+                'Slug',
+                'image',
+                'created_at',
+                'updated_at'
+            ])
+            ->latest()
+            ->paginate(12);
+
+        return Inertia::render('ProductDashboard', [
+            'products' => $products,
+            'totalProducts' => Product::count(),
+        ]);
     }
 }

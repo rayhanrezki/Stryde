@@ -1,12 +1,32 @@
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
+import { Link } from "@inertiajs/react";
+import { useState, useMemo } from "react";
 
 interface Props {
     products: Product[];
     totalItems: number;
+    availableSizes: number[];
 }
 
-export default function ProductList({ products, totalItems }: Props) {
+export default function ProductList({
+    products,
+    totalItems,
+    availableSizes,
+}: Props) {
+    const [selectedSize, setSelectedSize] = useState<number | null>(null);
+
+    // Filter products based on selected size
+    const filteredProducts = useMemo(() => {
+        if (!selectedSize) return products;
+        return products.filter((product) => product.size === selectedSize);
+    }, [products, selectedSize]);
+
+    // Handle size selection
+    const handleSizeClick = (size: number) => {
+        setSelectedSize(selectedSize === size ? null : size);
+    };
+
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Navbar />
@@ -18,7 +38,7 @@ export default function ProductList({ products, totalItems }: Props) {
                         <h1 className="text-5xl font-bold mb-4">Get 30% off</h1>
                         <p className="max-w-md">
                             Sneakers made with your comfort in mind so you can
-                            put all of your focus into your next session.
+                            put all of your focus into your next session
                         </p>
                     </div>
                     <img
@@ -34,7 +54,9 @@ export default function ProductList({ products, totalItems }: Props) {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h2 className="text-2xl font-bold">Life Style Shoes</h2>
-                        <p className="text-gray-600">{totalItems} items</p>
+                        <p className="text-gray-600">
+                            {filteredProducts.length} items
+                        </p>
                     </div>
                     <div className="relative">
                         <select
@@ -71,20 +93,19 @@ export default function ProductList({ products, totalItems }: Props) {
                         <div className="mb-6">
                             <h3 className="font-semibold mb-4">SIZE</h3>
                             <div className="grid grid-cols-5 gap-2">
-                                {[38, 39, 40, 41, 42, 43, 44, 45, 46, 47].map(
-                                    (size) => (
-                                        <button
-                                            key={size}
-                                            className={`p-2 text-sm border rounded-md ${
-                                                size === 38
-                                                    ? "bg-black text-white"
-                                                    : "hover:bg-gray-50"
-                                            }`}
-                                        >
-                                            {size}
-                                        </button>
-                                    )
-                                )}
+                                {availableSizes.map((size) => (
+                                    <button
+                                        key={size}
+                                        onClick={() => handleSizeClick(size)}
+                                        className={`p-2 text-sm border rounded-md ${
+                                            selectedSize === size
+                                                ? "bg-black text-white"
+                                                : "hover:bg-gray-50"
+                                        }`}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
                             </div>
                         </div>
 
@@ -145,35 +166,37 @@ export default function ProductList({ products, totalItems }: Props) {
                     {/* Product Grid */}
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {products.map((product) => (
-                                <div
-                                    key={product.id}
-                                    className="bg-gray-50 rounded-lg p-4"
-                                >
-                                    <img
-                                        src={product.image}
-                                        alt={product.title}
-                                        className="w-full h-48 object-cover rounded-lg mb-4"
-                                    />
-                                    <h3 className="font-bold mb-1">
-                                        {product.title}
-                                    </h3>
-                                    {product.Description && (
-                                        <p className="text-gray-600 mb-4">
-                                            {product.Description}
-                                        </p>
-                                    )}
-                                    <div className="flex justify-between items-center mb-2">
-                                        <span className="text-sm text-gray-600">
-                                            Size: {product.size}
-                                        </span>
-                                        <span className="text-sm text-gray-600">
-                                            Stock: {product.Stock}
-                                        </span>
+                            {filteredProducts.map((product) => (
+                                <div key={product.id} className="space-y-4">
+                                    {/* Card with image */}
+                                    <div className="bg-white rounded-[20px] p-2 relative">
+                                        <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
+                                            <img
+                                                src={product.image}
+                                                alt={product.title}
+                                                className="absolute inset-0 w-full h-full object-contain"
+                                            />
+                                        </div>
                                     </div>
-                                    <button className="w-full bg-black text-white py-2 rounded-md hover:bg-gray-800">
-                                        VIEW PRODUCT - ${product.Price}
-                                    </button>
+
+                                    {/* Product Info Below Card */}
+                                    <div className="space-y-3">
+                                        <h3 className="font-medium text-base line-clamp-2">
+                                            {product.title}
+                                        </h3>
+                                        <Link
+                                            href={route(
+                                                "products.show",
+                                                product.Slug
+                                            )}
+                                            className="block"
+                                        >
+                                            <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
+                                                VIEW PRODUCT - Rp{" "}
+                                                {product.Price}
+                                            </button>
+                                        </Link>
+                                    </div>
                                 </div>
                             ))}
                         </div>
