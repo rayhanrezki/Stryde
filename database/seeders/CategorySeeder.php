@@ -18,6 +18,7 @@ class CategorySeeder extends Seeder
         Category::create([
             'name' => 'Women Shoes',
             'slug' => Str::slug('Women Shoes'),
+
         ]);
     }
 }

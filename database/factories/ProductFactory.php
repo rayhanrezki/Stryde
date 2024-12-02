@@ -14,13 +14,12 @@ class ProductFactory extends Factory
     {
         return [
             'category_id' => Category::factory(),
-            'title' => $this->faker->word,
-            'Description' => $this->faker->paragraph,
-            'Price' => $this->faker->randomFloat(2, 10, 1000),
-            'Stock' => $this->faker->numberBetween(1, 100),
-            'size' => $this->faker->numberBetween(1, 10),
-            'Slug' => $this->faker->slug,
-            'image' => $this->faker->imageUrl(),
+            'title' => fake()->word(),
+            'Description' => fake()->paragraph(),
+            'Price' => fake()->randomFloat(2, 10, 1000),
+            'Slug' => fake()->slug(),
+            'image' => fake()->imageUrl(),
+
         ];
     }
 }

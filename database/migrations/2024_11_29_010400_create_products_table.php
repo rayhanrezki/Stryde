@@ -14,8 +14,6 @@ class CreateProductsTable extends Migration
             $table->string('title');
             $table->text('Description')->nullable();
             $table->decimal('Price', 10, 2);
-            $table->integer('Stock');
-            $table->integer('size');
             $table->string('Slug')->unique();
             $table->string('image');
             $table->timestamps();

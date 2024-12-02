@@ -14,7 +14,8 @@ class CartFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'total_price' => $this->faker->randomFloat(2, 10, 1000),
+            'total_price' => fake()->randomFloat(2, 10, 1000),
+
         ];
     }
 }

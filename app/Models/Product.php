@@ -26,11 +26,14 @@ class Product extends Model
         'title',
         'Description',
         'Price',
-        'Stock',
-        'size',
         'Slug',
         'image',
     ];
+
+    public function sizeStock()
+    {
+        return $this->hasOne(SizeStock::class);
+    }
 
     /**
      * The relationship with the Category model.
