@@ -13,7 +13,7 @@ class SizeStock extends Model
     protected $fillable = ['product_id', 'sizes'];
 
     protected $casts = [
-        'sizes' => 'array', // Menyatakan bahwa kolom sizes adalah array (JSON)
+        'sizes' => 'array',
     ];
 
     public function product()
