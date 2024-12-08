@@ -2,34 +2,20 @@ import { motion } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
 
-const products = [
-    {
-        id: 1,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 2,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 3,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 4,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-];
+// Define the Product type
+interface Product {
+    id: number;
+    name: string;
+    price: string;
+    image: string;
+    created_at: string;
+}
 
-export default function NewDrops() {
+interface NewDropsProps {
+    products: Product[];
+}
+
+export default function NewDrops({ products }: NewDropsProps) {
     return (
         <section className="py-16 bg-[#e7e7e3]">
             <div className="container mx-auto px-4 max-w-[1600px]">

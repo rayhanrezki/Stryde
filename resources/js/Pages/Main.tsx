@@ -5,19 +5,30 @@ import Categories from "@/Components/Categories";
 import Reviews from "@/Components/Reviews";
 import { Head } from "@inertiajs/react";
 
-function Main() {
+interface Product {
+    id: number;
+    name: string;
+    price: string;
+    image: string;
+    created_at: string;
+}
+
+interface Props {
+    latestProducts: Product[];
+    // ... other props
+}
+
+export default function Main({ latestProducts, ...props }: Props) {
     return (
         <>
             <Head title="Home" />
             <div>
                 <Navbar />
                 <Hero />
-                <NewDrops />
+                <NewDrops products={latestProducts} />
                 <Categories />
                 <Reviews />
             </div>
         </>
     );
 }
-
-export default Main;
