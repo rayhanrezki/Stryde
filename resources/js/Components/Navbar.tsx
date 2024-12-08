@@ -82,6 +82,7 @@ export default function Navbar() {
                         <NavIcon
                             icon={<ShoppingCart className="w-5 h-5" />}
                             label="Shopping cart"
+                            href={route("cart")}
                         />
                         <CartBadge />
                     </div>
@@ -100,6 +101,7 @@ export default function Navbar() {
                                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
                             }
                             label="Shopping cart"
+                            href={route("cart")}
                         />
                         <CartBadge />
                     </div>

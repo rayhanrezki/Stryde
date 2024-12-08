@@ -21,10 +21,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+
+
 Route::resource('products', ProductController::class);
 
 Route::get('/products-dashboard', [ProductController::class, 'dashboard'])
     ->name('products.dashboard')
     ->middleware(['auth']);
+
+Route::get('/cart', function () {
+    return Inertia::render('Cart', [
+        'cartItems' => [] // For now, we'll pass an empty array
+    ]);
+})->name('cart');
 
 require __DIR__ . '/auth.php';
