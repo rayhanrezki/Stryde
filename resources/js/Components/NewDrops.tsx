@@ -1,14 +1,16 @@
 import { motion } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "@inertiajs/react";
 
 // Define the Product type
 interface Product {
     id: number;
     name: string;
-    price: string;
+    Price: string;
     image: string;
     created_at: string;
+    Slug: string;
 }
 
 interface NewDropsProps {
@@ -69,9 +71,17 @@ export default function NewDrops({ products }: NewDropsProps) {
                                     {product.name}
                                 </h3>
                                 <div className="w-full">
-                                    <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
-                                        VIEW PRODUCT - Rp{product.price}
-                                    </Button>
+                                    <Link
+                                        href={route(
+                                            "products.show",
+                                            product.Slug
+                                        )}
+                                        className="block"
+                                    >
+                                        <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
+                                            VIEW PRODUCT - Rp {product.Price}
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>

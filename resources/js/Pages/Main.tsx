@@ -8,14 +8,14 @@ import { Head } from "@inertiajs/react";
 interface Product {
     id: number;
     name: string;
-    price: string;
+    Price: string;
     image: string;
     created_at: string;
+    Slug: string;
 }
 
 interface Props {
     latestProducts: Product[];
-    // ... other props
 }
 
 export default function Main({ latestProducts, ...props }: Props) {
