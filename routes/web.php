@@ -5,10 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MainController;
 
-Route::get('/', function () {
-    return Inertia::render('Main');
-});
+Route::get('/', [MainController::class, 'index']);
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 

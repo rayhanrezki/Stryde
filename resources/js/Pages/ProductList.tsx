@@ -85,7 +85,7 @@ export default function ProductList({
                                     Mens
                                 </button>
                                 <button className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm">
-                                    Casual
+                                    Womens
                                 </button>
                             </div>
                         </div>
