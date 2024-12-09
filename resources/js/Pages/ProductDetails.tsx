@@ -85,7 +85,10 @@ export default function ProductDetails({ product }: Props) {
                                 {product.title}
                             </h1>
                             <p className="text-2xl font-bold text-blue-600">
-                                ${product.price}
+                                {new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: 'IDR'
+                                }).format(product.Price)}
                             </p>
 
                             {/* Stock info */}
@@ -114,12 +117,6 @@ export default function ProductDetails({ product }: Props) {
                                             : !selectedSize
                                             ? "SELECT SIZE"
                                             : "ADD TO CART"}
-                                    </button>
-                                    <button
-                                        className="bg-[#2A2A2A] text-white p-3 rounded-md hover:bg-[#404040] transition-colors"
-                                        aria-label="Add to wishlist"
-                                    >
-                                        <Heart className="w-5 h-5" />
                                     </button>
                                 </div>
                                 <button

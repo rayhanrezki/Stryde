@@ -195,7 +195,7 @@ export default function ProductList({
                                         >
                                             <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
                                                 VIEW PRODUCT - Rp{" "}
-                                                {product.price}
+                                                {product.Price}
                                             </button>
                                         </Link>
                                     </div>
