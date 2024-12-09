@@ -9,9 +9,10 @@ use App\Http\Controllers\MainController;
 
 Route::get('/', [MainController::class, 'index']);
 
+Route::get('/products', [ProductController::class, 'list'])->name('products.list');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     // Public product routes
-    Route::get('/products', [ProductController::class, 'list'])->name('products.list');
     Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
     // Admin product routes

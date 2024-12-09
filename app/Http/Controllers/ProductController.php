@@ -27,7 +27,7 @@ class ProductController extends Controller
             ])
             ->orderBy('created_at', 'desc')
             ->paginate(12);
-        
+
         $totalProducts = Product::count();
 
         return Inertia::render('Admin/ProductDashboard', [
@@ -99,7 +99,7 @@ class ProductController extends Controller
     public function edit(Product $product)
     {
         $product->load('sizeStock');
-        
+
         return Inertia::render('Admin/Products/Edit', [
             'product' => $product,
             'categories' => Category::select('id', 'name', 'slug')->get()
@@ -145,7 +145,7 @@ class ProductController extends Controller
     {
         // Delete the size_stock records first (due to foreign key constraint)
         $product->sizeStock()->delete();
-        
+
         // Then delete the product
         $product->delete();
 
@@ -159,9 +159,9 @@ class ProductController extends Controller
             ->select([
                 'id',
                 'title',
-                'Description',
-                'Price',
-                'Slug',
+                'Description as description',
+                'Price as price',
+                'Slug as slug',
                 'image',
                 'created_at',
                 'updated_at'
@@ -169,7 +169,7 @@ class ProductController extends Controller
             ->latest()
             ->get();
 
-        // Get unique sizes from all products' size_stock
+        // Dapatkan ukuran yang tersedia
         $availableSizes = collect();
         foreach ($products as $product) {
             $sizes = collect($product->sizeStock->size_stock ?? [])->pluck('size');
@@ -177,8 +177,24 @@ class ProductController extends Controller
         }
         $availableSizes = $availableSizes->unique()->sort()->values();
 
+        // Transform data sesuai interface Product
+        $transformedProducts = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'title' => $product->title,
+                'description' => $product->description,
+                'price' => $product->price,
+                'slug' => $product->slug,
+                'image' => $product->image,
+                'size' => $product->sizeStock->size_stock[0]['size'] ?? '', // ambil ukuran pertama
+                'stock' => $product->sizeStock->size_stock[0]['stock'] ?? 0,
+                'created_at' => $product->created_at,
+                'updated_at' => $product->updated_at
+            ];
+        });
+
         return Inertia::render('ProductList', [
-            'products' => $products,
+            'products' => $transformedProducts,
             'totalItems' => $products->count(),
             'availableSizes' => $availableSizes
         ]);
