@@ -19,7 +19,9 @@ export default function ProductList({
     // Filter products based on selected size
     const filteredProducts = useMemo(() => {
         if (!selectedSize) return products;
-        return products.filter((product) => product.size === selectedSize);
+        return products.filter(
+            (product) => Number(product.size) === selectedSize
+        );
     }, [products, selectedSize]);
 
     // Handle size selection
@@ -187,13 +189,13 @@ export default function ProductList({
                                         <Link
                                             href={route(
                                                 "products.show",
-                                                product.Slug
+                                                product.slug
                                             )}
                                             className="block"
                                         >
                                             <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
                                                 VIEW PRODUCT - Rp{" "}
-                                                {product.Price}
+                                                {product.price}
                                             </button>
                                         </Link>
                                     </div>

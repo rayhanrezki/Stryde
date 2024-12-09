@@ -85,12 +85,12 @@ export default function ProductDetails({ product }: Props) {
                                 {product.title}
                             </h1>
                             <p className="text-2xl font-bold text-blue-600">
-                                ${product.Price}
+                                ${product.price}
                             </p>
 
                             {/* Stock info */}
                             <p className="text-gray-600">
-                                Stock Available: {product.Stock}
+                                Stock Available: {product.stock}
                             </p>
 
                             {/* Update SizeSelector props */}
@@ -106,10 +106,10 @@ export default function ProductDetails({ product }: Props) {
                                     <button
                                         className="flex-1 bg-[#2A2A2A] text-white py-3 px-4 rounded-md font-medium hover:bg-[#404040] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                                         disabled={
-                                            product.Stock === 0 || !selectedSize
+                                            product.stock === 0 || !selectedSize
                                         }
                                     >
-                                        {product.Stock === 0
+                                        {product.stock === 0
                                             ? "OUT OF STOCK"
                                             : !selectedSize
                                             ? "SELECT SIZE"
@@ -135,7 +135,7 @@ export default function ProductDetails({ product }: Props) {
                                     ABOUT THE PRODUCT
                                 </h2>
                                 <p className="text-gray-600">
-                                    {product.Description}
+                                    {product.description}
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
                                     <li>Product Ini Punya rafi</li>

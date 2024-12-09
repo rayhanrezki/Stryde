@@ -9,9 +9,21 @@ use App\Http\Controllers\MainController;
 
 Route::get('/', [MainController::class, 'index']);
 
-Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Public product routes
+    Route::get('/products', [ProductController::class, 'list'])->name('products.list');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
-Route::get('/dashboard', function () {
+    // Admin product routes
+    Route::get('/admin/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/admin/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/admin/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/admin/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::put('/admin/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::delete('/admin/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+});
+
+Route::get('/Admin/dashboard', function () {
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
@@ -21,17 +33,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-
-Route::resource('products', ProductController::class);
-
-Route::get('/products-dashboard', [ProductController::class, 'dashboard'])
-    ->name('products.dashboard')
-    ->middleware(['auth']);
-
 Route::get('/cart', function () {
     return Inertia::render('Cart', [
-        'cartItems' => [] // For now, we'll pass an empty array
+        'cartItems' => [] // Sementara, kosong.
     ]);
 })->name('cart');
 

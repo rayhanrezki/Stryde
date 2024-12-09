@@ -10,10 +10,10 @@ class SizeStock extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['product_id', 'sizes'];
+    protected $fillable = ['size_stock'];
 
     protected $casts = [
-        'sizes' => 'array', // Menyatakan bahwa kolom sizes adalah array (JSON)
+        'size_stock' => 'array'
     ];
 
     public function product()

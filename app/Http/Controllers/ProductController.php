@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
@@ -13,32 +14,25 @@ class ProductController extends Controller
      */
     public function index()
     {
-        $products = Product::query()
+        $products = Product::with('sizeStock')
             ->select([
                 'id',
                 'title',
                 'Description',
                 'Price',
-                'Stock',
-                'size',
                 'Slug',
                 'image',
                 'created_at',
                 'updated_at'
             ])
-            ->latest()
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+        
+        $totalProducts = Product::count();
 
-        // Get unique sizes from all products
-        $availableSizes = Product::distinct()
-            ->pluck('size')
-            ->sort()
-            ->values();
-
-        return Inertia::render('ProductList', [
+        return Inertia::render('Admin/ProductDashboard', [
             'products' => $products,
-            'totalItems' => $products->count(),
-            'availableSizes' => $availableSizes,
+            'totalProducts' => $totalProducts,
         ]);
     }
 
@@ -47,7 +41,9 @@ class ProductController extends Controller
      */
     public function create()
     {
-        return Inertia::render('Products/Create');
+        return Inertia::render('Admin/Products/Create', [
+            'categories' => Category::select('id', 'name', 'slug')->get()
+        ]);
     }
 
     /**
@@ -59,13 +55,26 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
-            'Stock' => 'required|integer|min:0',
-            'size' => 'required|integer|min:0',
             'Slug' => 'required|unique:products,Slug',
             'image' => 'required|string|max:255',
+            'category_id' => 'required|exists:categories,id',
+            'size_stock' => 'required|array',
+            'size_stock.*.size' => 'required|string',
+            'size_stock.*.stock' => 'required|integer|min:0',
         ]);
 
-        Product::create($validatedData);
+        $product = Product::create([
+            'title' => $validatedData['title'],
+            'Description' => $validatedData['Description'],
+            'Price' => $validatedData['Price'],
+            'Slug' => $validatedData['Slug'],
+            'image' => $validatedData['image'],
+            'category_id' => $validatedData['category_id'],
+        ]);
+
+        $product->sizeStock()->create([
+            'size_stock' => $validatedData['size_stock']
+        ]);
 
         return redirect()->route('products.index')
             ->with('success', 'Product created successfully.');
@@ -89,8 +98,11 @@ class ProductController extends Controller
      */
     public function edit(Product $product)
     {
-        return Inertia::render('Products/Edit', [
-            'product' => $product
+        $product->load('sizeStock');
+        
+        return Inertia::render('Admin/Products/Edit', [
+            'product' => $product,
+            'categories' => Category::select('id', 'name', 'slug')->get()
         ]);
     }
 
@@ -103,13 +115,24 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
-            'Stock' => 'required|integer|min:0',
-            'size' => 'required|integer|min:0',
             'Slug' => 'required|unique:products,Slug,' . $product->id,
             'image' => 'required|string|max:255',
+            'size_stock' => 'required|array',
+            'size_stock.*.size' => 'required|string',
+            'size_stock.*.stock' => 'required|integer|min:0',
         ]);
 
-        $product->update($validatedData);
+        $product->update([
+            'title' => $validatedData['title'],
+            'Description' => $validatedData['Description'],
+            'Price' => $validatedData['Price'],
+            'Slug' => $validatedData['Slug'],
+            'image' => $validatedData['image'],
+        ]);
+
+        $product->sizeStock()->update([
+            'size_stock' => $validatedData['size_stock']
+        ]);
 
         return redirect()->route('products.index')
             ->with('success', 'Product updated successfully.');
@@ -118,32 +141,46 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Product $product)
     {
-        //
+        // Delete the size_stock records first (due to foreign key constraint)
+        $product->sizeStock()->delete();
+        
+        // Then delete the product
+        $product->delete();
+
+        return redirect()->route('products.index')
+            ->with('success', 'Product deleted successfully.');
     }
 
-    public function dashboard()
+    public function list()
     {
-        $products = Product::query()
+        $products = Product::with('sizeStock')
             ->select([
                 'id',
                 'title',
                 'Description',
                 'Price',
-                'Stock',
-                'size',
                 'Slug',
                 'image',
                 'created_at',
                 'updated_at'
             ])
             ->latest()
-            ->paginate(12);
+            ->get();
 
-        return Inertia::render('ProductDashboard', [
+        // Get unique sizes from all products' size_stock
+        $availableSizes = collect();
+        foreach ($products as $product) {
+            $sizes = collect($product->sizeStock->size_stock ?? [])->pluck('size');
+            $availableSizes = $availableSizes->concat($sizes);
+        }
+        $availableSizes = $availableSizes->unique()->sort()->values();
+
+        return Inertia::render('ProductList', [
             'products' => $products,
-            'totalProducts' => Product::count(),
+            'totalItems' => $products->count(),
+            'availableSizes' => $availableSizes
         ]);
     }
 }

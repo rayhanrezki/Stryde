@@ -1,6 +1,6 @@
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Head, Link } from "@inertiajs/react";
-import { Product } from "@/types/product";
+import { Head, Link, router } from "@inertiajs/react";
+// import { Product } from "@/types/product";
 import {
     PlusCircle,
     Search,
@@ -17,6 +17,18 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
+import { useState } from "react";
 
 interface Props {
     products: {
@@ -34,11 +46,42 @@ interface Props {
     totalProducts: number;
 }
 
+interface SizeStock {
+    id: number;
+    product_id: number;
+    size: string;
+    stock: number;
+}
+
+interface Product {
+    id: number;
+    title: string;
+    Description: string;
+    Price: number;
+    Slug: string;
+    image: string;
+    size_stock: SizeStock;
+    created_at: string;
+    updated_at: string;
+}
+
 export default function ProductDashboard({ products, totalProducts }: Props) {
-    // Calculate stock percentage
-    const getStockPercentage = (stock: number) => {
+    const [productToDelete, setProductToDelete] = useState<number | null>(null);
+
+    const getStockPercentage = (product: Product) => {
         const maxStock = 100;
-        return (stock / maxStock) * 100;
+        return ((product.size_stock?.stock || 0) / maxStock) * 100;
+    };
+
+    const handleDeleteClick = (productId: number) => {
+        setProductToDelete(productId);
+    };
+
+    const confirmDelete = () => {
+        if (productToDelete) {
+            router.delete(route("products.destroy", productToDelete));
+            setProductToDelete(null);
+        }
     };
 
     return (
@@ -97,7 +140,7 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                             {product.title}
                                         </h3>
                                         <p className="text-sm text-gray-500">
-                                            Size: {product.size}
+                                            Size: {product.size_stock?.size}
                                         </p>
                                     </div>
                                 </div>
@@ -123,7 +166,12 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                                 <span>Edit Product</span>
                                             </Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="flex items-center gap-2 text-red-600 focus:text-red-600 cursor-pointer">
+                                        <DropdownMenuItem
+                                            onClick={() =>
+                                                handleDeleteClick(product.id)
+                                            }
+                                            className="flex items-center gap-2 text-red-600 focus:text-red-600 cursor-pointer"
+                                        >
                                             <Trash2 size={16} />
                                             <span>Remove Product</span>
                                         </DropdownMenuItem>
@@ -150,13 +198,11 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                             Stock
                                         </span>
                                         <span className="text-sm font-medium">
-                                            {product.Stock}
+                                            {product.size_stock?.stock || 0}
                                         </span>
                                     </div>
                                     <Progress
-                                        value={getStockPercentage(
-                                            product.Stock
-                                        )}
+                                        value={getStockPercentage(product)}
                                         className="h-2"
                                     />
                                 </div>
@@ -233,6 +279,30 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                     of {products.total} products
                 </div>
             </div>
+
+            <AlertDialog
+                open={productToDelete !== null}
+                onOpenChange={() => setProductToDelete(null)}
+            >
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently
+                            delete the product.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={confirmDelete}
+                            className="bg-red-500 hover:bg-red-600"
+                        >
+                            Delete
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AdminLayout>
     );
 }

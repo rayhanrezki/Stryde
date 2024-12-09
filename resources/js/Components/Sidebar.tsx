@@ -34,9 +34,9 @@ export default function Sidebar() {
                 </Link>
 
                 <Link
-                    href={route("products.dashboard")}
+                    href={route("products.index")}
                     className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        route().current("products.dashboard")
+                        route().current("products.index")
                             ? "bg-blue-50 text-blue-600"
                             : "text-gray-700 hover:bg-gray-100"
                     }`}
