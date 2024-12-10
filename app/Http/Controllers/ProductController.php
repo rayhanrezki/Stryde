@@ -202,7 +202,7 @@ class ProductController extends Controller
                     'stock' => $sizeStock->stock,
                 ];
             });
-            unset($product->sizeStocks); // Opsional, hapus sizeStocks jika tidak dibutuhkan
+            unset($product->sizeStocks);
             return $product;
         });
 
