@@ -3,14 +3,8 @@ export interface Product {
     Title: string;
     Description: string;
     Price: number;
-    Slug: string;
     Image: string;
-    created_at: string;
-    updated_at: string;
-    sizeStock?: {
-        size_stock: Array<{
-            size: string;
-            stock: number;
-        }>;
+    sizeStock: {
+        size_stock: Record<string, number>;
     };
 }

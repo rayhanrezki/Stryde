@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Heart, ArrowLeft } from "lucide-react";
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
@@ -9,29 +9,34 @@ interface Props {
     product: Product;
 }
 
-// const defaultColors = [
-//     { name: "Shadow Navy", value: "#1a237e" },
-//     { name: "Army Green", value: "#4b5320" },
-// ];
-
-// Available sizes array
-const availableSizes = ["38", "39", "40", "41", "42", "43", "44", "45"];
-
 export default function ProductDetails({ product }: Props) {
+    console.log("Product data:", product);
+    console.log("Size stock data:", product.sizeStock);
+
     const productImages = [
-        product.image,
-        product.image,
-        product.image,
-        product.image,
+        product.Image,
+        product.Image,
+        product.Image,
+        product.Image,
     ];
 
-    const [selectedImage, setSelectedImage] = useState(0);
-    // const [selectedColor, setSelectedColor] = useState(defaultColors[0].value);
-    const [selectedSize, setSelectedSize] = useState<string | null>(
-        product.size?.toString() ?? null
-    );
+    const sizeStockMap = useMemo(() => {
+        return product.sizeStock?.size_stock || {};
+    }, [product.sizeStock]);
 
-    // Add handleSizeChange function
+    const availableSizes = useMemo(() => {
+        console.log("Available sizes:", Object.keys(sizeStockMap));
+        return Object.keys(sizeStockMap).filter(
+            (size) => sizeStockMap[size] > 0
+        );
+    }, [sizeStockMap]);
+
+    const [selectedImage, setSelectedImage] = useState(0);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+
+    // Get current stock for selected size
+    const currentStock = selectedSize ? sizeStockMap[selectedSize] || 0 : 0;
+
     const handleSizeChange = (size: string) => {
         setSelectedSize(size);
     };
@@ -43,7 +48,7 @@ export default function ProductDetails({ product }: Props) {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
                     <Link
-                        href={route("products.index")}
+                        href={route("products.list")}
                         className="inline-flex items-center text-gray-600 hover:text-black transition-colors"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2" />
@@ -70,7 +75,7 @@ export default function ProductDetails({ product }: Props) {
                                 >
                                     <img
                                         src={image}
-                                        alt={`${product.Title} view ${
+                                        alt={`${product.title} view ${
                                             index + 1
                                         }`}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -81,16 +86,18 @@ export default function ProductDetails({ product }: Props) {
 
                         {/* Product Info */}
                         <div className="p-8 space-y-6">
-                            <h1 className="text-2xl font-bold">
-                                {product.Title}
+                            <h1 className="text-2xl font-bold font-rubik">
+                                {product.title}
                             </h1>
-                            <p className="text-2xl font-bold text-blue-600">
-                                ${product.price}
+                            <p className="text-2xl font-bold font-rubik text-blue-600">
+                                Rp {product.Price.toLocaleString("id-ID")}
                             </p>
 
-                            {/* Stock info */}
+                            {/* Stock info for selected size */}
                             <p className="text-gray-600">
-                                Stock Available: {product.stock}
+                                {selectedSize
+                                    ? `Stock Available for size ${selectedSize}: ${currentStock}`
+                                    : "Select a size to see available stock"}
                             </p>
 
                             {/* Update SizeSelector props */}
@@ -98,6 +105,7 @@ export default function ProductDetails({ product }: Props) {
                                 sizes={availableSizes}
                                 selectedSize={selectedSize}
                                 onChange={handleSizeChange}
+                                stockMap={sizeStockMap}
                             />
 
                             {/* Updated buttons section */}
@@ -106,13 +114,13 @@ export default function ProductDetails({ product }: Props) {
                                     <button
                                         className="flex-1 bg-[#2A2A2A] text-white py-3 px-4 rounded-md font-medium hover:bg-[#404040] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                                         disabled={
-                                            product.stock === 0 || !selectedSize
+                                            currentStock === 0 || !selectedSize
                                         }
                                     >
-                                        {product.stock === 0
-                                            ? "OUT OF STOCK"
-                                            : !selectedSize
+                                        {!selectedSize
                                             ? "SELECT SIZE"
+                                            : currentStock === 0
+                                            ? "OUT OF STOCK"
                                             : "ADD TO CART"}
                                     </button>
                                     <button
@@ -135,7 +143,7 @@ export default function ProductDetails({ product }: Props) {
                                     ABOUT THE PRODUCT
                                 </h2>
                                 <p className="text-gray-600">
-                                    {product.description}
+                                    {product.Description}
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
                                     <li>Product Ini Punya rafi</li>

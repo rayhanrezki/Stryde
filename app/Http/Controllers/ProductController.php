@@ -84,7 +84,15 @@ class ProductController extends Controller
     public function show(string $slug)
     {
         $product = Product::where('Slug', $slug)
+            ->with('sizeStock')
             ->firstOrFail();
+
+        if ($product->sizeStock) {
+            $sizeStockMap = collect($product->sizeStock->size_stock)
+                ->pluck('stock', 'size')
+                ->toArray();
+            $product->sizeStock->size_stock = $sizeStockMap;
+        }
 
         return Inertia::render('ProductDetails', [
             'product' => $product

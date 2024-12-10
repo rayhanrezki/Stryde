@@ -1,7 +1,7 @@
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
 import { Link } from "@inertiajs/react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 
 interface Props {
     products: Product[];
@@ -12,17 +12,6 @@ interface Props {
 export default function ProductList({ products, availableSizes }: Props) {
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
 
-    // Filter products based on selected size
-    const filteredProducts = useMemo(() => {
-        if (!selectedSize) return products;
-        return products.filter((product) =>
-            product.sizeStock?.size_stock.some(
-                (sizeInfo) => Number(sizeInfo.size) === selectedSize
-            )
-        );
-    }, [products, selectedSize]);
-
-    // Handle size selection
     const handleSizeClick = (size: number) => {
         setSelectedSize(selectedSize === size ? null : size);
     };
@@ -54,9 +43,7 @@ export default function ProductList({ products, availableSizes }: Props) {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h2 className="text-2xl font-bold">Life Style Shoes</h2>
-                        <p className="text-gray-600">
-                            {filteredProducts.length} items
-                        </p>
+                        <p className="text-gray-600">{products.length} items</p>
                     </div>
                     <div className="relative">
                         <select
@@ -138,7 +125,7 @@ export default function ProductList({ products, availableSizes }: Props) {
                     {/* Product Grid */}
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredProducts.map((product) => (
+                            {products.map((product) => (
                                 <div key={product.id} className="space-y-4">
                                     {/* Card with image */}
                                     <div className="bg-white rounded-[20px] p-2 relative">
