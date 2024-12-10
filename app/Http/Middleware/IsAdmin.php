@@ -14,9 +14,9 @@ class IsAdmin
     public function handle(Request $request, Closure $next)
     {
         if (!Auth::check() || !Auth::user()->is_admin) {
-            return redirect('/main');  // Redirect ke main jika bukan admin
+            return redirect('/main');
         }
 
-        return $next($request);  // Lanjutkan request jika admin
+        return $next($request);
     }
 }

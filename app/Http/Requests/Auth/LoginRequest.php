@@ -55,10 +55,10 @@ class LoginRequest extends FormRequest
         $user = Auth::user();
 
         if ($user->is_admin) {
-            // Redirect ke dashboard jika admin
+
             return redirect()->route('dashboard');
         } else {
-            // Redirect ke halaman utama untuk pengguna biasa
+
             return redirect()->route('main');
         }
     }
