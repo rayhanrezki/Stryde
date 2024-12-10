@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Str;
 
 class Product extends Model
 {
@@ -29,6 +30,26 @@ class Product extends Model
         'Slug',
         'image',
     ];
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($product) {
+            if (empty($product->Slug)) {
+                $product->Slug = Str::slug($product->title);
+            }
+        });
+
+        static::updating(function ($product) {
+            if ($product->isDirty('title') && empty($product->Slug)) {
+                $product->Slug = Str::slug($product->title);
+            }
+        });
+    }
 
     public function sizeStock()
     {

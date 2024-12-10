@@ -8,17 +8,18 @@ use Illuminate\Support\Str;
 
 class CategorySeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        Category::create([
-            'name' => 'Men Shoes',
-            'slug' => Str::slug('Men Shoes'),
-        ]);
+        $categories = [
+            'Men',
+            'Women'
+        ];
 
-        Category::create([
-            'name' => 'Women Shoes',
-            'slug' => Str::slug('Women Shoes'),
-
-        ]);
+        foreach ($categories as $category) {
+            Category::create([
+                'name' => $category,
+                'slug' => Str::slug($category),
+            ]);
+        }
     }
 }

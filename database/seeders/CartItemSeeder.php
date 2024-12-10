@@ -2,20 +2,35 @@
 
 namespace Database\Seeders;
 
-use App\Models\CartItem;
 use App\Models\Cart;
 use App\Models\Product;
+use App\Models\CartItem;
 use Illuminate\Database\Seeder;
 
 class CartItemSeeder extends Seeder
 {
     public function run()
     {
-        // Menambahkan cart item manual
-        CartItem::create([
-            'cart_id' => Cart::first()->id, // Pastikan ada cart pertama
-            'product_id' => Product::where('title', 'Nike Air Force 1')->first()->id,
-            'quantity' => 2,
-        ]);
+        $cart = Cart::first();
+        $product = Product::where('title', 'Nike Air Zoom Pegasus 39')->first();
+
+        if ($cart && $product) {
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $product->id,
+                'quantity' => 2,
+            ]);
+        }
+
+        // Add another cart item for women's product
+        $womensProduct = Product::where('title', 'Nike Air Zoom Pegasus 38 Women')->first();
+
+        if ($cart && $womensProduct) {
+            CartItem::create([
+                'cart_id' => $cart->id,
+                'product_id' => $womensProduct->id,
+                'quantity' => 1,
+            ]);
+        }
     }
 }

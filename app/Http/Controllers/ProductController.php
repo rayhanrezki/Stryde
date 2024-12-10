@@ -55,7 +55,6 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
-            'Slug' => 'required|unique:products,Slug',
             'image' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
             'size_stock' => 'required|array',
@@ -67,7 +66,6 @@ class ProductController extends Controller
             'title' => $validatedData['title'],
             'Description' => $validatedData['Description'],
             'Price' => $validatedData['Price'],
-            'Slug' => $validatedData['Slug'],
             'image' => $validatedData['image'],
             'category_id' => $validatedData['category_id'],
         ]);
@@ -115,7 +113,6 @@ class ProductController extends Controller
             'title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
-            'Slug' => 'required|unique:products,Slug,' . $product->id,
             'image' => 'required|string|max:255',
             'size_stock' => 'required|array',
             'size_stock.*.size' => 'required|string',
@@ -126,7 +123,6 @@ class ProductController extends Controller
             'title' => $validatedData['title'],
             'Description' => $validatedData['Description'],
             'Price' => $validatedData['Price'],
-            'Slug' => $validatedData['Slug'],
             'image' => $validatedData['image'],
         ]);
 

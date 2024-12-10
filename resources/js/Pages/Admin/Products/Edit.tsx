@@ -20,7 +20,6 @@ interface Product {
     title: string;
     Description: string;
     Price: number;
-    Slug: string;
     category_id: number;
     image: string;
     size_stock: {
@@ -38,7 +37,6 @@ export default function Edit({ categories, product }: Props) {
         title: product.title,
         Description: product.Description,
         Price: product.Price.toString(),
-        Slug: product.Slug,
         category_id: product.category_id.toString(),
         image: product.image,
         size_stock: product.size_stock.size_stock || [{ size: "", stock: 0 }],
@@ -178,23 +176,6 @@ export default function Edit({ categories, product }: Props) {
                         {errors.Price && (
                             <p className="text-red-500 text-sm mt-1">
                                 {errors.Price}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Slug
-                        </label>
-                        <input
-                            type="text"
-                            value={data.Slug}
-                            onChange={(e) => setData("Slug", e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
-                        />
-                        {errors.Slug && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.Slug}
                             </p>
                         )}
                     </div>

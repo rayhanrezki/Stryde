@@ -24,7 +24,6 @@ export default function Create({ categories }: Props) {
         title: "",
         Description: "",
         Price: "",
-        Slug: "",
         image: "",
         category_id: "",
         size_stock: [{ size: "", stock: 0 }],
@@ -163,23 +162,6 @@ export default function Create({ categories }: Props) {
                         {errors.Price && (
                             <p className="text-red-500 text-sm mt-1">
                                 {errors.Price}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Slug
-                        </label>
-                        <input
-                            type="text"
-                            value={data.Slug}
-                            onChange={(e) => setData("Slug", e.target.value)}
-                            className="w-full border rounded-lg px-3 py-2"
-                        />
-                        {errors.Slug && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.Slug}
                             </p>
                         )}
                     </div>
