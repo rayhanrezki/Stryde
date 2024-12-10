@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
         // Add products for men
         Product::create([
             'category_id' => $menCategory->id,
-            'title' => 'Nike Air Zoom Pegasus 39',
+            'Title' => 'Nike Air Zoom Pegasus 39',
             'Description' => 'The Nike Air Zoom Pegasus 39 brings the lightweight comfort you expect with a fresh design that lets you express your personal style.',
             'Price' => 120.00,
             'Slug' => 'nike-air-zoom-pegasus-39',
@@ -29,7 +29,7 @@ class ProductSeeder extends Seeder
         // Add products for women
         Product::create([
             'category_id' => $womenCategory->id,
-            'title' => 'Nike Air Zoom Pegasus 38 Women',
+            'Title' => 'Nike Air Zoom Pegasus 38 Women',
             'Description' => 'The Nike Air Zoom Pegasus 38 continues to put a spring in your step, using the same responsive foam as its predecessor.',
             'Price' => 110.00,
             'Slug' => 'nike-air-zoom-pegasus-38-women',

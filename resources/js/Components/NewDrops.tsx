@@ -6,7 +6,7 @@ import { Link } from "@inertiajs/react";
 // Define the Product type
 interface Product {
     id: number;
-    title: string;
+    Title: string;
     Price: string;
     image: string;
     created_at: string;
@@ -57,7 +57,7 @@ export default function NewDrops({ products }: NewDropsProps) {
                             <div className="aspect-square relative bg-neutral-50 rounded-[32px] overflow-hidden">
                                 <img
                                     src={product.image}
-                                    alt={product.title}
+                                    alt={product.Title}
                                     className="absolute inset-0 w-full h-full object-cover"
                                 />
                                 <div className="inline-flex items-start gap-2.5 px-5 py-3 absolute top-3 left-3 bg-blue-600 rounded-[28px_0px_28px_0px]">
@@ -68,7 +68,7 @@ export default function NewDrops({ products }: NewDropsProps) {
                             </div>
                             <div className="w-full px-3 space-y-4 mt-4">
                                 <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik">
-                                    {product.title}
+                                    {product.Title}
                                 </h3>
                                 <div className="w-full">
                                     <Link

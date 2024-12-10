@@ -21,7 +21,7 @@ interface SizeStock {
 
 export default function Create({ categories }: Props) {
     const { data, setData, post, processing, errors } = useForm({
-        title: "",
+        Title: "",
         Description: "",
         Price: "",
         image: "",
@@ -118,13 +118,13 @@ export default function Create({ categories }: Props) {
                         </label>
                         <input
                             type="text"
-                            value={data.title}
-                            onChange={(e) => setData("title", e.target.value)}
+                            value={data.Title}
+                            onChange={(e) => setData("Title", e.target.value)}
                             className="w-full border rounded-lg px-3 py-2"
                         />
-                        {errors.title && (
+                        {errors.Title && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.title}
+                                {errors.Title}
                             </p>
                         )}
                     </div>

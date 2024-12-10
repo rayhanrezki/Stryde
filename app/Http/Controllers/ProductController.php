@@ -17,7 +17,7 @@ class ProductController extends Controller
         $products = Product::with('sizeStock')
             ->select([
                 'id',
-                'title',
+                'Title',
                 'Description',
                 'Price',
                 'Slug',
@@ -52,7 +52,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'Title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
             'image' => 'required|string|max:255',
@@ -63,7 +63,7 @@ class ProductController extends Controller
         ]);
 
         $product = Product::create([
-            'title' => $validatedData['title'],
+            'Title' => $validatedData['Title'],
             'Description' => $validatedData['Description'],
             'Price' => $validatedData['Price'],
             'image' => $validatedData['image'],
@@ -110,7 +110,7 @@ class ProductController extends Controller
     public function update(Request $request, Product $product)
     {
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
+            'Title' => 'required|string|max:255',
             'Description' => 'nullable|string',
             'Price' => 'required|numeric|min:0',
             'image' => 'required|string|max:255',
@@ -120,7 +120,7 @@ class ProductController extends Controller
         ]);
 
         $product->update([
-            'title' => $validatedData['title'],
+            'Title' => $validatedData['Title'],
             'Description' => $validatedData['Description'],
             'Price' => $validatedData['Price'],
             'image' => $validatedData['image'],
@@ -154,11 +154,11 @@ class ProductController extends Controller
         $products = Product::with('sizeStock')
             ->select([
                 'id',
-                'title',
+                'Title',
                 'Description',
                 'Price',
                 'Slug',
-                'image',
+                'Image',
                 'created_at',
                 'updated_at'
             ])

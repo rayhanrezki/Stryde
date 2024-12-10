@@ -24,7 +24,7 @@ class Product extends Model
      */
     protected $fillable = [
         'category_id',
-        'title',
+        'Title',
         'Description',
         'Price',
         'Slug',
@@ -40,13 +40,13 @@ class Product extends Model
 
         static::creating(function ($product) {
             if (empty($product->Slug)) {
-                $product->Slug = Str::slug($product->title);
+                $product->Slug = Str::slug($product->Title);
             }
         });
 
         static::updating(function ($product) {
-            if ($product->isDirty('title') && empty($product->Slug)) {
-                $product->Slug = Str::slug($product->title);
+            if ($product->isDirty('Title') && empty($product->Slug)) {
+                $product->Slug = Str::slug($product->Title);
             }
         });
     }

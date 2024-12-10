@@ -38,7 +38,7 @@ export default function ProductDetails({ product }: Props) {
 
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
-            <Head title={product.title} />
+            <Head title={product.Title} />
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
@@ -70,7 +70,7 @@ export default function ProductDetails({ product }: Props) {
                                 >
                                     <img
                                         src={image}
-                                        alt={`${product.title} view ${
+                                        alt={`${product.Title} view ${
                                             index + 1
                                         }`}
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
@@ -82,7 +82,7 @@ export default function ProductDetails({ product }: Props) {
                         {/* Product Info */}
                         <div className="p-8 space-y-6">
                             <h1 className="text-2xl font-bold">
-                                {product.title}
+                                {product.Title}
                             </h1>
                             <p className="text-2xl font-bold text-blue-600">
                                 ${product.price}

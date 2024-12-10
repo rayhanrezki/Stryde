@@ -55,7 +55,7 @@ interface SizeStock {
 
 interface Product {
     id: number;
-    title: string;
+    Title: string;
     Description: string;
     Price: number;
     Slug: string;
@@ -132,12 +132,12 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                 <div className="flex items-center gap-4">
                                     <img
                                         src={product.image}
-                                        alt={product.title}
+                                        alt={product.Title}
                                         className="w-16 h-16 rounded-xl object-cover"
                                     />
                                     <div>
                                         <h3 className="font-medium text-lg">
-                                            {product.title}
+                                            {product.Title}
                                         </h3>
                                         <p className="text-sm text-gray-500">
                                             Size: {product.size_stock?.size}

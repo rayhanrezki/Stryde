@@ -3,24 +3,24 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 interface Category {
     id: number;
-    title: string;
+    Title: string;
     image: string;
 }
 
 const categories: Category[] = [
     {
         id: 1,
-        title: "LIFESTYLE SHOES",
+        Title: "LIFESTYLE SHOES",
         image: "/images/Categories/CATEGORY_LIFESTYLE.png",
     },
     {
         id: 2,
-        title: "BASKETBALL SHOES",
+        Title: "BASKETBALL SHOES",
         image: "/images/Categories/CATEGORY_BASKETBALL.png",
     },
     {
         id: 3,
-        title: "SOCCER SHOES",
+        Title: "SOCCER SHOES",
         image: "/images/soccer.webp",
     },
 ];
@@ -87,7 +87,7 @@ const Categories = () => {
                                     >
                                         <div className="absolute top-8 left-8 right-8 z-10 flex justify-between items-center">
                                             <h2 className="text-black text-2xl font-bold font-rubik">
-                                                {category.title}
+                                                {category.Title}
                                             </h2>
                                             <div className="bg-black rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <ArrowRight
@@ -99,7 +99,7 @@ const Categories = () => {
                                         <div className="aspect-[4/3]">
                                             <img
                                                 src={category.image}
-                                                alt={category.title}
+                                                alt={category.Title}
                                                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                             />
                                         </div>

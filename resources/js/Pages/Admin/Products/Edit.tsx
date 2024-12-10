@@ -17,7 +17,7 @@ interface SizeStock {
 
 interface Product {
     id: number;
-    title: string;
+    Title: string;
     Description: string;
     Price: number;
     category_id: number;
@@ -34,7 +34,7 @@ interface Props {
 
 export default function Edit({ categories, product }: Props) {
     const { data, setData, put, processing, errors } = useForm({
-        title: product.title,
+        Title: product.Title,
         Description: product.Description,
         Price: product.Price.toString(),
         category_id: product.category_id.toString(),
@@ -132,13 +132,13 @@ export default function Edit({ categories, product }: Props) {
                         </label>
                         <input
                             type="text"
-                            value={data.title}
-                            onChange={(e) => setData("title", e.target.value)}
+                            value={data.Title}
+                            onChange={(e) => setData("Title", e.target.value)}
                             className="w-full border rounded-lg px-3 py-2"
                         />
-                        {errors.title && (
+                        {errors.Title && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.title}
+                                {errors.Title}
                             </p>
                         )}
                     </div>

@@ -12,7 +12,7 @@ class CartItemSeeder extends Seeder
     public function run()
     {
         $cart = Cart::first();
-        $product = Product::where('title', 'Nike Air Zoom Pegasus 39')->first();
+        $product = Product::where('Title', 'Nike Air Zoom Pegasus 39')->first();
 
         if ($cart && $product) {
             CartItem::create([
@@ -23,7 +23,7 @@ class CartItemSeeder extends Seeder
         }
 
         // Add another cart item for women's product
-        $womensProduct = Product::where('title', 'Nike Air Zoom Pegasus 38 Women')->first();
+        $womensProduct = Product::where('Title', 'Nike Air Zoom Pegasus 38 Women')->first();
 
         if ($cart && $womensProduct) {
             CartItem::create([

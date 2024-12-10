@@ -9,18 +9,16 @@ interface Props {
     availableSizes: number[];
 }
 
-export default function ProductList({
-    products,
-    totalItems,
-    availableSizes,
-}: Props) {
+export default function ProductList({ products, availableSizes }: Props) {
     const [selectedSize, setSelectedSize] = useState<number | null>(null);
 
     // Filter products based on selected size
     const filteredProducts = useMemo(() => {
         if (!selectedSize) return products;
-        return products.filter(
-            (product) => Number(product.size) === selectedSize
+        return products.filter((product) =>
+            product.sizeStock?.size_stock.some(
+                (sizeInfo) => Number(sizeInfo.size) === selectedSize
+            )
         );
     }, [products, selectedSize]);
 
@@ -111,34 +109,6 @@ export default function ProductList({
                             </div>
                         </div>
 
-                        <div className="mb-6">
-                            <h3 className="font-semibold mb-4">COLOR</h3>
-                            <div className="grid grid-cols-5 gap-2">
-                                {[
-                                    "blue",
-                                    "orange",
-                                    "black",
-                                    "green",
-                                    "gray",
-                                    "coral",
-                                    "silver",
-                                    "navy",
-                                    "brown",
-                                    "tan",
-                                ].map((color) => (
-                                    <button
-                                        key={color}
-                                        className={`w-8 h-8 rounded-md border ${
-                                            color === "blue"
-                                                ? "ring-2 ring-blue-500"
-                                                : ""
-                                        }`}
-                                        style={{ backgroundColor: color }}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
                         <div>
                             <h3 className="font-semibold mb-4">TYPE</h3>
                             <div className="space-y-2">
@@ -174,8 +144,8 @@ export default function ProductList({
                                     <div className="bg-white rounded-[20px] p-2 relative">
                                         <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
                                             <img
-                                                src={product.image}
-                                                alt={product.title}
+                                                src={product.Image}
+                                                alt={product.Title}
                                                 className="absolute inset-0 w-full h-full object-contain"
                                             />
                                         </div>
@@ -184,18 +154,18 @@ export default function ProductList({
                                     {/* Product Info Below Card */}
                                     <div className="space-y-3">
                                         <h3 className="font-medium text-base line-clamp-2">
-                                            {product.title}
+                                            {product.Title}
                                         </h3>
                                         <Link
                                             href={route(
                                                 "products.show",
-                                                product.slug
+                                                product.Slug
                                             )}
                                             className="block"
                                         >
                                             <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
                                                 VIEW PRODUCT - Rp{" "}
-                                                {product.price}
+                                                {product.Price}
                                             </button>
                                         </Link>
                                     </div>

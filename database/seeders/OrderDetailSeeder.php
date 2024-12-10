@@ -13,7 +13,7 @@ class OrderDetailSeeder extends Seeder
     {
         OrderDetail::create([
             'order_id' => Order::first()->id,
-            'product_id' => Product::where('title', 'Nike Air Zoom Pegasus 39')->first()->id,
+            'product_id' => Product::where('Title', 'Nike Air Zoom Pegasus 39')->first()->id,
             'quantity' => 1,
             'price' => 120.00,
         ]);
