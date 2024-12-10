@@ -37,7 +37,7 @@ class LoginRequest extends FormRequest
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function authenticate(): void
+    public function authenticate(): \Illuminate\Http\RedirectResponse
     {
         $this->ensureIsNotRateLimited();
 
@@ -50,7 +50,19 @@ class LoginRequest extends FormRequest
         }
 
         RateLimiter::clear($this->throttleKey());
+
+        // Periksa role setelah login
+        $user = Auth::user();
+
+        if ($user->is_admin) {
+            // Redirect ke dashboard jika admin
+            return redirect()->route('dashboard');
+        } else {
+            // Redirect ke halaman utama untuk pengguna biasa
+            return redirect()->route('main');
+        }
     }
+
 
     /**
      * Ensure the login request is not rate limited.
@@ -80,6 +92,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        return Str::transliterate(Str::lower($this->string('email')) . '|' . $this->ip());
     }
 }

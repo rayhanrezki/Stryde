@@ -32,20 +32,29 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
+
+        // Tentukan apakah user adalah admin atau biasa (default adalah biasa)
+        $isAdmin = $request->has('is_admin') ? true : false; // Menetapkan role admin jika ada input is_admin
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_admin' => $isAdmin, // Menyimpan role pengguna
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        // Redirect berdasarkan role
+        if ($user->is_admin) {
+            return redirect(route('dashboard', absolute: false));  // Admin ke dashboard
+        }
+
+        return redirect(route('main', absolute: false));  // Pengguna biasa ke halaman utama
     }
 }

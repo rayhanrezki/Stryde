@@ -29,3 +29,13 @@ Route::get('/products-dashboard', [ProductController::class, 'dashboard'])
     ->middleware(['auth']);
 
 require __DIR__ . '/auth.php';
+
+
+Route::get('/main', function () {
+    return Inertia::render('Main');
+})->name('main');
+
+// Route untuk halaman utama (untuk pengguna biasa)
+Route::middleware('auth')->get('/main', function () {
+    return Inertia::render('Main');  // Render halaman Main
+})->name('main');

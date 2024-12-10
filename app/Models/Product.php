@@ -30,9 +30,9 @@ class Product extends Model
         'image',
     ];
 
-    public function sizeStock()
+    public function sizeStocks()
     {
-        return $this->hasOne(SizeStock::class);
+        return $this->hasMany(SizeStock::class); // Menunjukkan relasi satu ke banyak
     }
 
     /**
