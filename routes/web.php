@@ -7,7 +7,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MainController;
 
-Route::get('/', [MainController::class, 'index']);
+Route::get('/', [ProductController::class, 'main'])->name('main');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Public product routes

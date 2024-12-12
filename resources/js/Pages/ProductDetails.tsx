@@ -1,49 +1,33 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { Heart, ArrowLeft } from "lucide-react";
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
 import { Head, Link } from "@inertiajs/react";
-import { SizeSelector } from "@/Components/SizeSelector";
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious,
+} from "@/Components/ui/carousel";
 
 interface Props {
     product: Product;
 }
 
 export default function ProductDetails({ product }: Props) {
-    console.log("Product data:", product);
-    console.log("Size stock data:", product.sizeStock);
+    const [selectedSize, setSelectedSize] = useState<string>("");
 
-    const productImages = [
-        product.Image,
-        product.Image,
-        product.Image,
-        product.Image,
-    ];
-
-    const sizeStockMap = useMemo(() => {
-        return product.sizeStock?.size_stock || {};
-    }, [product.sizeStock]);
-
-    const availableSizes = useMemo(() => {
-        console.log("Available sizes:", Object.keys(sizeStockMap));
-        return Object.keys(sizeStockMap).filter(
-            (size) => sizeStockMap[size] > 0
-        );
-    }, [sizeStockMap]);
-
-    const [selectedImage, setSelectedImage] = useState(0);
-    const [selectedSize, setSelectedSize] = useState<string | null>(null);
-
-    // Get current stock for selected size
-    const currentStock = selectedSize ? sizeStockMap[selectedSize] || 0 : 0;
-
-    const handleSizeChange = (size: string) => {
-        setSelectedSize(size);
+    const getCurrentStock = () => {
+        const size = product.sizes.find((s) => s.size === selectedSize);
+        return size ? size.stock : 0;
     };
+
+    const currentStock = getCurrentStock();
 
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
-            <Head title={product.Title} />
+            <Head title={product.name} />
             <Navbar />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
@@ -57,58 +41,69 @@ export default function ProductDetails({ product }: Props) {
                 </div>
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                     <div className="grid md:grid-cols-2 gap-8">
-                        {/* Product Images */}
-                        <div className="grid grid-cols-2 gap-4 p-4">
-                            {productImages.map((image, index) => (
-                                <div
-                                    key={index}
-                                    className={`overflow-hidden cursor-pointer ${
-                                        index === 0 ? "rounded-tl-xl" : ""
-                                    } ${index === 1 ? "rounded-tr-xl" : ""} ${
-                                        index === 2 ? "rounded-bl-xl" : ""
-                                    } ${index === 3 ? "rounded-br-xl" : ""} ${
-                                        selectedImage === index
-                                            ? "ring-2 ring-blue-600"
-                                            : ""
-                                    }`}
-                                    onClick={() => setSelectedImage(index)}
-                                >
-                                    <img
-                                        src={image}
-                                        alt={`${product.title} view ${
-                                            index + 1
-                                        }`}
-                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                                    />
-                                </div>
-                            ))}
+                        {/* Product Images Carousel */}
+                        <div className="p-4">
+                            <Carousel className="w-full max-w-xl mx-auto">
+                                <CarouselContent>
+                                    {product.images.map((image, index) => (
+                                        <CarouselItem key={image.id}>
+                                            <div className="aspect-square relative overflow-hidden rounded-xl">
+                                                <img
+                                                    src={`/storage/${image.image_path}`}
+                                                    alt={`${
+                                                        product.name
+                                                    } view ${index + 1}`}
+                                                    className="absolute inset-0 w-full h-full object-cover"
+                                                />
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="left-2" />
+                                <CarouselNext className="right-2" />
+                            </Carousel>
                         </div>
 
                         {/* Product Info */}
                         <div className="p-8 space-y-6">
                             <h1 className="text-2xl font-bold font-rubik">
-                                {product.title}
+                                {product.name}
                             </h1>
                             <p className="text-2xl font-bold font-rubik text-blue-600">
-                                Rp {product.Price.toLocaleString("id-ID")}
+                                Rp {product.price.toLocaleString("id-ID")}
                             </p>
 
-                            {/* Stock info for selected size */}
                             <p className="text-gray-600">
                                 {selectedSize
                                     ? `Stock Available for size ${selectedSize}: ${currentStock}`
                                     : "Select a size to see available stock"}
                             </p>
 
-                            {/* Update SizeSelector props */}
-                            <SizeSelector
-                                sizes={availableSizes}
-                                selectedSize={selectedSize}
-                                onChange={handleSizeChange}
-                                stockMap={sizeStockMap}
-                            />
+                            {/* Size Selector */}
+                            <div className="grid grid-cols-2 gap-2">
+                                {product.sizes.map((size) => (
+                                    <button
+                                        key={size.id}
+                                        className={`p-3 border rounded-lg ${
+                                            selectedSize === size.size
+                                                ? "border-blue-600 bg-blue-50"
+                                                : "hover:border-gray-400"
+                                        }`}
+                                        onClick={() =>
+                                            setSelectedSize(size.size)
+                                        }
+                                    >
+                                        <span className="font-medium">
+                                            {size.size}
+                                        </span>
+                                        <p className="text-sm text-gray-500">
+                                            Stock: {size.stock}
+                                        </p>
+                                    </button>
+                                ))}
+                            </div>
 
-                            {/* Updated buttons section */}
+                            {/* Action Buttons */}
                             <div className="flex flex-col gap-2 w-full">
                                 <div className="flex gap-2">
                                     <button
@@ -143,7 +138,7 @@ export default function ProductDetails({ product }: Props) {
                                     ABOUT THE PRODUCT
                                 </h2>
                                 <p className="text-gray-600">
-                                    {product.Description}
+                                    {product.description}
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
                                     <li>Product Ini Punya rafi</li>

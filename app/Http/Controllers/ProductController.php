@@ -148,7 +148,6 @@ class ProductController extends Controller
                 Storage::disk('public')->delete($image->image_path);
             }
             
-            // Delete the product (this will cascade delete related records)
             $product->delete();
 
             return redirect()->route('products.index')
@@ -169,5 +168,28 @@ class ProductController extends Controller
         $category = Category::create($validated);
 
         return response()->json($category);
+    }
+
+    public function show($slug)
+    {
+        $product = Product::with(['images', 'sizes'])
+            ->where('slug', $slug)
+            ->firstOrFail();
+
+        return Inertia::render('ProductDetails', [
+            'product' => $product
+        ]);
+    }
+
+    public function main()
+    {
+        $latestProducts = Product::with('images')
+            ->latest()
+            ->take(4)
+            ->get();
+
+        return Inertia::render('Main', [
+            'latestProducts' => $latestProducts
+        ]);
     }
 }

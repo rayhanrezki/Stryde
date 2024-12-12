@@ -20,7 +20,7 @@ export default function Edit({ product, categories }: Props) {
         price: product.price.toString(),
         images: [] as File[],
         sizes: product.sizes,
-        categories: product.categories.map((c) => c.id),
+        categories: product.categories.map((c: { id: any }) => c.id),
         existingImages: product.images,
     });
 

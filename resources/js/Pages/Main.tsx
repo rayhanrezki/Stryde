@@ -4,15 +4,7 @@ import NewDrops from "../Components/NewDrops";
 import Categories from "@/Components/Categories";
 import Reviews from "@/Components/Reviews";
 import { Head } from "@inertiajs/react";
-
-interface Product {
-    id: number;
-    name: string;
-    Price: string;
-    image: string;
-    created_at: string;
-    Slug: string;
-}
+import { Product } from "@/types/product";
 
 interface Props {
     latestProducts: Product[];
