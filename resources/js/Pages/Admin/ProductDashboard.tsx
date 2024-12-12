@@ -1,14 +1,13 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, Link, router } from "@inertiajs/react";
-// import { Product } from "@/types/product";
 import {
     PlusCircle,
     Search,
     MoreVertical,
     Pencil,
     Trash2,
-    ChevronLeft,
-    ChevronRight,
+    XCircle,
+    CheckCircle2,
 } from "lucide-react";
 import { Progress } from "@/Components/ui/progress";
 import {
@@ -26,61 +25,47 @@ import {
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
 } from "@/Components/ui/alert-dialog";
 import { useState } from "react";
+import { Product } from "@/types/product";
+import { Alert, AlertDescription } from "@/Components/ui/alert";
 
 interface Props {
-    products: {
-        data: Product[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-        links: {
-            url: string | null;
-            label: string;
-            active: boolean;
-        }[];
-    };
-    totalProducts: number;
+    products: Product[];
 }
 
-interface SizeStock {
-    id: number;
-    product_id: number;
-    size: string;
-    stock: number;
-}
+export default function ProductDashboard({ products }: Props) {
+    const [productToDelete, setProductToDelete] = useState<string | null>(null);
+    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+    const [showErrorAlert, setShowErrorAlert] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-interface Product {
-    id: number;
-    Title: string;
-    Description: string;
-    Price: number;
-    Slug: string;
-    image: string;
-    size_stock: SizeStock;
-    created_at: string;
-    updated_at: string;
-}
-
-export default function ProductDashboard({ products, totalProducts }: Props) {
-    const [productToDelete, setProductToDelete] = useState<number | null>(null);
-
-    const getStockPercentage = (product: Product) => {
-        const maxStock = 100;
-        return ((product.size_stock?.stock || 0) / maxStock) * 100;
+    const getStockPercentage = () => {
+        return 75;
     };
 
-    const handleDeleteClick = (productId: number) => {
-        setProductToDelete(productId);
+    const handleDeleteClick = (productSlug: string) => {
+        setProductToDelete(productSlug);
     };
 
     const confirmDelete = () => {
         if (productToDelete) {
-            router.delete(route("products.destroy", productToDelete));
-            setProductToDelete(null);
+            router.delete(route("products.destroy", productToDelete), {
+                onSuccess: () => {
+                    setProductToDelete(null);
+                    setShowSuccessAlert(true);
+                    setTimeout(() => setShowSuccessAlert(false), 3000);
+                },
+                onError: (errors) => {
+                    console.error("Delete failed:", errors);
+                    setErrorMessage(
+                        "Failed to delete product. Please try again."
+                    );
+                    setShowErrorAlert(true);
+                    setTimeout(() => setShowErrorAlert(false), 3000);
+                },
+                preserveScroll: true,
+            });
         }
     };
 
@@ -88,21 +73,36 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
         <AdminLayout>
             <Head title="Products Dashboard" />
 
-            <div className="space-y-6">
+            <div className="p-8 space-y-6">
+                {showSuccessAlert && (
+                    <Alert className="border-green-500 text-green-500">
+                        <CheckCircle2 className="h-4 w-4" />
+                        <AlertDescription>
+                            Product successfully deleted.
+                        </AlertDescription>
+                    </Alert>
+                )}
+
+                {showErrorAlert && (
+                    <Alert className="border-red-500 text-red-500">
+                        <XCircle className="h-4 w-4" />
+                        <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                )}
+
                 {/* Header */}
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-bold">Products</h1>
                         <p className="text-gray-600">
-                            {totalProducts} total products
+                            {products.length} total products
                         </p>
                     </div>
-                    <Link
-                        href={route("products.create")}
-                        className="inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-blue-500 transition-colors"
-                    >
-                        <PlusCircle size={20} />
-                        <span>Add New Product</span>
+                    <Link href={route("products.create")}>
+                        <button className="inline-flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-zinc-800">
+                            <PlusCircle size={20} />
+                            <span>Add New Product</span>
+                        </button>
                     </Link>
                 </div>
 
@@ -123,7 +123,7 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
 
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {products.data.map((product) => (
+                    {products.map((product) => (
                         <div
                             key={product.id}
                             className="bg-white p-6 rounded-xl"
@@ -131,16 +131,26 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-4">
                                     <img
-                                        src={product.image}
-                                        alt={product.Title}
+                                        src={
+                                            product.images[0]?.image_path
+                                                ? `/storage/${product.images[0].image_path}`
+                                                : "/placeholder.jpg"
+                                        }
+                                        alt={product.name}
                                         className="w-16 h-16 rounded-xl object-cover"
                                     />
                                     <div>
                                         <h3 className="font-medium text-lg">
-                                            {product.Title}
+                                            {product.name}
                                         </h3>
                                         <p className="text-sm text-gray-500">
-                                            Size: {product.size_stock?.size}
+                                            {product.description.substring(
+                                                0,
+                                                50
+                                            )}
+                                            {product.description.length > 50
+                                                ? "..."
+                                                : ""}
                                         </p>
                                     </div>
                                 </div>
@@ -158,7 +168,7 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                             <Link
                                                 href={route(
                                                     "products.edit",
-                                                    product.id
+                                                    product.slug
                                                 )}
                                                 className="flex items-center gap-2 cursor-pointer"
                                             >
@@ -168,7 +178,7 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() =>
-                                                handleDeleteClick(product.id)
+                                                handleDeleteClick(product.slug)
                                             }
                                             className="flex items-center gap-2 text-red-600 focus:text-red-600 cursor-pointer"
                                         >
@@ -183,26 +193,14 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                 <div>
                                     <div className="flex justify-between mb-2">
                                         <span className="text-sm text-gray-600">
-                                            Sales
+                                            Stock Status
                                         </span>
                                         <span className="text-sm font-medium">
-                                            1269
-                                        </span>
-                                    </div>
-                                    <Progress value={75} className="h-2" />
-                                </div>
-
-                                <div>
-                                    <div className="flex justify-between mb-2">
-                                        <span className="text-sm text-gray-600">
-                                            Stock
-                                        </span>
-                                        <span className="text-sm font-medium">
-                                            {product.size_stock?.stock || 0}
+                                            In Stock
                                         </span>
                                     </div>
                                     <Progress
-                                        value={getStockPercentage(product)}
+                                        value={getStockPercentage()}
                                         className="h-2"
                                     />
                                 </div>
@@ -210,73 +208,14 @@ export default function ProductDashboard({ products, totalProducts }: Props) {
                                 <div className="pt-4 border-t">
                                     <div className="flex justify-between items-center">
                                         <span className="font-medium">
-                                            ${product.Price}
+                                            Rp{" "}
+                                            {Number(product.price).toFixed(2)}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ))}
-                </div>
-
-                {/* Pagination */}
-                {products.last_page > 1 && (
-                    <div className="flex items-center justify-center gap-2 mt-8">
-                        <Link
-                            href={products.links[0].url || ""}
-                            className={`p-2 rounded-lg transition-colors ${
-                                !products.links[0].url
-                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                    : "bg-white hover:bg-gray-50"
-                            }`}
-                            preserveScroll
-                        >
-                            <ChevronLeft className="w-5 h-5" />
-                        </Link>
-
-                        <div className="flex items-center gap-1">
-                            {products.links.slice(1, -1).map((link, i) => (
-                                <Link
-                                    key={i}
-                                    href={link.url || ""}
-                                    className={`px-4 py-2 rounded-lg transition-colors ${
-                                        link.active
-                                            ? "bg-blue-50 text-blue-600 font-medium"
-                                            : "bg-white hover:bg-gray-50"
-                                    }`}
-                                    preserveScroll
-                                >
-                                    {link.label}
-                                </Link>
-                            ))}
-                        </div>
-
-                        <Link
-                            href={
-                                products.links[products.links.length - 1].url ||
-                                ""
-                            }
-                            className={`p-2 rounded-lg transition-colors ${
-                                !products.links[products.links.length - 1].url
-                                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                                    : "bg-white hover:bg-gray-50"
-                            }`}
-                            preserveScroll
-                        >
-                            <ChevronRight className="w-5 h-5" />
-                        </Link>
-                    </div>
-                )}
-
-                {/* Page Info */}
-                <div className="text-center text-sm text-gray-600">
-                    Showing{" "}
-                    {(products.current_page - 1) * products.per_page + 1} to{" "}
-                    {Math.min(
-                        products.current_page * products.per_page,
-                        products.total
-                    )}{" "}
-                    of {products.total} products
                 </div>
             </div>
 

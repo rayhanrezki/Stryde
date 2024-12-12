@@ -1,37 +1,76 @@
-import AdminLayout from "@/Layouts/AdminLayout";
 import { Head, useForm, Link } from "@inertiajs/react";
+import AdminLayout from "@/Layouts/AdminLayout";
+import { PageProps } from "@/types";
 import { FormEvent, useState } from "react";
-import { Button } from "@/Components/ui/button";
-import { Trash2 } from "lucide-react";
+import axios from "axios";
+import { Category, Size, ProductFormData } from "@/types/product";
 
-interface Category {
-    id: number;
-    name: string;
-    slug: string;
-}
-
-interface Props {
+interface Props extends PageProps {
     categories: Category[];
 }
 
-interface SizeStock {
-    size: string;
-    stock: number;
-}
-
 export default function Create({ categories }: Props) {
-    const { data, setData, post, processing, errors } = useForm({
-        Title: "",
-        Description: "",
-        Price: "",
-        image: "",
-        category_id: "",
-        size_stock: [{ size: "", stock: 0 }],
-    });
+    const { data, setData, post, processing, errors } =
+        useForm<ProductFormData>({
+            name: "",
+            description: "",
+            price: "",
+            images: [] as File[],
+            sizes: [] as Size[],
+            categories: [] as number[],
+            existingImages: [],
+        });
 
-    const [sizeStocks, setSizeStocks] = useState<SizeStock[]>([
+    const [newCategory, setNewCategory] = useState("");
+    const [isAddingCategory, setIsAddingCategory] = useState(false);
+    const [categoryError, setCategoryError] = useState("");
+    const [availableCategories, setAvailableCategories] = useState(categories);
+    const [sizeStocks, setSizeStocks] = useState<Size[]>([
         { size: "", stock: 0 },
     ]);
+
+    const handleSubmit = (e: FormEvent) => {
+        e.preventDefault();
+        const formData = new FormData();
+
+        formData.append("name", data.name);
+        formData.append("description", data.description);
+        formData.append("price", data.price);
+
+        if (data.images.length > 0) {
+            Array.from(data.images).forEach((image, index) => {
+                formData.append(`images[${index}]`, image);
+            });
+        }
+
+        formData.append("sizes", JSON.stringify(sizeStocks));
+        formData.append("categories", JSON.stringify(data.categories));
+
+        post(route("products.store"));
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files.length > 0) {
+            const validFiles = Array.from(e.target.files).filter((file) => {
+                const isValidType = [
+                    "image/jpeg",
+                    "image/png",
+                    "image/gif",
+                    "image/jpg",
+                ].includes(file.type);
+                const isValidSize = file.size <= 2 * 1024 * 1024;
+                return isValidType && isValidSize;
+            });
+
+            if (validFiles.length !== e.target.files.length) {
+                alert(
+                    "Some files were skipped. Please ensure all files are images under 2MB."
+                );
+            }
+
+            setData("images", validFiles);
+        }
+    };
 
     const addSizeStock = () => {
         setSizeStocks([...sizeStocks, { size: "", stock: 0 }]);
@@ -44,24 +83,48 @@ export default function Create({ categories }: Props) {
 
     const updateSizeStock = (
         index: number,
-        field: keyof SizeStock,
+        field: keyof Size,
         value: string | number
     ) => {
         const newSizeStocks = [...sizeStocks];
         newSizeStocks[index] = { ...newSizeStocks[index], [field]: value };
         setSizeStocks(newSizeStocks);
-        setData("size_stock", newSizeStocks);
+        setData("sizes", newSizeStocks);
     };
 
-    const handleSubmit = (e: FormEvent) => {
-        e.preventDefault();
-        post(route("products.store"));
+    const handleAddCategory = async () => {
+        if (!newCategory.trim()) {
+            setCategoryError("Category name is required");
+            return;
+        }
+
+        setIsAddingCategory(true);
+        setCategoryError("");
+
+        try {
+            const response = await axios.post(
+                route("products.categories.store"),
+                {
+                    name: newCategory,
+                }
+            );
+
+            const addedCategory = response.data;
+            setAvailableCategories([...availableCategories, addedCategory]);
+            setNewCategory("");
+            setData("categories", [...data.categories, addedCategory.id]);
+        } catch (error: any) {
+            setCategoryError(
+                error.response?.data?.message || "Failed to add category"
+            );
+        } finally {
+            setIsAddingCategory(false);
+        }
     };
 
     return (
         <AdminLayout>
             <Head title="Create Product" />
-
             <div className="max-w-2xl mx-auto py-8">
                 <div className="flex items-center justify-between mb-8">
                     <h1 className="text-2xl font-bold">Create New Product</h1>
@@ -89,42 +152,17 @@ export default function Create({ categories }: Props) {
                 <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            Category
-                        </label>
-                        <select
-                            value={data.category_id}
-                            onChange={(e) =>
-                                setData("category_id", e.target.value)
-                            }
-                            className="w-full border rounded-lg px-3 py-2"
-                        >
-                            <option value="">Select a category</option>
-                            {categories.map((category) => (
-                                <option key={category.id} value={category.id}>
-                                    {category.name}
-                                </option>
-                            ))}
-                        </select>
-                        {errors.category_id && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.category_id}
-                            </p>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Title
+                            Name
                         </label>
                         <input
                             type="text"
-                            value={data.Title}
-                            onChange={(e) => setData("Title", e.target.value)}
+                            value={data.name}
+                            onChange={(e) => setData("name", e.target.value)}
                             className="w-full border rounded-lg px-3 py-2"
                         />
-                        {errors.Title && (
+                        {errors.name && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.Title}
+                                {errors.name}
                             </p>
                         )}
                     </div>
@@ -134,16 +172,16 @@ export default function Create({ categories }: Props) {
                             Description
                         </label>
                         <textarea
-                            value={data.Description}
+                            value={data.description}
                             onChange={(e) =>
-                                setData("Description", e.target.value)
+                                setData("description", e.target.value)
                             }
                             className="w-full border rounded-lg px-3 py-2"
                             rows={4}
                         />
-                        {errors.Description && (
+                        {errors.description && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.Description}
+                                {errors.description}
                             </p>
                         )}
                     </div>
@@ -155,30 +193,31 @@ export default function Create({ categories }: Props) {
                         <input
                             type="number"
                             step="0.01"
-                            value={data.Price}
-                            onChange={(e) => setData("Price", e.target.value)}
+                            value={data.price}
+                            onChange={(e) => setData("price", e.target.value)}
                             className="w-full border rounded-lg px-3 py-2"
                         />
-                        {errors.Price && (
+                        {errors.price && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.Price}
+                                {errors.price}
                             </p>
                         )}
                     </div>
 
                     <div>
                         <label className="block text-sm font-medium mb-2">
-                            Image URL
+                            Images
                         </label>
                         <input
-                            type="text"
-                            value={data.image}
-                            onChange={(e) => setData("image", e.target.value)}
+                            type="file"
+                            multiple
+                            onChange={handleImageChange}
                             className="w-full border rounded-lg px-3 py-2"
+                            accept="image/*"
                         />
-                        {errors.image && (
+                        {errors.images && (
                             <p className="text-red-500 text-sm mt-1">
-                                {errors.image}
+                                {errors.images}
                             </p>
                         )}
                     </div>
@@ -188,13 +227,13 @@ export default function Create({ categories }: Props) {
                             <label className="block text-sm font-medium">
                                 Sizes and Stock
                             </label>
-                            <Button
+                            <button
                                 type="button"
                                 onClick={addSizeStock}
-                                variant="outline"
+                                className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200"
                             >
                                 Add Size
-                            </Button>
+                            </button>
                         </div>
 
                         <div className="space-y-4">
@@ -240,30 +279,108 @@ export default function Create({ categories }: Props) {
                                     </div>
 
                                     {sizeStocks.length > 1 && (
-                                        <Button
+                                        <button
                                             type="button"
                                             onClick={() =>
                                                 removeSizeStock(index)
                                             }
-                                            variant="ghost"
                                             className="text-red-500 hover:text-red-700"
                                         >
-                                            <Trash2 className="w-4 h-4" />
-                                        </Button>
+                                            <svg
+                                                className="w-5 h-5"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth={2}
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                                />
+                                            </svg>
+                                        </button>
                                     )}
                                 </div>
                             ))}
                         </div>
                     </div>
 
+                    <div>
+                        <label className="block text-sm font-medium mb-2">
+                            Categories
+                        </label>
+                        <div className="flex gap-2 mb-4">
+                            <input
+                                type="text"
+                                value={newCategory}
+                                onChange={(e) => setNewCategory(e.target.value)}
+                                placeholder="New category name"
+                                className="flex-1 border rounded-lg px-3 py-2"
+                            />
+                            <button
+                                type="button"
+                                onClick={handleAddCategory}
+                                disabled={isAddingCategory}
+                                className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 disabled:opacity-50"
+                            >
+                                {isAddingCategory
+                                    ? "Adding..."
+                                    : "Add Category"}
+                            </button>
+                        </div>
+                        {categoryError && (
+                            <p className="text-red-500 text-sm mb-4">
+                                {categoryError}
+                            </p>
+                        )}
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {availableCategories.map((category) => (
+                                <label
+                                    key={category.id}
+                                    className={`flex items-center p-3 rounded-lg border ${
+                                        data.categories.includes(category.id)
+                                            ? "border-blue-500 bg-blue-50"
+                                            : "border-gray-200 hover:border-gray-300"
+                                    }`}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={data.categories.includes(
+                                            category.id
+                                        )}
+                                        onChange={(e) => {
+                                            const categoryId = category.id;
+                                            setData(
+                                                "categories",
+                                                e.target.checked
+                                                    ? [
+                                                          ...data.categories,
+                                                          categoryId,
+                                                      ]
+                                                    : data.categories.filter(
+                                                          (id) =>
+                                                              id !== categoryId
+                                                      )
+                                            );
+                                        }}
+                                        className="mr-2"
+                                    />
+                                    <span>{category.name}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
                     <div className="flex justify-end">
-                        <Button
+                        <button
                             type="submit"
                             disabled={processing}
-                            className="bg-zinc-900 text-white hover:bg-blue-500"
+                            className="px-6 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-800 disabled:opacity-50"
                         >
                             Create Product
-                        </Button>
+                        </button>
                     </div>
                 </form>
             </div>

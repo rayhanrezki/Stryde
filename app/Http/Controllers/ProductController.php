@@ -4,187 +4,170 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use App\Models\Category;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $products = Product::with('sizeStock')
-            ->select([
-                'id',
-                'Title',
-                'Description',
-                'Price',
-                'Slug',
-                'image',
-                'created_at',
-                'updated_at'
-            ])
-            ->orderBy('created_at', 'desc')
-            ->paginate(12);
+        $products = Product::with('images')->latest()->get();
         
-        $totalProducts = Product::count();
-
         return Inertia::render('Admin/ProductDashboard', [
-            'products' => $products,
-            'totalProducts' => $totalProducts,
+            'products' => $products
         ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('Admin/Products/Create', [
-            'categories' => Category::select('id', 'name', 'slug')->get()
+            'categories' => Category::all()
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'Title' => 'required|string|max:255',
-            'Description' => 'nullable|string',
-            'Price' => 'required|numeric|min:0',
-            'image' => 'required|string|max:255',
-            'category_id' => 'required|exists:categories,id',
-            'size_stock' => 'required|array',
-            'size_stock.*.size' => 'required|string',
-            'size_stock.*.stock' => 'required|integer|min:0',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'sizes' => 'required|array|min:1',
+            'sizes.*.size' => 'required|string',
+            'sizes.*.stock' => 'required|integer|min:0',
         ]);
 
         $product = Product::create([
-            'Title' => $validatedData['Title'],
-            'Description' => $validatedData['Description'],
-            'Price' => $validatedData['Price'],
-            'image' => $validatedData['image'],
-            'category_id' => $validatedData['category_id'],
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
         ]);
 
-        $product->sizeStock()->create([
-            'size_stock' => $validatedData['size_stock']
-        ]);
-
-        return redirect()->route('products.index')
-            ->with('success', 'Product created successfully.');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $slug)
-    {
-        $product = Product::where('Slug', $slug)
-            ->with('sizeStock')
-            ->firstOrFail();
-
-        if ($product->sizeStock) {
-            $sizeStockMap = collect($product->sizeStock->size_stock)
-                ->pluck('stock', 'size')
-                ->toArray();
-            $product->sizeStock->size_stock = $sizeStockMap;
+        // Handle image uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create([
+                    'image_path' => $path
+                ]);
+            }
         }
 
-        return Inertia::render('ProductDetails', [
-            'product' => $product
-        ]);
+        // Handle sizes and stock
+        foreach ($request->sizes as $size) {
+            $product->sizes()->create([
+                'size' => $size['size'],
+                'stock' => $size['stock']
+            ]);
+        }
+
+        return redirect()->route('products.index')
+            ->with('message', 'Product created successfully');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Product $product)
     {
-        $product->load('sizeStock');
-        
         return Inertia::render('Admin/Products/Edit', [
-            'product' => $product,
-            'categories' => Category::select('id', 'name', 'slug')->get()
+            'product' => $product->load(['images', 'sizes', 'categories']),
+            'categories' => Category::all()
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Product $product)
     {
-        $validatedData = $request->validate([
-            'Title' => 'required|string|max:255',
-            'Description' => 'nullable|string',
-            'Price' => 'required|numeric|min:0',
-            'image' => 'required|string|max:255',
-            'size_stock' => 'required|array',
-            'size_stock.*.size' => 'required|string',
-            'size_stock.*.stock' => 'required|integer|min:0',
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'sizes' => 'required|string',
+            'existingImages' => 'sometimes|string',
+            'categories' => 'sometimes|string',
         ]);
 
         $product->update([
-            'Title' => $validatedData['Title'],
-            'Description' => $validatedData['Description'],
-            'Price' => $validatedData['Price'],
-            'image' => $validatedData['image'],
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
         ]);
 
-        $product->sizeStock()->update([
-            'size_stock' => $validatedData['size_stock']
-        ]);
+        // Handle existing images
+        if ($request->has('existingImages')) {
+            $existingImages = json_decode($request->existingImages, true);
+            $existingImageIds = collect($existingImages)->pluck('id');
+            
+            // Delete images that are not in the existingImages array
+            $product->images()
+                ->whereNotIn('id', $existingImageIds)
+                ->get()
+                ->each(function ($image) {
+                    Storage::disk('public')->delete($image->image_path);
+                    $image->delete();
+                });
+        }
+
+        // Handle new image uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('products', 'public');
+                $product->images()->create([
+                    'image_path' => $path
+                ]);
+            }
+        }
+
+        // Update sizes and stock
+        $sizes = json_decode($request->sizes, true);
+        $product->sizes()->delete(); 
+        foreach ($sizes as $size) {
+            $product->sizes()->create([
+                'size' => $size['size'],
+                'stock' => $size['stock']
+            ]);
+        }
+
+        // Update categories if they were provided
+        if ($request->has('categories')) {
+            $categories = json_decode($request->categories, true);
+            $product->categories()->sync($categories);
+        }
 
         return redirect()->route('products.index')
-            ->with('success', 'Product updated successfully.');
+            ->with('message', 'Product updated successfully');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified product from storage.
      */
     public function destroy(Product $product)
     {
-        // Delete the size_stock records first (due to foreign key constraint)
-        $product->sizeStock()->delete();
-        
-        // Then delete the product
-        $product->delete();
+        try {
+            // Delete associated images from storage
+            foreach ($product->images as $image) {
+                Storage::disk('public')->delete($image->image_path);
+            }
+            
+            // Delete the product (this will cascade delete related records)
+            $product->delete();
 
-        return redirect()->route('products.index')
-            ->with('success', 'Product deleted successfully.');
+            return redirect()->route('products.index')
+                ->with('message', 'Product deleted successfully');
+            
+        } catch (\Exception $e) {
+            return redirect()->back()
+                ->with('error', 'Failed to delete product');
+        }
     }
 
-    public function list()
+    public function storeCategory(Request $request)
     {
-        $products = Product::with('sizeStock')
-            ->select([
-                'id',
-                'Title',
-                'Description',
-                'Price',
-                'Slug',
-                'Image',
-                'created_at',
-                'updated_at'
-            ])
-            ->latest()
-            ->get();
-
-        // Get unique sizes from all products' size_stock
-        $availableSizes = collect();
-        foreach ($products as $product) {
-            $sizes = collect($product->sizeStock->size_stock ?? [])->pluck('size');
-            $availableSizes = $availableSizes->concat($sizes);
-        }
-        $availableSizes = $availableSizes->unique()->sort()->values();
-
-        return Inertia::render('ProductList', [
-            'products' => $products,
-            'totalItems' => $products->count(),
-            'availableSizes' => $availableSizes
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name'
         ]);
+
+        $category = Category::create($validated);
+
+        return response()->json($category);
     }
 }

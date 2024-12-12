@@ -3,67 +3,40 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    use HasFactory;
+    protected $fillable = ['name', 'slug', 'description', 'price'];
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'products';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'category_id',
-        'Title',
-        'Description',
-        'Price',
-        'Slug',
-        'image',
-    ];
-
-    /**
-     * Boot the model.
-     */
     protected static function boot()
     {
         parent::boot();
-
+        
         static::creating(function ($product) {
-            if (empty($product->Slug)) {
-                $product->Slug = Str::slug($product->Title);
-            }
-        });
-
-        static::updating(function ($product) {
-            if ($product->isDirty('Title') && empty($product->Slug)) {
-                $product->Slug = Str::slug($product->Title);
-            }
+            $product->slug = Str::slug($product->name);
         });
     }
 
-    public function sizeStock()
+    public function getRouteKeyName()
     {
-        return $this->hasOne(SizeStock::class);
+        return 'slug';
     }
 
-    /**
-     * The relationship with the Category model.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function category()
+    public function images(): HasMany
     {
-        return $this->belongsTo(Category::class);
+        return $this->hasMany(ProductImage::class);
+    }
+
+    public function sizes(): HasMany
+    {
+        return $this->hasMany(ProductSize::class);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 }
