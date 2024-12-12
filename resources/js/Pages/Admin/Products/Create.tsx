@@ -44,7 +44,10 @@ export default function Create({ categories }: Props) {
         }
 
         formData.append("sizes", JSON.stringify(sizeStocks));
-        formData.append("categories", JSON.stringify(data.categories));
+
+        data.categories.forEach((categoryId, index) => {
+            formData.append(`categories[${index}]`, categoryId.toString());
+        });
 
         post(route("products.store"));
     };

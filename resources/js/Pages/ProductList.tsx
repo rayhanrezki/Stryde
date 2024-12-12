@@ -1,24 +1,92 @@
+import { Head, Link } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
-import { Product } from "@/types/product";
-import { Link } from "@inertiajs/react";
-import { useState } from "react";
+import { Product, Category } from "@/types/product";
+import { useState, useMemo } from "react";
 
 interface Props {
     products: Product[];
     totalItems: number;
-    availableSizes: number[];
 }
 
-export default function ProductList({ products, availableSizes }: Props) {
-    const [selectedSize, setSelectedSize] = useState<number | null>(null);
+export default function ProductList({ products }: Props) {
+    const [filters, setFilters] = useState({
+        size: "",
+        categories: [] as number[],
+    });
 
-    const handleSizeClick = (size: number) => {
-        setSelectedSize(selectedSize === size ? null : size);
+    // Get unique sizes and categories
+    const availableSizes = useMemo(() => {
+        return Array.from(
+            new Set(
+                products.flatMap((product) =>
+                    product.sizes.map((size) => size.size)
+                )
+            )
+        ).sort();
+    }, [products]);
+
+    const availableCategories = useMemo(() => {
+        return Array.from(
+            new Set(products.flatMap((product) => product.categories))
+        ).reduce((unique, category) => {
+            if (!unique.some((item) => item.id === category.id)) {
+                unique.push(category);
+            }
+            return unique;
+        }, [] as Category[]);
+    }, [products]);
+
+    // Filtering logic
+    const filteredProducts = useMemo(() => {
+        return products.filter((product) => {
+            const sizeMatch =
+                !filters.size ||
+                product.sizes.some((s) => s.size === filters.size);
+            const categoryMatch =
+                filters.categories.length === 0 ||
+                product.categories.some((c) =>
+                    filters.categories.includes(c.id)
+                );
+            return sizeMatch && categoryMatch;
+        });
+    }, [products, filters]);
+
+    // Filter handlers
+    const handleFilter = (
+        type: "size" | "categories",
+        value: string | number
+    ) => {
+        if (type === "size") {
+            setFilters((prev) => ({
+                ...prev,
+                size: prev.size === value ? "" : (value as string),
+            }));
+        } else {
+            setFilters((prev) => ({
+                ...prev,
+                categories: prev.categories.includes(value as number)
+                    ? prev.categories.filter((id) => id !== value)
+                    : [...prev.categories, value as number],
+            }));
+        }
+    };
+
+    const clearFilters = (type?: "size" | "categories") => {
+        if (!type) {
+            setFilters({ size: "", categories: [] });
+        } else {
+            setFilters((prev) => ({
+                ...prev,
+                [type]: type === "size" ? "" : [],
+            }));
+        }
     };
 
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
+            <Head title="Products" />
             <Navbar />
+
             {/* Hero Banner */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative overflow-hidden bg-black text-white rounded-lg mb-8">
@@ -43,7 +111,17 @@ export default function ProductList({ products, availableSizes }: Props) {
                 <div className="flex justify-between items-center mb-8">
                     <div>
                         <h2 className="text-2xl font-bold">Life Style Shoes</h2>
-                        <p className="text-gray-600">{products.length} items</p>
+                        <p className="text-gray-600">
+                            {filteredProducts.length} items
+                            {(filters.size ||
+                                filters.categories.length > 0) && (
+                                <span className="ml-2">
+                                    {filters.size && `(Size: ${filters.size})`}
+                                    {filters.categories.length > 0 &&
+                                        ` (${filters.categories.length} categories selected)`}
+                                </span>
+                            )}
+                        </p>
                     </div>
                     <div className="relative">
                         <select
@@ -66,26 +144,26 @@ export default function ProductList({ products, availableSizes }: Props) {
                     {/* Filters Sidebar */}
                     <div className="w-64 flex-shrink-0">
                         <div className="mb-6">
-                            <h3 className="font-semibold mb-4">REFINE BY</h3>
-                            <div className="flex gap-2">
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm">
-                                    Mens
-                                </button>
-                                <button className="px-4 py-2 bg-blue-600 text-white rounded-full text-sm">
-                                    Womens
-                                </button>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="font-semibold">SIZE</h3>
+                                {filters.size && (
+                                    <button
+                                        onClick={() => clearFilters("size")}
+                                        className="text-sm text-blue-600 hover:text-blue-800"
+                                    >
+                                        Clear filter
+                                    </button>
+                                )}
                             </div>
-                        </div>
-
-                        <div className="mb-6">
-                            <h3 className="font-semibold mb-4">SIZE</h3>
                             <div className="grid grid-cols-5 gap-2">
                                 {availableSizes.map((size) => (
                                     <button
                                         key={size}
-                                        onClick={() => handleSizeClick(size)}
+                                        onClick={() =>
+                                            handleFilter("size", size)
+                                        }
                                         className={`p-2 text-sm border rounded-md ${
-                                            selectedSize === size
+                                            filters.size === size
                                                 ? "bg-black text-white"
                                                 : "hover:bg-gray-50"
                                         }`}
@@ -97,25 +175,41 @@ export default function ProductList({ products, availableSizes }: Props) {
                         </div>
 
                         <div>
-                            <h3 className="font-semibold mb-4">TYPE</h3>
+                            <div className="flex justify-between items-center mb-4">
+                                <h3 className="font-semibold">CATEGORIES</h3>
+                                {filters.categories.length > 0 && (
+                                    <button
+                                        onClick={() =>
+                                            clearFilters("categories")
+                                        }
+                                        className="text-sm text-blue-600 hover:text-blue-800"
+                                    >
+                                        Clear filters
+                                    </button>
+                                )}
+                            </div>
                             <div className="space-y-2">
-                                {[
-                                    "Casual shoes",
-                                    "Runners",
-                                    "Hiking",
-                                    "Sneaker",
-                                    "Basketball",
-                                    "Golf",
-                                ].map((type) => (
+                                {availableCategories.map((category) => (
                                     <label
-                                        key={type}
-                                        className="flex items-center"
+                                        key={category.id}
+                                        className="flex items-center cursor-pointer group"
                                     >
                                         <input
                                             type="checkbox"
-                                            className="mr-2"
+                                            checked={filters.categories.includes(
+                                                category.id
+                                            )}
+                                            onChange={() =>
+                                                handleFilter(
+                                                    "categories",
+                                                    category.id
+                                                )
+                                            }
+                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
                                         />
-                                        <span className="text-sm">{type}</span>
+                                        <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900">
+                                            {category.name}
+                                        </span>
                                     </label>
                                 ))}
                             </div>
@@ -125,36 +219,52 @@ export default function ProductList({ products, availableSizes }: Props) {
                     {/* Product Grid */}
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {products.map((product) => (
-                                <div key={product.id} className="space-y-4">
-                                    {/* Card with image */}
-                                    <div className="bg-white rounded-[20px] p-2 relative">
-                                        <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
-                                            <img
-                                                src={product.Image}
-                                                alt={product.Title}
-                                                className="absolute inset-0 w-full h-full object-contain"
-                                            />
-                                        </div>
-                                    </div>
-
-                                    {/* Product Info Below Card */}
-                                    <div className="space-y-3">
-                                        <h3 className="font-medium text-base line-clamp-2">
-                                            {product.Title}
+                            {filteredProducts.map((product) => (
+                                <div
+                                    key={product.id}
+                                    className="bg-white rounded-lg shadow-sm border"
+                                >
+                                    <img
+                                        src={
+                                            product.images[0]?.image_path
+                                                ? `/storage/${product.images[0].image_path}`
+                                                : "/placeholder.jpg"
+                                        }
+                                        alt={product.name}
+                                        className="w-full h-48 object-cover rounded-t-lg"
+                                    />
+                                    <div className="p-4">
+                                        <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik mb-4">
+                                            {product.name}
                                         </h3>
-                                        <Link
-                                            href={route(
-                                                "products.show",
-                                                product.Slug
-                                            )}
-                                            className="block"
-                                        >
-                                            <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
-                                                VIEW PRODUCT - Rp{" "}
-                                                {product.Price}
-                                            </button>
-                                        </Link>
+                                        <div className="mt-2">
+                                            <div className="flex flex-wrap gap-1 mb-4">
+                                                {product.categories.map(
+                                                    (category) => (
+                                                        <span
+                                                            key={category.id}
+                                                            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                                                        >
+                                                            {category.name}
+                                                        </span>
+                                                    )
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="mt-4">
+                                            <Link
+                                                href={route(
+                                                    "products.show",
+                                                    product.slug
+                                                )}
+                                                className="block"
+                                            >
+                                                <button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6 rounded-md">
+                                                    VIEW PRODUCT - Rp{" "}
+                                                    {product.price}
+                                                </button>
+                                            </Link>
+                                        </div>
                                     </div>
                                 </div>
                             ))}

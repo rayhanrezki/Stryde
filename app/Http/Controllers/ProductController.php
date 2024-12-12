@@ -44,6 +44,11 @@ class ProductController extends Controller
             'price' => $request->price,
         ]);
 
+        // Handle categories
+        if ($request->has('categories')) {
+            $product->categories()->attach($request->categories);
+        }
+
         // Handle image uploads
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
@@ -190,6 +195,18 @@ class ProductController extends Controller
 
         return Inertia::render('Main', [
             'latestProducts' => $latestProducts
+        ]);
+    }
+
+    public function list()
+    {
+        $products = Product::with(['images', 'sizes', 'categories'])
+            ->latest()
+            ->get();
+
+        return Inertia::render('ProductList', [
+            'products' => $products,
+            'totalItems' => $products->count()
         ]);
     }
 }

@@ -3,7 +3,6 @@ import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "@inertiajs/react";
 
-// Define the Product type
 interface Product {
     id: number;
     name: string;
