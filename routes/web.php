@@ -1,10 +1,11 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', function () {
     return Inertia::render('Main');
@@ -29,13 +30,3 @@ Route::get('/products-dashboard', [ProductController::class, 'dashboard'])
     ->middleware(['auth']);
 
 require __DIR__ . '/auth.php';
-
-
-Route::get('/main', function () {
-    return Inertia::render('Main');
-})->name('main');
-
-
-Route::middleware('auth')->get('/main', function () {
-    return Inertia::render('Main');
-})->name('main');

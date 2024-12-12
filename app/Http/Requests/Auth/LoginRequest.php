@@ -51,15 +51,15 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
 
-        // Periksa role setelah login
+
         $user = Auth::user();
 
         if ($user->is_admin) {
 
-            return redirect()->route('dashboard');
+            return redirect()->intended(route('dashboard', absolute: false));
         } else {
 
-            return redirect()->route('main');
+            return redirect()->intended(route('main', absolute: false));
         }
     }
 
