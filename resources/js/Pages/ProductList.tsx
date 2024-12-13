@@ -263,10 +263,7 @@ export default function ProductList({ products }: Props) {
                                             )}
                                         </div>
                                         <Link
-                                            href={route(
-                                                "products.show",
-                                                product.slug
-                                            )}
+                                            href={`/products/${product.slug}`}
                                             className="block"
                                         >
                                             <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">

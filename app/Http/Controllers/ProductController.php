@@ -184,12 +184,20 @@ class ProductController extends Controller
     // Menampilkan detail produk berdasarkan slug
     public function show($slug)
     {
-        $product = Product::with(['images', 'sizes'])
+        $product = Product::with(['images', 'sizes', 'categories'])
             ->where('slug', $slug)
             ->firstOrFail();
 
+        // Rekomendasi product ambil random 4
+        $recommendedProducts = Product::with(['images', 'categories'])
+            ->where('id', '!=', $product->id)
+            ->inRandomOrder()
+            ->take(4)
+            ->get();
+
         return Inertia::render('ProductDetails', [
-            'product' => $product
+            'product' => $product,
+            'recommendedProducts' => $recommendedProducts
         ]);
     }
 

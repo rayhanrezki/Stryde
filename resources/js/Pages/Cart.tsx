@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Head } from "@inertiajs/react";
 import { Heart, Trash2 } from "lucide-react";
-import { CartItem, OrderSummary } from "@/types/cart";
 
 export default function Cart() {
     const [cartItem] = useState<CartItem>({
