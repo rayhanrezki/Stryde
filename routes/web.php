@@ -1,11 +1,12 @@
 <?php
 
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\MainController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProfileController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
@@ -40,3 +41,11 @@ Route::get('/cart', function () {
 })->name('cart');
 
 require __DIR__ . '/auth.php';
+
+
+Route::middleware('auth')->get('/main', function () {
+    if (Auth::user()->isAdmin) {
+        return redirect()->route('admin.dashboard');
+    }
+    return redirect()->route('main');
+});
