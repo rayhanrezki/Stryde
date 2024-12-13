@@ -28,8 +28,8 @@ export default function ProductList({ products }: Props) {
     const availableCategories = useMemo(() => {
         return Array.from(
             new Set(products.flatMap((product) => product.categories))
-        ).reduce((unique, category) => {
-            if (!unique.some((item) => item.id === category.id)) {
+        ).reduce((unique: Category[], category: Category) => {
+            if (!unique.some((item: Category) => item.id === category.id)) {
                 unique.push(category);
             }
             return unique;
@@ -44,7 +44,7 @@ export default function ProductList({ products }: Props) {
                 product.sizes.some((s) => s.size === filters.size);
             const categoryMatch =
                 filters.categories.length === 0 ||
-                product.categories.some((c) =>
+                product.categories.some((c: Category) =>
                     filters.categories.includes(c.id)
                 );
             return sizeMatch && categoryMatch;
@@ -189,29 +189,34 @@ export default function ProductList({ products }: Props) {
                                 )}
                             </div>
                             <div className="space-y-2">
-                                {availableCategories.map((category) => (
-                                    <label
-                                        key={category.id}
-                                        className="flex items-center cursor-pointer group"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            checked={filters.categories.includes(
-                                                category.id
-                                            )}
-                                            onChange={() =>
-                                                handleFilter(
-                                                    "categories",
+                                {availableCategories.map(
+                                    (category: {
+                                        id: number;
+                                        name: string;
+                                    }) => (
+                                        <label
+                                            key={category.id}
+                                            className="flex items-center cursor-pointer group"
+                                        >
+                                            <input
+                                                type="checkbox"
+                                                checked={filters.categories.includes(
                                                     category.id
-                                                )
-                                            }
-                                            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                                        />
-                                        <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900">
-                                            {category.name}
-                                        </span>
-                                    </label>
-                                ))}
+                                                )}
+                                                onChange={() =>
+                                                    handleFilter(
+                                                        "categories",
+                                                        category.id
+                                                    )
+                                                }
+                                                className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                                            />
+                                            <span className="ml-2 text-sm text-gray-700 group-hover:text-gray-900">
+                                                {category.name}
+                                            </span>
+                                        </label>
+                                    )
+                                )}
                             </div>
                         </div>
                     </div>
@@ -220,51 +225,55 @@ export default function ProductList({ products }: Props) {
                     <div className="flex-1">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredProducts.map((product) => (
-                                <div
-                                    key={product.id}
-                                    className="bg-white rounded-lg shadow-sm border"
-                                >
-                                    <img
-                                        src={
-                                            product.images[0]?.image_path
-                                                ? `/storage/${product.images[0].image_path}`
-                                                : "/placeholder.jpg"
-                                        }
-                                        alt={product.name}
-                                        className="w-full h-48 object-cover rounded-t-lg"
-                                    />
-                                    <div className="p-4">
-                                        <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik mb-4">
+                                <div key={product.id} className="space-y-4">
+                                    {/* Card with image */}
+                                    <div className="bg-[#fafafa] rounded-[20px] p-2 relative">
+                                        <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
+                                            <img
+                                                src={
+                                                    product.images[0]
+                                                        ?.image_path
+                                                        ? `/storage/${product.images[0].image_path}`
+                                                        : "/placeholder.jpg"
+                                                }
+                                                alt={product.name}
+                                                className="absolute inset-0 w-full h-full object-cover"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Product Info Below Card */}
+                                    <div className="space-y-3">
+                                        <h3 className="font-medium text-base line-clamp-2">
                                             {product.name}
                                         </h3>
-                                        <div className="mt-2">
-                                            <div className="flex flex-wrap gap-1 mb-4">
-                                                {product.categories.map(
-                                                    (category) => (
-                                                        <span
-                                                            key={category.id}
-                                                            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
-                                                        >
-                                                            {category.name}
-                                                        </span>
-                                                    )
-                                                )}
-                                            </div>
+                                        <div className="flex flex-wrap gap-1">
+                                            {product.categories.map(
+                                                (category: {
+                                                    id: number;
+                                                    name: string;
+                                                }) => (
+                                                    <span
+                                                        key={category.id}
+                                                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                                                    >
+                                                        {category.name}
+                                                    </span>
+                                                )
+                                            )}
                                         </div>
-                                        <div className="mt-4">
-                                            <Link
-                                                href={route(
-                                                    "products.show",
-                                                    product.slug
-                                                )}
-                                                className="block"
-                                            >
-                                                <button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6 rounded-md">
-                                                    VIEW PRODUCT - Rp{" "}
-                                                    {product.price}
-                                                </button>
-                                            </Link>
-                                        </div>
+                                        <Link
+                                            href={route(
+                                                "products.show",
+                                                product.slug
+                                            )}
+                                            className="block"
+                                        >
+                                            <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
+                                                VIEW PRODUCT - Rp{" "}
+                                                {product.price}
+                                            </button>
+                                        </Link>
                                     </div>
                                 </div>
                             ))}

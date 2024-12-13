@@ -10,6 +10,7 @@ use App\Models\Category;
 
 class ProductController extends Controller
 {
+    // Menampilkan daftar semua produk
     public function index()
     {
         $products = Product::with('images')->latest()->get();
@@ -19,6 +20,7 @@ class ProductController extends Controller
         ]);
     }
 
+    // Menampilkan form untuk membuat produk baru
     public function create()
     {
         return Inertia::render('Admin/Products/Create', [
@@ -26,6 +28,7 @@ class ProductController extends Controller
         ]);
     }
 
+    // Menyimpan produk baru ke database
     public function store(Request $request)
     {
         $request->validate([
@@ -44,12 +47,12 @@ class ProductController extends Controller
             'price' => $request->price,
         ]);
 
-        // Handle categories
+        // Menangani kategori
         if ($request->has('categories')) {
             $product->categories()->attach($request->categories);
         }
 
-        // Handle image uploads
+        // Menangani upload gambar
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('products', 'public');
@@ -59,7 +62,7 @@ class ProductController extends Controller
             }
         }
 
-        // Handle sizes and stock
+        // Menangani ukuran dan stok
         foreach ($request->sizes as $size) {
             $product->sizes()->create([
                 'size' => $size['size'],
@@ -71,6 +74,7 @@ class ProductController extends Controller
             ->with('message', 'Product created successfully');
     }
 
+    // Menampilkan form untuk mengedit produk
     public function edit(Product $product)
     {
         return Inertia::render('Admin/Products/Edit', [
@@ -79,6 +83,7 @@ class ProductController extends Controller
         ]);
     }
 
+    // Memperbarui data produk di database
     public function update(Request $request, Product $product)
     {
         $request->validate([
@@ -97,12 +102,12 @@ class ProductController extends Controller
             'price' => $request->price,
         ]);
 
-        // Handle existing images
+        // Menangani gambar yang sudah ada
         if ($request->has('existingImages')) {
             $existingImages = json_decode($request->existingImages, true);
             $existingImageIds = collect($existingImages)->pluck('id');
             
-            // Delete images that are not in the existingImages array
+            // Menghapus gambar yang tidak ada dalam array existingImages
             $product->images()
                 ->whereNotIn('id', $existingImageIds)
                 ->get()
@@ -112,7 +117,7 @@ class ProductController extends Controller
                 });
         }
 
-        // Handle new image uploads
+        // Menangani upload gambar baru
         if ($request->hasFile('images')) {
             foreach ($request->file('images') as $image) {
                 $path = $image->store('products', 'public');
@@ -122,7 +127,7 @@ class ProductController extends Controller
             }
         }
 
-        // Update sizes and stock
+        // Memperbarui ukuran dan stok
         $sizes = json_decode($request->sizes, true);
         $product->sizes()->delete(); 
         foreach ($sizes as $size) {
@@ -132,7 +137,7 @@ class ProductController extends Controller
             ]);
         }
 
-        // Update categories if they were provided
+        // Memperbarui kategori jika ada
         if ($request->has('categories')) {
             $categories = json_decode($request->categories, true);
             $product->categories()->sync($categories);
@@ -143,12 +148,12 @@ class ProductController extends Controller
     }
 
     /**
-     * Remove the specified product from storage.
+     * Menghapus produk tertentu dari database
      */
     public function destroy(Product $product)
     {
         try {
-            // Delete associated images from storage
+            // Menghapus gambar terkait dari penyimpanan
             foreach ($product->images as $image) {
                 Storage::disk('public')->delete($image->image_path);
             }
@@ -164,6 +169,7 @@ class ProductController extends Controller
         }
     }
 
+    // Menyimpan kategori baru
     public function storeCategory(Request $request)
     {
         $validated = $request->validate([
@@ -175,6 +181,7 @@ class ProductController extends Controller
         return response()->json($category);
     }
 
+    // Menampilkan detail produk berdasarkan slug
     public function show($slug)
     {
         $product = Product::with(['images', 'sizes'])
@@ -186,6 +193,7 @@ class ProductController extends Controller
         ]);
     }
 
+    // Menampilkan halaman utama dengan produk terbaru
     public function main()
     {
         $latestProducts = Product::with('images')
@@ -198,6 +206,7 @@ class ProductController extends Controller
         ]);
     }
 
+    // Menampilkan daftar semua produk untuk halaman publik
     public function list()
     {
         $products = Product::with(['images', 'sizes', 'categories'])
