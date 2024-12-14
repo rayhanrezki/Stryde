@@ -52,7 +52,3 @@ Route::middleware('auth')->get('/main', function () {
     }
     return redirect()->route('main');
 });
-
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified', 'IsAdmin']);
