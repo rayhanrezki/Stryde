@@ -4,10 +4,15 @@ import { useState, useEffect } from "react";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "@inertiajs/react";
+import { User as UserType } from "@/types";
 
-export default function Navbar() {
+export default function Navbar({ user }: { user?: UserType }) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        console.log("User:", user);
+    }, [user]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -73,11 +78,13 @@ export default function Navbar() {
                         icon={<Search className="w-5 h-5" />}
                         label="Search"
                     />
+
                     <NavIcon
                         icon={<User className="w-5 h-5" />}
                         label="User account"
-                        href="/login"
+                        href={user?.is_admin ? "/Admin/dashboard" : "/profile"}
                     />
+
                     <div className="relative">
                         <NavIcon
                             icon={<ShoppingCart className="w-5 h-5" />}
@@ -93,7 +100,7 @@ export default function Navbar() {
                     <NavIcon
                         icon={<User className="w-4 h-4 sm:w-5 sm:h-5" />}
                         label="User account"
-                        href="/login"
+                        href={user?.is_admin ? "/Admin/dashboard" : "/profile"}
                     />
                     <div className="relative">
                         <NavIcon
@@ -226,6 +233,7 @@ function NavIcon({
         </motion.div>
     );
 }
+
 function CartBadge() {
     return (
         <motion.span

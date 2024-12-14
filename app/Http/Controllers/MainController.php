@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Product;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
 
 class MainController extends Controller
 {
@@ -15,7 +16,10 @@ class MainController extends Controller
             ->get();
 
         return Inertia::render('Main', [
-            'latestProducts' => $latestProducts
+            'latestProducts' => $latestProducts,
+            'auth' => [
+                'user' => Auth::user(), // Kirim data user
+            ],
         ]);
     }
-} 
+}

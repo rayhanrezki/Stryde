@@ -26,7 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::get('/Admin/dashboard', function () {
-    return Inertia::render('Dashboard');
+    return Inertia::render('Dashboard', [
+        'user' => Auth::user()
+    ]);
 })->middleware(['auth', 'verified', 'IsAdmin'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -37,7 +39,7 @@ Route::middleware('auth')->group(function () {
 
 Route::get('/cart', function () {
     return Inertia::render('Cart', [
-        'cartItems' => [] // Sementara, kosong.
+        'cartItems' => []
     ]);
 })->name('cart');
 
@@ -50,3 +52,7 @@ Route::middleware('auth')->get('/main', function () {
     }
     return redirect()->route('main');
 });
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified', 'IsAdmin']);
