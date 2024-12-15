@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Link } from "@inertiajs/react";
 
 interface Category {
     id: number;
