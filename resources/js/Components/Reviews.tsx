@@ -8,7 +8,7 @@ const reviews = [
         rating: 5,
         comment:
             "These shoes are amazing! The comfort level is unmatched, and they look even better in person.",
-        image: "/images/profile1.jpg",
+        image: "",
         product: {
             name: "Nike Air Max DN",
             image: "/images/AIR-MAX-DN.png",
@@ -20,7 +20,7 @@ const reviews = [
         rating: 5,
         comment:
             "Perfect fit and excellent quality. I've received so many compliments wearing these.",
-        image: "/images/profile2.jpg",
+        image: "",
         product: {
             name: "Nike Air Max DN",
             image: "/images/AIR-MAX-DN.png",
@@ -32,7 +32,7 @@ const reviews = [
         rating: 5,
         comment:
             "Best purchase I've made this year! The style is perfect for both casual and athletic wear.",
-        image: "/images/profile3.jpg",
+        image: "",
         product: {
             name: "Nike Air Max DN",
             image: "/images/AIR-MAX-DN.png",

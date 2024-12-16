@@ -1,35 +1,24 @@
 import { motion } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { cn } from "@/lib/utils";
+import { Link } from "@inertiajs/react";
 
-const products = [
-    {
-        id: 1,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 2,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 3,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-    {
-        id: 4,
-        name: "ADIDAS 4DFWD X PARLEY RUNNING SHOES",
-        price: "125.000",
-        image: "/images/AIR-MAX-DN.png",
-    },
-];
+interface Product {
+    id: number;
+    name: string;
+    price: number;
+    images: {
+        id: number;
+        image_path: string;
+    }[];
+    slug: string;
+}
 
-export default function NewDrops() {
+interface NewDropsProps {
+    products: Product[];
+}
+
+export default function NewDrops({ products }: NewDropsProps) {
     return (
         <section className="py-16 bg-[#e7e7e3]">
             <div className="container mx-auto px-4 max-w-[1600px]">
@@ -46,14 +35,15 @@ export default function NewDrops() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                     >
-                        <Button
+                        <Link
+                            href={route("products.list")}
                             className={cn(
-                                "bg-blue-600 hover:bg-blue-700 text-white font-rubik",
+                                "bg-blue-600 hover:bg-blue-700 text-white font-rubik rounded-sm",
                                 "text-sm md:text-base px-6 py-3 h-auto"
                             )}
                         >
                             SHOP NEW DROPS
-                        </Button>
+                        </Link>
                     </motion.div>
                 </div>
 
@@ -68,7 +58,11 @@ export default function NewDrops() {
                         >
                             <div className="aspect-square relative bg-neutral-50 rounded-[32px] overflow-hidden">
                                 <img
-                                    src={product.image}
+                                    src={
+                                        product.images?.[0]?.image_path
+                                            ? `/storage/${product.images[0].image_path}`
+                                            : "/placeholder.jpg"
+                                    }
                                     alt={product.name}
                                     className="absolute inset-0 w-full h-full object-cover"
                                 />
@@ -83,9 +77,17 @@ export default function NewDrops() {
                                     {product.name}
                                 </h3>
                                 <div className="w-full">
-                                    <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
-                                        VIEW PRODUCT - Rp{product.price}
-                                    </Button>
+                                    <Link
+                                        href={route(
+                                            "products.show",
+                                            product.slug
+                                        )}
+                                        className="block"
+                                    >
+                                        <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
+                                            VIEW PRODUCT - Rp {product.price}
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
                         </motion.div>
