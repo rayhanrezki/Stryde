@@ -11,9 +11,9 @@ use App\Http\Middleware\IsAdmin;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
-    // Public product routes
-    Route::get('/products', [ProductController::class, 'list'])->name('products.list');
-    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+// Public product routes
+Route::get('/products', [ProductController::class, 'list'])->name('products.list');
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Admin product routes
@@ -47,7 +47,7 @@ require __DIR__ . '/auth.php';
 
 
 Route::middleware('auth')->get('/main', function () {
-    if (Auth::user()->isAdmin) {
+    if (Auth::user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('main');
