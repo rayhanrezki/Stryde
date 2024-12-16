@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('ratings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade'); // ID pelanggan
-            $table->foreignId('product_id')->constrained()->onDelete('cascade'); // ID produk
-            $table->integer('rating')->unsigned(); // Nilai rating (1-5)
-            $table->text('review')->nullable(); // Ulasan opsional
-            $table->timestamps();
-        });
-    }
-    
+Schema::create('ratings', function (Blueprint $table) {
+    $table->id();
+    $table->unsignedBigInteger('user_id');
+    $table->unsignedBigInteger('item_id');
+    $table->integer('rating'); // 1-5
+    $table->text('review')->nullable();
+    $table->timestamps();
+
+    $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+    $table->foreign('item_id')->references('id')->on('items')->onDelete('cascade');
+});
+}
 };
