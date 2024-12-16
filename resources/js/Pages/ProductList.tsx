@@ -273,5 +273,7 @@ export default function ProductList({ products }: Props) {
                 </div>
             </div>
         </div>
+        
+        
     );
 }
