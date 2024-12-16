@@ -12,7 +12,7 @@ import "@fontsource/rubik/600.css";
 const appName = import.meta.env.VITE_APP_NAME || "Stryde";
 
 createInertiaApp({
-    Title: (Title) => `${Title} - ${appName}`,
+    title: (title) => `${title} - ${appName}`,
     resolve: (name) =>
         resolvePageComponent(
             `./Pages/${name}.tsx`,

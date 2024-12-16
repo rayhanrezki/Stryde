@@ -10,28 +10,6 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
         
-        <!-- Fontsource Rubik -->
-        <link 
-            rel="preload"
-            href="/@fontsource/rubik/files/rubik-latin-400-normal.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
-        <link 
-            rel="preload"
-            href="/@fontsource/rubik/files/rubik-latin-500-normal.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
-        <link 
-            rel="preload"
-            href="/@fontsource/rubik/files/rubik-latin-600-normal.woff2"
-            as="font"
-            type="font/woff2"
-            crossorigin
-        />
 
         <!-- Scripts -->
         @routes
