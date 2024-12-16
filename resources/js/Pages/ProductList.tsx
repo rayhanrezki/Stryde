@@ -5,7 +5,6 @@ import { useState, useMemo } from "react";
 
 interface Props {
     products: Product[];
-    totalItems: number;
 }
 
 export default function ProductList({ products }: Props) {
@@ -14,7 +13,6 @@ export default function ProductList({ products }: Props) {
         categories: [] as number[],
     });
 
-    // Get unique sizes and categories
     const availableSizes = useMemo(() => {
         return Array.from(
             new Set(
