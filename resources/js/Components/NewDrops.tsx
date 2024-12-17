@@ -34,12 +34,14 @@ export default function NewDrops({ products }: NewDropsProps) {
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
+                        className="w-full sm:w-auto"
                     >
                         <Link
                             href={route("products.list")}
                             className={cn(
                                 "bg-blue-600 hover:bg-blue-700 text-white font-rubik rounded-sm",
-                                "text-sm md:text-base px-6 py-3 h-auto"
+                                "text-sm md:text-base px-6 py-3 h-auto",
+                                "w-full sm:w-auto inline-block text-center"
                             )}
                         >
                             SHOP NEW DROPS
