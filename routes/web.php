@@ -8,6 +8,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
+use Illuminate\Support\Facades\Http;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
@@ -51,4 +52,14 @@ Route::middleware('auth')->get('/main', function () {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('main');
+});
+
+
+
+Route::get('/fetch-quote', function () {
+    $response = Http::withHeaders([
+        'X-Api-Key' => '5LHI20AwEx2XYKb8I9efxhMmtODlDRi9WcMBsaeP',  // Ganti dengan API key Anda
+    ])->get('https://api.api-ninjas.com/v1/quotes');
+
+    return response()->json($response->json());
 });
