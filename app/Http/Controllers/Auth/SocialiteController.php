@@ -32,7 +32,7 @@ class SocialiteController extends Controller
                 'google_id' => $socialUser->id,
                 'name' => $socialUser->name,
                 'email' => $socialUser->email,
-                'password' => Hash::make('123'),  // Password default untuk akun baru
+                'password' => Hash::make('password'),  // Password default untuk akun baru
                 'google_token' => $socialUser->token,
                 'google_refresh_token' => $socialUser->refreshToken,
             ]);
@@ -67,7 +67,7 @@ class SocialiteController extends Controller
                 'github_id' => $socialUser->id,
                 'name' => $socialUser->name ?? $socialUser->nickname,
                 'email' => $socialUser->email,
-                'password' => Hash::make('123'),  // Password default untuk akun baru
+                'password' => Hash::make('password'),  // Password default untuk akun baru
                 'github_token' => $socialUser->token,
                 'github_refresh_token' => $socialUser->refreshToken,
                 'email_verified_at' => now(),
