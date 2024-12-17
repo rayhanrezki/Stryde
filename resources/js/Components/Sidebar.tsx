@@ -1,10 +1,5 @@
 import { Link } from "@inertiajs/react";
-import {
-    LayoutDashboard,
-    Package,
-    ListOrdered,
-    ChevronDown,
-} from "lucide-react";
+import { LayoutDashboard, Package, ListOrdered, Grid2x2 } from "lucide-react";
 import { useState } from "react";
 
 export default function Sidebar() {
@@ -52,52 +47,15 @@ export default function Sidebar() {
                     <ListOrdered size={20} />
                     <span className="font-medium font-rubik">ORDER LIST</span>
                 </Link>
-            </nav>
 
-            {/* Categories */}
-            <div className="p-4">
-                <button
-                    onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                    className="flex items-center justify-between w-full p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                <Link
+                    href="#"
+                    className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 >
-                    <span className="font-medium">Categories</span>
-                    <ChevronDown
-                        size={20}
-                        className={`transform transition-transform ${
-                            isCategoriesOpen ? "rotate-180" : ""
-                        }`}
-                    />
-                </button>
-
-                {isCategoriesOpen && (
-                    <div className="mt-2 ml-3 space-y-1">
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Running
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Basketball
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Training
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Lifestyle
-                        </Link>
-                    </div>
-                )}
-            </div>
+                    <Grid2x2 size={20} />
+                    <span className="font-medium font-rubik">Categories</span>
+                </Link>
+            </nav>
         </aside>
     );
 }

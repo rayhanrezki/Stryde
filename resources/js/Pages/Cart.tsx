@@ -1,15 +1,39 @@
 import { useState } from "react";
 import { Head } from "@inertiajs/react";
 import { Heart, Trash2 } from "lucide-react";
+import RecommendedProducts from "@/Components/RecommendedProducts";
+import { Product } from "@/types/product";
+interface CartItem {
+    id: string;
+    name: string;
+    category: string;
+    description: string;
+    price: number;
+    image: string;
+    size: string;
+    quantity: number;
+}
 
-export default function Cart() {
+interface OrderSummary {
+    itemCount: number;
+    subtotal: number;
+    delivery: number;
+    salesTax: number;
+    total: number;
+}
+
+interface Props {
+    recommendedProducts: Product[];
+}
+
+export default function Cart({ recommendedProducts }: Props) {
     const [cartItem] = useState<CartItem>({
         id: "1",
         name: "DROPSET TRAINER SHOES",
         category: "Men's Road Running Shoes",
         description: "Enamel Blue/ University White",
         price: 130.0,
-        image: "/placeholder.svg",
+        image: "./images/NIKE_AIR_MAX.png",
         size: "10",
         quantity: 1,
     });
@@ -26,7 +50,7 @@ export default function Cart() {
         <>
             <Head title="Shopping Cart" />
 
-            <div className="min-h-screen bg-gray-100 p-6">
+            <div className="min-h-screen bg-[#e7e7e3] p-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-2xl font-bold mb-2">
@@ -138,7 +162,7 @@ export default function Cart() {
                         </div>
 
                         <div className="md:col-span-1">
-                            <div className="bg-white rounded-lg p-6 shadow-sm">
+                            <div className="bg-[#e7e7e3] p-6">
                                 <h2 className="text-xl font-semibold mb-6">
                                     Order Summary
                                 </h2>
@@ -151,22 +175,6 @@ export default function Cart() {
                                         <span>
                                             ${orderSummary.subtotal.toFixed(2)}
                                         </span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">
-                                            Delivery
-                                        </span>
-                                        <span>
-                                            ${orderSummary.delivery.toFixed(2)}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">
-                                            Sales Tax
-                                        </span>
-                                        <span>-</span>
                                     </div>
 
                                     <div className="flex justify-between border-t pt-4">
@@ -191,6 +199,12 @@ export default function Cart() {
                     </div>
                 </div>
             </div>
+
+            {recommendedProducts.length > 0 && (
+                <RecommendedProducts
+                    recommendedProducts={recommendedProducts}
+                />
+            )}
         </>
     );
 }

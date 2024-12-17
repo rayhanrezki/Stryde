@@ -8,6 +8,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
+use App\Models\Product;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
@@ -38,8 +39,13 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/cart', function () {
+    $recommendedProducts = Product::with('images')
+        ->inRandomOrder()
+        ->limit(4)
+        ->get();
+    
     return Inertia::render('Cart', [
-        'cartItems' => []
+        'recommendedProducts' => $recommendedProducts
     ]);
 })->name('cart');
 
