@@ -190,9 +190,7 @@ export default function Login({
                             transition={{ delay: 0.6 }}
                         >
                             <motion.a
-                                href="auth/redirect"
-                                target="_blank" // Jika ingin membuka di tab baru
-                                rel="noopener noreferrer" // Untuk alasan keamanan saat menggunakan target="_blank"
+                                href="auth/google/redirect"
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
@@ -200,13 +198,14 @@ export default function Login({
                                 <Google className="h-6 w-6" />
                             </motion.a>
 
-                            <motion.button
+                            <motion.a
+                                href="auth/github/redirect"
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Github className="h-6 w-6" />
-                            </motion.button>
+                            </motion.a>
 
                             <motion.button
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"

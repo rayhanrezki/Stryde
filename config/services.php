@@ -41,6 +41,11 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'github' => [
+        'client_id' => env('GITHUB_ID'),
+        'client_secret' => env('GITHUB_SECRET'),
+        'redirect' => env('GITHUB_URL'),
+    ],
 
 
 ];

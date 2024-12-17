@@ -53,8 +53,12 @@ Route::middleware('auth')->get('/main', function () {
 });
 
 
-Route::get('/auth/redirect', [SocialiteController::class, 'redirect']);
+Route::get('/auth/google/redirect', [SocialiteController::class, 'googleRedirect']);
+Route::get('/auth/google/callback', [SocialiteController::class, 'googleCallback']);
 
-Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
+
+Route::get('/auth/github/redirect', [SocialiteController::class, 'githubRedirect']);
+Route::get('/auth/github/callback', [SocialiteController::class, 'githubCallback']);
+
 
 require __DIR__ . '/auth.php';
