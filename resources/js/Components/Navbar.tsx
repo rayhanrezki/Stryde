@@ -23,6 +23,43 @@ export default function Navbar({ user }: { user?: UserType }) {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const [desktopLinks, mobileLinks] = [
+        <div className="hidden lg:flex items-center space-x-6 font-rubik">
+            <NavLink href="/products">New Drops</NavLink>
+            <NavLink href="/products?category=men">Men</NavLink>
+            <NavLink href="/products?category=women">Women</NavLink>
+        </div>,
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ delay: 0.1 }}
+            className="p-3 sm:p-4 space-y-2 sm:space-y-4"
+        >
+            <MobileNavLink href="/products" onClick={() => setIsOpen(false)}>
+                New Drops
+            </MobileNavLink>
+            <MobileNavLink
+                href="/products?category=men"
+                onClick={() => setIsOpen(false)}
+            >
+                Men
+            </MobileNavLink>
+            <MobileNavLink
+                href="/products?category=women"
+                onClick={() => setIsOpen(false)}
+            >
+                Women
+            </MobileNavLink>
+            <div className="pt-2 sm:pt-4 border-t border-gray-100">
+                <MobileNavLink href="/search" onClick={() => setIsOpen(false)}>
+                    <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+                    Search
+                </MobileNavLink>
+            </div>
+        </motion.div>,
+    ];
+
     return (
         <motion.div
             className="fixed top-0 left-0 right-0 z-50 px-1 sm:px-4 py-1 sm:py-2"
@@ -52,11 +89,7 @@ export default function Navbar({ user }: { user?: UserType }) {
                 </motion.button>
 
                 {/* Desktop Navigation */}
-                <div className="hidden lg:flex items-center space-x-6 font-rubik">
-                    <NavLink href="/products">New Drops</NavLink>
-                    <NavLink href="/men">Men</NavLink>
-                    <NavLink href="/women">Women</NavLink>
-                </div>
+                {desktopLinks}
 
                 {/* Logo */}
                 <motion.div
@@ -125,41 +158,7 @@ export default function Navbar({ user }: { user?: UserType }) {
                         transition={{ duration: 0.3, ease: "easeInOut" }}
                         className="lg:hidden bg-white mt-1 sm:mt-2 rounded-2xl shadow-lg overflow-hidden mx-2"
                     >
-                        <motion.div
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ delay: 0.1 }}
-                            className="p-3 sm:p-4 space-y-2 sm:space-y-4"
-                        >
-                            <MobileNavLink
-                                href="/products"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                New Drops
-                            </MobileNavLink>
-                            <MobileNavLink
-                                href="/men"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                Men
-                            </MobileNavLink>
-                            <MobileNavLink
-                                href="/women"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                Women
-                            </MobileNavLink>
-                            <div className="pt-2 sm:pt-4 border-t border-gray-100">
-                                <MobileNavLink
-                                    href="/search"
-                                    onClick={() => setIsOpen(false)}
-                                >
-                                    <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                                    Search
-                                </MobileNavLink>
-                            </div>
-                        </motion.div>
+                        {mobileLinks}
                     </motion.div>
                 )}
             </AnimatePresence>

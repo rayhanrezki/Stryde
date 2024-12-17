@@ -11,6 +11,7 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/Components/ui/carousel";
+import Footer from "@/Components/Footer";
 
 interface Props {
     product: Product;
@@ -154,6 +155,7 @@ export default function ProductDetails({
             </div>
 
             <RecommendedProducts recommendedProducts={recommendedProducts} />
+            <Footer />
         </div>
     );
 }

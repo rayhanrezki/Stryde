@@ -1,7 +1,8 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import { Product, Category } from "@/types/product";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import Footer from "@/Components/Footer";
 
 interface Props {
     products: Product[];
@@ -12,6 +13,25 @@ export default function ProductList({ products }: Props) {
         size: "",
         categories: [] as number[],
     });
+
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get("category");
+
+        if (categoryParam) {
+            const category = availableCategories.find(
+                (cat: Category) =>
+                    cat.name.toLowerCase() === categoryParam.toLowerCase()
+            );
+
+            if (category) {
+                setFilters((prev) => ({
+                    ...prev,
+                    categories: [category.id],
+                }));
+            }
+        }
+    }, []);
 
     const availableSizes = useMemo(() => {
         return Array.from(
@@ -60,23 +80,53 @@ export default function ProductList({ products }: Props) {
                 size: prev.size === value ? "" : (value as string),
             }));
         } else {
+            const newCategories = filters.categories.includes(value as number)
+                ? filters.categories.filter((id) => id !== value)
+                : [...filters.categories, value as number];
+
             setFilters((prev) => ({
                 ...prev,
-                categories: prev.categories.includes(value as number)
-                    ? prev.categories.filter((id) => id !== value)
-                    : [...prev.categories, value as number],
+                categories: newCategories,
             }));
+
+            const category = availableCategories.find(
+                (cat: Category) => cat.id === value
+            );
+            if (category) {
+                const url = new URL(window.location.href);
+                if (newCategories.includes(category.id)) {
+                    url.searchParams.set(
+                        "category",
+                        category.name.toLowerCase()
+                    );
+                } else {
+                    url.searchParams.delete("category");
+                }
+                router.get(
+                    url.pathname + url.search,
+                    {},
+                    { preserveState: true }
+                );
+            }
         }
     };
 
     const clearFilters = (type?: "size" | "categories") => {
         if (!type) {
             setFilters({ size: "", categories: [] });
+            router.get(window.location.pathname, {}, { preserveState: true });
         } else {
             setFilters((prev) => ({
                 ...prev,
                 [type]: type === "size" ? "" : [],
             }));
+            if (type === "categories") {
+                router.get(
+                    window.location.pathname,
+                    {},
+                    { preserveState: true }
+                );
+            }
         }
     };
 
@@ -220,7 +270,7 @@ export default function ProductList({ products }: Props) {
                     </div>
 
                     {/* Product Grid */}
-                    <div className="flex-1">
+                    <div className="flex-1 mb-20">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredProducts.map((product) => (
                                 <div key={product.id} className="space-y-4">
@@ -276,6 +326,7 @@ export default function ProductList({ products }: Props) {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

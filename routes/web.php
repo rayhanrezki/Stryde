@@ -11,7 +11,7 @@ use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Product;
-
+use App\Http\Controllers\CategoryController;
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
 // Public product routes
@@ -26,6 +26,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('products.categories.store');
 
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');
+
+    // Admin category routes
+    Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
 Route::get('/Admin/dashboard', function () {
@@ -40,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+// Recommended products route for cart page
 Route::get('/cart', function () {
     $recommendedProducts = Product::with('images')
         ->inRandomOrder()
@@ -51,6 +56,7 @@ Route::get('/cart', function () {
     ]);
 })->name('cart');
 
+// Route for Authenticated users
 Route::middleware('auth')->get('/main', function () {
     if (Auth::user()->is_admin) {
         return redirect()->route('admin.dashboard');

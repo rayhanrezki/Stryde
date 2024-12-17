@@ -49,8 +49,12 @@ export default function Sidebar() {
                 </Link>
 
                 <Link
-                    href="#"
-                    className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
+                    href={route("categories.index")}
+                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                        route().current("categories.index")
+                            ? "bg-blue-50 text-blue-600"
+                            : "text-gray-700 hover:bg-gray-100"
+                    }`}
                 >
                     <Grid2x2 size={20} />
                     <span className="font-medium font-rubik">Categories</span>

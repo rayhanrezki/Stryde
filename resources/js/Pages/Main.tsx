@@ -7,7 +7,7 @@ import Reviews from "@/Components/Reviews";
 import { Head } from "@inertiajs/react";
 import { Product } from "@/types/product";
 import { PageProps } from "@/types"; // Menggunakan PageProps untuk data autentikasi
-
+import Footer from "@/Components/Footer";
 export default function Main({
     latestProducts,
     auth,
@@ -22,6 +22,7 @@ export default function Main({
                 <NewDrops products={latestProducts} />
                 <Categories />
                 <Reviews />
+                <Footer />
             </div>
         </>
     );

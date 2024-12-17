@@ -3,6 +3,8 @@ import { Head } from "@inertiajs/react";
 import { Heart, Trash2 } from "lucide-react";
 import RecommendedProducts from "@/Components/RecommendedProducts";
 import { Product } from "@/types/product";
+import Navbar from "@/Components/Navbar";
+import Footer from "@/Components/Footer";
 interface CartItem {
     id: string;
     name: string;
@@ -50,7 +52,9 @@ export default function Cart({ recommendedProducts }: Props) {
         <>
             <Head title="Shopping Cart" />
 
-            <div className="min-h-screen bg-[#e7e7e3] p-6">
+            <Navbar />
+
+            <div className="min-h-screen bg-[#e7e7e3] p-6 py-24">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-2xl font-bold mb-2">
@@ -205,6 +209,8 @@ export default function Cart({ recommendedProducts }: Props) {
                     recommendedProducts={recommendedProducts}
                 />
             )}
+
+            <Footer />
         </>
     );
 }
