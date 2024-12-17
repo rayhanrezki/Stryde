@@ -1,20 +1,22 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use Inertia\Inertia;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\MainController;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Middleware\IsAdmin;
 use App\Models\Product;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
-    // Public product routes
-    Route::get('/products', [ProductController::class, 'list'])->name('products.list');
-    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+// Public product routes
+Route::get('/products', [ProductController::class, 'list'])->name('products.list');
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // Admin product routes
@@ -43,18 +45,26 @@ Route::get('/cart', function () {
         ->inRandomOrder()
         ->limit(4)
         ->get();
-    
+
     return Inertia::render('Cart', [
         'recommendedProducts' => $recommendedProducts
     ]);
 })->name('cart');
 
-require __DIR__ . '/auth.php';
-
-
 Route::middleware('auth')->get('/main', function () {
-    if (Auth::user()->isAdmin) {
+    if (Auth::user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('main');
 });
+
+
+Route::get('/auth/google/redirect', [SocialiteController::class, 'googleRedirect']);
+Route::get('/auth/google/callback', [SocialiteController::class, 'googleCallback']);
+
+
+Route::get('/auth/github/redirect', [SocialiteController::class, 'githubRedirect']);
+Route::get('/auth/github/callback', [SocialiteController::class, 'githubCallback']);
+
+
+require __DIR__ . '/auth.php';
