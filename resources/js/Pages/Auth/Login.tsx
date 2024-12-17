@@ -189,13 +189,17 @@ export default function Login({
                             variants={slideUp}
                             transition={{ delay: 0.6 }}
                         >
-                            <motion.button
+                            <motion.a
+                                href="auth/redirect"
+                                target="_blank" // Jika ingin membuka di tab baru
+                                rel="noopener noreferrer" // Untuk alasan keamanan saat menggunakan target="_blank"
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
                                 whileHover={{ scale: 1.05 }}
                                 whileTap={{ scale: 0.95 }}
                             >
                                 <Google className="h-6 w-6" />
-                            </motion.button>
+                            </motion.a>
+
                             <motion.button
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
                                 whileHover={{ scale: 1.05 }}
@@ -203,6 +207,7 @@ export default function Login({
                             >
                                 <Github className="h-6 w-6" />
                             </motion.button>
+
                             <motion.button
                                 className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
                                 whileHover={{ scale: 1.05 }}

@@ -1,13 +1,15 @@
 <?php
 
+use App\Http\Controllers\Auth\SocialiteController;
 use Inertia\Inertia;
+use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\MainController;
+use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Middleware\IsAdmin;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
@@ -43,12 +45,16 @@ Route::get('/cart', function () {
     ]);
 })->name('cart');
 
-require __DIR__ . '/auth.php';
-
-
 Route::middleware('auth')->get('/main', function () {
     if (Auth::user()->is_admin) {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('main');
 });
+
+
+Route::get('/auth/redirect', [SocialiteController::class, 'redirect']);
+
+Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
+
+require __DIR__ . '/auth.php';
