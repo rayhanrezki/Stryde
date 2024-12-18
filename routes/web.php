@@ -13,6 +13,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Product;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\QuoteController;
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
 // Public product routes
@@ -72,5 +73,9 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'googleCallback
 Route::get('/auth/github/redirect', [SocialiteController::class, 'githubRedirect']);
 Route::get('/auth/github/callback', [SocialiteController::class, 'githubCallback']);
 
+
+Route::get('/fetch-quote', [QuoteController::class, 'fetch'])
+    ->middleware(['auth', 'verified', 'IsAdmin'])
+    ->name('fetch.quote');
 
 require __DIR__ . '/auth.php';

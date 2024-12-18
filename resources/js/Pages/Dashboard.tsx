@@ -1,6 +1,7 @@
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Head } from "@inertiajs/react";
 import { Package, Users, ShoppingCart } from "lucide-react";
+import QuoteFetch from "@/Components/QuoteFetch";
 
 interface Props {
     totalProducts: number;
@@ -77,7 +78,7 @@ export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
 
                 {/* Additional dashboard content can go here */}
                 <div className="bg-white rounded-xl shadow-sm p-6">
-                    <p>Welcome to your dashboard!</p>
+                    <QuoteFetch />
                 </div>
             </div>
         </AdminLayout>
