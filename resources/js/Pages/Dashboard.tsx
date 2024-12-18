@@ -14,7 +14,7 @@ interface Props {
     };
 }
 
-export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
+export default function Dashboard({ totalProducts, totalUsers }: Props) {
     return (
         <AdminLayout>
             <Head title="Dashboard" />

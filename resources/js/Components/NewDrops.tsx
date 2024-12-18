@@ -75,7 +75,7 @@ export default function NewDrops({ products }: NewDropsProps) {
                                 </div>
                             </div>
                             <div className="w-full px-3 space-y-4 mt-4">
-                                <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 font-rubik">
+                                <h3 className="font-medium text-base sm:text-lg lg:text-xl line-clamp-2 min-h-[3em] font-rubik">
                                     {product.name}
                                 </h3>
                                 <div className="w-full">
@@ -86,8 +86,13 @@ export default function NewDrops({ products }: NewDropsProps) {
                                         )}
                                         className="block"
                                     >
-                                        <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 text-lg sm:text-base lg:text-lg font-rubik py-6">
-                                            VIEW PRODUCT - Rp {product.price}
+                                        <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 font-rubik py-6">
+                                            <span className="text-sm sm:text-base whitespace-nowrap">
+                                                VIEW PRODUCT - Rp{" "}
+                                                {new Intl.NumberFormat(
+                                                    "id-ID"
+                                                ).format(product.price)}
+                                            </span>
                                         </Button>
                                     </Link>
                                 </div>
