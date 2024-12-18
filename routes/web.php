@@ -12,6 +12,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Product;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DashboardController;
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
 // Public product routes
@@ -32,11 +33,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 });
 
-Route::get('/Admin/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'user' => Auth::user()
-    ]);
-})->middleware(['auth', 'verified', 'IsAdmin'])->name('dashboard');
+// Admin dashboard
+Route::get('/Admin/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified', 'IsAdmin'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
