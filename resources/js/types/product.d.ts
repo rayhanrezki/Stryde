@@ -10,7 +10,7 @@ export interface ProductSize {
 }
 
 export interface Product {
-    categories: any;
+    categories: Category[];
     id: number;
     name: string;
     slug: string;
@@ -39,4 +39,13 @@ export interface ProductFormData {
     sizes: Size[];
     categories: number[];
     existingImages: Array<{ id: number; image_path: string }>;
+}
+
+interface Props extends PageProps {
+    cart: {
+        id: number;
+        user_id: number;
+        items: CartItem[];
+    };
+    recommendedProducts: Product[];
 }

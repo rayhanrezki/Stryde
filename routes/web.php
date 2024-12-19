@@ -1,17 +1,19 @@
 <?php
 
-use App\Http\Controllers\Auth\SocialiteController;
 use Inertia\Inertia;
+use App\Models\Product;
 use App\Http\Middleware\IsAdmin;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\MainController;
 use Laravel\Socialite\Facades\Socialite;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Product;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Auth\SocialiteController;
+
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
 // Public product routes
@@ -30,30 +32,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Admin category routes
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
-});
 
-Route::get('/Admin/dashboard', function () {
-    return Inertia::render('Dashboard', [
-        'user' => Auth::user()
-    ]);
-})->middleware(['auth', 'verified', 'IsAdmin'])->name('dashboard');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('cart'); // Menampilkan keranjang
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add'); // Menambah item ke keranjang
+    Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update'); // Mengupdate kuantitas item di keranjang
+    Route::post('/cart/remove', [CartController::class, 'removeItem'])->name('cart.remove'); // Menghapus item dari keranjang
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
 
-// Recommended products route for cart page
-Route::get('/cart', function () {
-    $recommendedProducts = Product::with('images')
-        ->inRandomOrder()
-        ->limit(4)
-        ->get();
+    Route::get('/Admin/dashboard', function () {
+        return Inertia::render('Dashboard', [
+            'user' => Auth::user()
+        ]);
+    })->middleware(['auth', 'verified', 'IsAdmin'])->name('dashboard');
 
-    return Inertia::render('Cart', [
-        'recommendedProducts' => $recommendedProducts
-    ]);
+    Route::middleware('auth')->group(function () {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
+    // Recommended products route for cart page
+
 })->name('cart');
 
 // Route for Authenticated users

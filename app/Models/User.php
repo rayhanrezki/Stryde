@@ -55,4 +55,9 @@ class User extends Authenticatable
             'is_admin' => 'boolean',
         ];
     }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class); // Relasi satu user memiliki satu cart
+    }
 }

@@ -1,58 +1,94 @@
-import { useState } from "react";
-import { Head } from "@inertiajs/react";
-import { Heart, Trash2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Head, usePage } from "@inertiajs/react";
+import { Trash2 } from "lucide-react";
 import RecommendedProducts from "@/Components/RecommendedProducts";
-import { Product } from "@/types/product";
+
+import { Product, ProductSize } from "@/types/product";
 import Navbar from "@/Components/Navbar";
 import Footer from "@/Components/Footer";
+import { PageProps } from "@/types";
+
 interface CartItem {
-    id: string;
-    name: string;
-    category: string;
-    description: string;
-    price: number;
-    image: string;
-    size: string;
+    sizes(arg0: string, sizes: any): unknown;
+    id: number;
+    product_id: number;
+    product_size_id: number;
     quantity: number;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
 }
 
-interface OrderSummary {
-    itemCount: number;
-    subtotal: number;
-    delivery: number;
-    salesTax: number;
-    total: number;
-}
-
-interface Props {
+interface Props extends PageProps {
     recommendedProducts: Product[];
+    cartItems: CartItem[]; // Menggunakan tipe CartItem[]
 }
 
-export default function Cart({ recommendedProducts }: Props) {
-    const [cartItem] = useState<CartItem>({
-        id: "1",
-        name: "DROPSET TRAINER SHOES",
-        category: "Men's Road Running Shoes",
-        description: "Enamel Blue/ University White",
-        price: 130.0,
-        image: "./images/NIKE_AIR_MAX.png",
-        size: "10",
-        quantity: 1,
-    });
+export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
+    const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
 
-    const [orderSummary] = useState<OrderSummary>({
-        itemCount: 1,
-        subtotal: 130.0,
-        delivery: 6.99,
-        salesTax: 0,
-        total: 136.99,
-    });
+    useEffect(() => {
+        console.log("Cart Items:", cartItemsState); // Lihat seluruh data
+        cartItemsState.forEach((item) => {
+            console.log("Size:", item.sizes); // Periksa apakah size tersedia
+        });
+    }, [cartItemsState]);
+
+    const removeItem = (id: number) => {
+        setCartItems(cartItemsState.filter((item) => item.id !== id));
+    };
+
+    const updateQuantity = (id: number, quantity: number) => {
+        setCartItems((prevItems) =>
+            prevItems.map((item) =>
+                item.id === id ? { ...item, quantity } : item
+            )
+        );
+    };
+
+    const calculateOrderSummary = () => {
+        if (!cartItemsState.length) {
+            return {
+                itemCount: 0,
+                subtotal: 0,
+                delivery: 0,
+                salesTax: 0,
+                total: 0,
+            };
+        }
+
+        const itemCount = cartItemsState.reduce(
+            (acc, item) => acc + item.quantity,
+            0
+        );
+        const subtotal = cartItemsState.reduce(
+            (acc, item) => acc + parseFloat(item.product.price) * item.quantity,
+            0
+        );
+        const delivery = 6.99;
+        const salesTax = 0; // Static for now
+        const total = subtotal + delivery + salesTax;
+
+        return { itemCount, subtotal, delivery, salesTax, total };
+    };
+
+    const orderSummary = calculateOrderSummary();
 
     return (
-        <>
+        <div>
             <Head title="Shopping Cart" />
-
-            <Navbar />
+            <Navbar user={auth?.user} />
 
             <div className="min-h-screen bg-[#e7e7e3] p-6 py-24">
                 <div className="max-w-6xl mx-auto">
@@ -87,81 +123,112 @@ export default function Cart({ recommendedProducts }: Props) {
                                     now to make them yours.
                                 </p>
 
-                                <div className="flex gap-6">
-                                    <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden">
-                                        <img
-                                            src={cartItem.image}
-                                            alt={cartItem.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                    </div>
+                                {cartItemsState.map((cartItem) => (
+                                    <div
+                                        key={cartItem.id}
+                                        className="flex gap-6 mb-6"
+                                    >
+                                        <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden">
+                                            {/* Memastikan array images tidak kosong sebelum mengakses elemen pertama */}
+                                            <img
+                                                src={
+                                                    cartItem.product.images &&
+                                                    cartItem.product.images
+                                                        .length > 0
+                                                        ? `/storage/${cartItem.product.images[0].image_path}` // Menambahkan '/storage' untuk path gambar publik
+                                                        : "/public/imagesAIR-MAX-DN.png" // Gambar default jika tidak ada gambar produk
+                                                }
+                                                alt={cartItem.product.name}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
 
-                                    <div className="flex-1">
-                                        <div className="flex justify-between items-start">
-                                            <div>
-                                                <h3 className="font-semibold text-lg">
-                                                    {cartItem.name}
-                                                </h3>
-                                                <p className="text-gray-600">
-                                                    {cartItem.category}
-                                                </p>
-                                                <p className="text-gray-600">
-                                                    {cartItem.description}
-                                                </p>
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-start">
+                                                <div>
+                                                    <h3 className="font-semibold text-lg">
+                                                        {cartItem.product.name}
+                                                    </h3>
+
+                                                    <p className="text-gray-600">
+                                                        {cartItem.product
+                                                            .categories &&
+                                                        cartItem.product
+                                                            .categories.length >
+                                                            0
+                                                            ? `Category: ${cartItem.product.categories[0]?.name}`
+                                                            : "No category available"}
+                                                    </p>
+                                                    <p className="text-gray-600">
+                                                        {
+                                                            cartItem.product
+                                                                .description
+                                                        }
+                                                    </p>
+
+                                                    <p className="text-gray-600">
+                                                        Size:{" "}
+                                                        {cartItem.product_size
+                                                            ?.size || "N/A"}
+                                                    </p>
+                                                </div>
+                                                <span className="text-blue-600 font-semibold">
+                                                    $
+                                                    {parseFloat(
+                                                        cartItem.product.price.toString()
+                                                    ).toFixed(2)}
+                                                </span>
                                             </div>
-                                            <span className="text-blue-600 font-semibold">
-                                                ${cartItem.price.toFixed(2)}
-                                            </span>
-                                        </div>
 
-                                        <div className="flex gap-4 mt-4">
-                                            <select
-                                                className="border rounded-md px-3 py-2 bg-white"
-                                                value={cartItem.size}
-                                            >
-                                                <option value="10">
-                                                    Size 10
-                                                </option>
-                                                <option value="10.5">
-                                                    Size 10.5
-                                                </option>
-                                                <option value="11">
-                                                    Size 11
-                                                </option>
-                                            </select>
-
-                                            <select
-                                                className="border rounded-md px-3 py-2 bg-white"
-                                                value={cartItem.quantity}
-                                            >
-                                                <option value="1">
-                                                    Quantity 1
-                                                </option>
-                                                <option value="2">
-                                                    Quantity 2
-                                                </option>
-                                                <option value="3">
-                                                    Quantity 3
-                                                </option>
-                                            </select>
-                                        </div>
-
-                                        <div className="flex gap-4 mt-4">
-                                            <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                                                <Heart className="w-5 h-5" />
-                                                <span className="sr-only">
-                                                    Add to Favorites
+                                            <div className="flex items-center gap-4 mt-4">
+                                                <button
+                                                    className="text-gray-600 hover:text-gray-900"
+                                                    onClick={() =>
+                                                        updateQuantity(
+                                                            cartItem.id,
+                                                            Math.max(
+                                                                cartItem.quantity -
+                                                                    1,
+                                                                1
+                                                            )
+                                                        )
+                                                    }
+                                                >
+                                                    -
+                                                </button>
+                                                <span className="text-lg font-semibold">
+                                                    {cartItem.quantity}
                                                 </span>
-                                            </button>
-                                            <button className="flex items-center gap-2 text-gray-600 hover:text-gray-900">
-                                                <Trash2 className="w-5 h-5" />
-                                                <span className="sr-only">
-                                                    Remove Item
-                                                </span>
-                                            </button>
+                                                <button
+                                                    className="text-gray-600 hover:text-gray-900"
+                                                    onClick={() =>
+                                                        updateQuantity(
+                                                            cartItem.id,
+                                                            cartItem.quantity +
+                                                                1
+                                                        )
+                                                    }
+                                                >
+                                                    +
+                                                </button>
+                                            </div>
+
+                                            <div className="flex gap-4 mt-4">
+                                                <button
+                                                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                                                    onClick={() =>
+                                                        removeItem(cartItem.id)
+                                                    }
+                                                >
+                                                    <Trash2 className="w-5 h-5" />
+                                                    <span className="sr-only">
+                                                        Remove Item
+                                                    </span>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
                         </div>
 
@@ -211,6 +278,6 @@ export default function Cart({ recommendedProducts }: Props) {
             )}
 
             <Footer />
-        </>
+        </div>
     );
 }
