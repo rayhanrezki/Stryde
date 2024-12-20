@@ -37,6 +37,7 @@ interface Props extends PageProps {
 
 export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         console.log("Cart Items:", cartItemsState); // Lihat seluruh data
@@ -46,15 +47,71 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     }, [cartItemsState]);
 
     const removeItem = (id: number) => {
-        setCartItems(cartItemsState.filter((item) => item.id !== id));
+        if (!confirm("Are you sure you want to remove this item?")) return;
+
+        // Membuat form untuk mengirimkan data ke server
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/cart/remove";
+
+        // Menambahkan CSRF token
+        const csrfToken =
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") || "";
+
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "_token";
+        csrfInput.value = csrfToken;
+
+        // Menambahkan ID item yang akan dihapus
+        const idInput = document.createElement("input");
+        idInput.type = "hidden";
+        idInput.name = "cart_item_id";
+        idInput.value = id.toString();
+
+        form.appendChild(csrfInput);
+        form.appendChild(idInput);
+
+        document.body.appendChild(form);
+        form.submit();
     };
 
     const updateQuantity = (id: number, quantity: number) => {
-        setCartItems((prevItems) =>
-            prevItems.map((item) =>
-                item.id === id ? { ...item, quantity } : item
-            )
-        );
+        // Membuat form untuk mengirimkan data ke server
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/cart/update";
+
+        // Menambahkan CSRF token
+        const csrfToken =
+            document
+                .querySelector('meta[name="csrf-token"]')
+                ?.getAttribute("content") || "";
+
+        const csrfInput = document.createElement("input");
+        csrfInput.type = "hidden";
+        csrfInput.name = "_token";
+        csrfInput.value = csrfToken;
+
+        // Menambahkan ID item dan kuantitas
+        const idInput = document.createElement("input");
+        idInput.type = "hidden";
+        idInput.name = "cart_item_id";
+        idInput.value = id.toString();
+
+        const quantityInput = document.createElement("input");
+        quantityInput.type = "hidden";
+        quantityInput.name = "quantity";
+        quantityInput.value = quantity.toString();
+
+        form.appendChild(csrfInput);
+        form.appendChild(idInput);
+        form.appendChild(quantityInput);
+
+        document.body.appendChild(form);
+        form.submit();
     };
 
     const calculateOrderSummary = () => {
@@ -215,15 +272,12 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
 
                                             <div className="flex gap-4 mt-4">
                                                 <button
-                                                    className="flex items-center gap-2 text-gray-600 hover:text-gray-900"
+                                                    className="text-red-600 hover:text-red-800"
                                                     onClick={() =>
                                                         removeItem(cartItem.id)
                                                     }
                                                 >
                                                     <Trash2 className="w-5 h-5" />
-                                                    <span className="sr-only">
-                                                        Remove Item
-                                                    </span>
                                                 </button>
                                             </div>
                                         </div>
