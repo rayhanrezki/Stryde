@@ -27,7 +27,7 @@ export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     {/* Products Card */}
-                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-blue-100 rounded-lg">
                                 <Package className="w-5 h-5 md:w-6 md:h-6 text-blue-600" />
@@ -44,7 +44,7 @@ export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
                     </div>
 
                     {/* Users Card */}
-                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-green-100 rounded-lg">
                                 <Users className="w-5 h-5 md:w-6 md:h-6 text-green-600" />
@@ -61,7 +61,7 @@ export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
                     </div>
 
                     {/* Orders Card */}
-                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                    <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow">
                         <div className="flex items-center gap-4">
                             <div className="p-3 bg-purple-100 rounded-lg">
                                 <ShoppingCart className="w-5 h-5 md:w-6 md:h-6 text-purple-600" />
@@ -79,7 +79,7 @@ export default function Dashboard({ totalProducts, totalUsers, user }: Props) {
                 </div>
 
                 {/* Additional dashboard content */}
-                <div className="bg-white rounded-xl shadow-sm p-4 md:p-6">
+                <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 hover:shadow-md transition-shadow">
                     <QuoteFetch />
                 </div>
             </div>
