@@ -3,12 +3,37 @@ import Navbar from "@/Components/Navbar";
 import { Product, Category } from "@/types/product";
 import { useState, useMemo, useEffect } from "react";
 import Footer from "@/Components/Footer";
+import { PageProps } from "@/types";
 
-interface Props {
-    products: Product[];
+interface CartItem {
+    sizes(arg0: string, sizes: any): unknown;
+    id: number;
+    product_id: number;
+    product_size_id: number;
+    quantity: number;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
 }
 
-export default function ProductList({ products }: Props) {
+interface Props extends PageProps {
+    products: Product[];
+
+    cartItems: CartItem[];
+}
+
+export default function ProductList({ auth, products, cartItems }: Props) {
     const [filters, setFilters] = useState({
         size: "",
         categories: [] as number[],
@@ -133,7 +158,7 @@ export default function ProductList({ products }: Props) {
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title="Products" />
-            <Navbar cartItems={[]} />
+            <Navbar user={auth?.user} cartItems={cartItems} />
 
             {/* Hero Banner */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

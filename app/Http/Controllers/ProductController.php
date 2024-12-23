@@ -231,13 +231,18 @@ class ProductController extends Controller
     // Menampilkan daftar semua produk untuk halaman publik
     public function list()
     {
+
+        $user = Auth::user();
+        $cartItems = $user ? CartItem::where('cart_id', $user->id)->get() : [];
         $products = Product::with(['images', 'sizes', 'categories'])
             ->latest()
             ->get();
 
         return Inertia::render('ProductList', [
             'products' => $products,
-            'totalItems' => $products->count()
+            'totalItems' => $products->count(),
+            'auth' => ['user' => $user],
+            'cartItems' => $cartItems,
         ]);
     }
 }
