@@ -133,7 +133,7 @@ export default function ProductList({ products }: Props) {
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title="Products" />
-            <Navbar />
+            <Navbar cartItems={[]} />
 
             {/* Hero Banner */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

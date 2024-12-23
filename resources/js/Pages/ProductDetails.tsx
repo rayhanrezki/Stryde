@@ -14,18 +14,43 @@ import {
 } from "@/Components/ui/carousel";
 import Footer from "@/Components/Footer";
 
+interface CartItem {
+    sizes(arg0: string, sizes: any): unknown;
+    id: number;
+    product_id: number;
+    product_size_id: number;
+    quantity: number;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
+}
+
 interface Props extends PageProps {
     product: Product;
     recommendedProducts: Product[];
+    cartItems: CartItem[];
 }
 
 export default function ProductDetails({
     auth,
     product,
     recommendedProducts,
+    cartItems,
 }: Props) {
     const [selectedSize, setSelectedSize] = useState<number | null>(null); // Ukuran yang dipilih
-    const [quantity, setQuantity] = useState<number>(1); // Jumlah produk yang dipilih
+    const [quantity, setQuantity] = useState<number>(1);
+    const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
 
     const { data, setData, post, processing, errors } = useForm({
         product_id: product.id,
@@ -71,7 +96,7 @@ export default function ProductDetails({
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title={product.name} />
-            <Navbar user={auth?.user} />
+            <Navbar user={auth?.user} cartItems={cartItems} />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
                     <Link

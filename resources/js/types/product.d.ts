@@ -41,11 +41,20 @@ export interface ProductFormData {
     existingImages: Array<{ id: number; image_path: string }>;
 }
 
+export interface CartItem {
+    id: number;
+    product_id: number;
+    quantity: number;
+    size: string;
+}
+
+export interface Cart {
+    id: number;
+    user_id: number;
+    items: CartItem[]; // Array of CartItems
+}
+
 interface Props extends PageProps {
-    cart: {
-        id: number;
-        user_id: number;
-        items: CartItem[];
-    };
+    cart: Cart;
     recommendedProducts: Product[];
 }

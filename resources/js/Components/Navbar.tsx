@@ -6,13 +6,19 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "@inertiajs/react";
 import { User as UserType } from "@/types";
 
-export default function Navbar({ user }: { user?: UserType }) {
+interface NavbarProps {
+    user?: UserType;
+    cartItems: { id: number; product_id: number; quantity: number }[]; // CartItems with id, product_id, and quantity
+}
+
+export default function Navbar({ user, cartItems }: NavbarProps) {
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         console.log("User:", user);
-    }, [user]);
+        console.log("CartItems Nav:", cartItems); // Log cartItems for debugging
+    }, [user, cartItems]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -22,6 +28,18 @@ export default function Navbar({ user }: { user?: UserType }) {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
+
+    // Count the total quantity of items grouped by product_id
+    const cartItemCount = (Array.isArray(cartItems) ? cartItems : []).reduce(
+        (acc, item) => {
+            if (!acc[item.product_id]) {
+                acc[item.product_id] = 0;
+            }
+            acc[item.product_id] += item.quantity;
+            return acc;
+        },
+        {} as { [key: number]: number }
+    );
 
     const [desktopLinks, mobileLinks] = [
         <div className="hidden lg:flex items-center space-x-6 font-rubik">
@@ -124,7 +142,9 @@ export default function Navbar({ user }: { user?: UserType }) {
                             label="Shopping cart"
                             href={route("cart")}
                         />
-                        <CartBadge />
+                        <CartBadge
+                            itemCount={cartItems ? cartItems.length : 0}
+                        />
                     </div>
                 </div>
 
@@ -143,7 +163,9 @@ export default function Navbar({ user }: { user?: UserType }) {
                             label="Shopping cart"
                             href={route("cart")}
                         />
-                        <CartBadge />
+                        <CartBadge
+                            itemCount={cartItems ? cartItems.length : 0}
+                        />
                     </div>
                 </div>
             </motion.nav>
@@ -222,30 +244,27 @@ function NavIcon({
 }) {
     return (
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-            <Link
-                href={href || "#"}
-                className="p-0.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors inline-flex items-center justify-center"
-                aria-label={label}
-            >
-                {icon}
-            </Link>
+            {href ? (
+                <Link href={href} className="flex items-center">
+                    {icon}
+                    <span className="sr-only">{label}</span>
+                </Link>
+            ) : (
+                <span className="flex items-center">
+                    {icon}
+                    <span className="sr-only">{label}</span>
+                </span>
+            )}
         </motion.div>
     );
 }
 
-function CartBadge() {
+function CartBadge({ itemCount }: { itemCount: number }) {
+    if (itemCount === 0) return null; // Early return to avoid rendering empty badge
+
     return (
-        <motion.span
-            className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] sm:text-xs font-bold rounded-full w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{
-                type: "spring",
-                stiffness: 500,
-                damping: 30,
-            }}
-        >
-            0
-        </motion.span>
+        <div className="absolute top-0 right-0 -mr-2 -mt-2 h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+            {itemCount > 99 ? "99+" : itemCount}
+        </div>
     );
 }

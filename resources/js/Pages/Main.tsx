@@ -8,16 +8,47 @@ import { Head } from "@inertiajs/react";
 import { Product } from "@/types/product";
 import { PageProps } from "@/types"; // Menggunakan PageProps untuk data autentikasi
 import Footer from "@/Components/Footer";
+
+// Definisikan tipe CartItem dengan lebih jelas
+interface CartItem {
+    id: number;
+    product_id: number;
+    product_size_id: number;
+    quantity: number;
+    size: string;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
+}
+
+// Perbarui Props agar cartItems adalah array CartItem
+interface Props extends PageProps {
+    latestProducts: Product[];
+    cartItems: CartItem[]; // cartItems sekarang array
+}
+
 export default function Main({
     latestProducts,
     auth,
-}: PageProps<{ latestProducts: Product[] }>) {
+    cartItems, // cartItems yang diterima harus array
+}: Props) {
     return (
         <>
             <Head title="Home" />
             <div>
-                {/* Kirim data user ke komponen Navbar */}
-                <Navbar user={auth?.user} />
+                {/* Kirim data user dan cartItems ke komponen Navbar */}
+                <Navbar user={auth?.user} cartItems={cartItems} />
                 <Hero />
                 <NewDrops products={latestProducts} />
                 <Categories />
