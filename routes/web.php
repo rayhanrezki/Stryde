@@ -13,9 +13,10 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\SocialiteController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\QuoteController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
-
 // Public product routes
 Route::get('/products', [ProductController::class, 'list'])->name('products.list');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
@@ -33,10 +34,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
+
     Route::get('/cart', [CartController::class, 'viewCart'])->name('cart'); // Menampilkan keranjang
     Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add'); // Menambah item ke keranjang
     Route::post('/cart/update', [CartController::class, 'updateQuantity'])->name('cart.update'); // Mengupdate kuantitas item di keranjang
     Route::post('/cart/remove', [CartController::class, 'removeItem'])->name('cart.remove'); // Menghapus item dari keranjang
+    // Admin dashboard
+    Route::get('/Admin/dashboard', [DashboardController::class, 'index'])
+        ->middleware(['auth', 'verified', 'IsAdmin'])
+        ->name('dashboard');
 
 
     Route::get('/Admin/dashboard', function () {
@@ -71,5 +77,9 @@ Route::get('/auth/google/callback', [SocialiteController::class, 'googleCallback
 Route::get('/auth/github/redirect', [SocialiteController::class, 'githubRedirect']);
 Route::get('/auth/github/callback', [SocialiteController::class, 'githubCallback']);
 
+
+Route::get('/fetch-quote', [QuoteController::class, 'fetch'])
+    ->middleware(['auth', 'verified', 'IsAdmin'])
+    ->name('fetch.quote');
 
 require __DIR__ . '/auth.php';

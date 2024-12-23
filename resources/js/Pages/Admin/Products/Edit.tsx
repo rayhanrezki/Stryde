@@ -5,6 +5,7 @@ import { FormEvent, useState, useEffect } from "react";
 import axios from "axios";
 import { Product, Category, Size, ProductFormData } from "@/types/product";
 import { Trash2 } from "lucide-react";
+import ImageDropzone from "@/Components/ImageDropzone";
 
 interface Props extends PageProps {
     categories: Category[];
@@ -29,9 +30,6 @@ export default function Edit({ product, categories }: Props) {
     const [categoryError, setCategoryError] = useState("");
     const [availableCategories, setAvailableCategories] = useState(categories);
     const [sizeStocks, setSizeStocks] = useState<Size[]>(product.sizes);
-    const [imagePreview, setImagePreview] = useState<string[]>(
-        product.images.map((img) => `/storage/${img.image_path}`)
-    );
 
     const removeExistingImage = (imageId: number) => {
         setFormData((prev) => ({
@@ -97,43 +95,6 @@ export default function Edit({ product, categories }: Props) {
             [key]: value,
         }));
     };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const validFiles = Array.from(e.target.files).filter((file) => {
-                const isValidType = [
-                    "image/jpeg",
-                    "image/png",
-                    "image/gif",
-                    "image/jpg",
-                ].includes(file.type);
-                const isValidSize = file.size <= 2 * 1024 * 1024;
-                return isValidType && isValidSize;
-            });
-
-            if (validFiles.length !== e.target.files.length) {
-                alert(
-                    "Some files were skipped. Please ensure all files are images under 2MB."
-                );
-            }
-
-            const newPreviews = validFiles.map((file) =>
-                URL.createObjectURL(file)
-            );
-            setImagePreview([...imagePreview, ...newPreviews]);
-            updateFormData("images", validFiles);
-        }
-    };
-
-    useEffect(() => {
-        return () => {
-            imagePreview.forEach((url) => {
-                if (url.startsWith("blob:")) {
-                    URL.revokeObjectURL(url);
-                }
-            });
-        };
-    }, [imagePreview]);
 
     const addSizeStock = () => {
         setSizeStocks([...sizeStocks, { size: "", stock: 0 }]);
@@ -226,7 +187,7 @@ export default function Edit({ product, categories }: Props) {
                                     <img
                                         src={`/storage/${image.image_path}`}
                                         alt="Product"
-                                        className="w-full h-24 object-cover rounded-lg"
+                                        className="w-32 h-32 object-cover rounded-lg"
                                     />
                                     <button
                                         type="button"
@@ -241,22 +202,16 @@ export default function Edit({ product, categories }: Props) {
                             ))}
                         </div>
 
-                        <div>
+                        <div className="mt-6">
                             <label className="block text-sm font-medium mb-2">
                                 Add New Images
                             </label>
-                            <input
-                                type="file"
-                                multiple
-                                onChange={handleImageChange}
-                                className="w-full border rounded-lg px-3 py-2"
-                                accept="image/*"
+                            <ImageDropzone
+                                onImagesChange={(files) =>
+                                    updateFormData("images", files)
+                                }
+                                error={errors.images}
                             />
-                            {errors.images && (
-                                <p className="text-red-500 text-sm mt-1">
-                                    {errors.images}
-                                </p>
-                            )}
                         </div>
                     </div>
 
