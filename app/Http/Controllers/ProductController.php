@@ -185,9 +185,8 @@ class ProductController extends Controller
     // Menampilkan detail produk berdasarkan slug
     public function show($slug)
     {
-
         $user = Auth::user();
-        $cartItems = CartItem::where('cart_id', $user->id)->get();
+        $cartItems = $user ? CartItem::where('cart_id', $user->id)->get() : [];
         $product = Product::with(['images', 'sizes', 'categories'])
             ->where('slug', $slug)
             ->firstOrFail();

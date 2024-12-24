@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Head, usePage } from "@inertiajs/react";
+import { Head, usePage, Link } from "@inertiajs/react";
 import { Trash2 } from "lucide-react";
 import RecommendedProducts from "@/Components/RecommendedProducts";
 
@@ -312,9 +312,12 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                     </div>
                                 </div>
 
-                                <button className="w-full bg-black text-white rounded-md py-3 mt-6 hover:bg-gray-800">
-                                    CHECKOUT
-                                </button>
+                                <Link
+                                    href={route("checkout")}
+                                    className="block w-full bg-black text-white rounded-md py-3 mt-6 hover:bg-gray-800 text-center"
+                                >
+                                    Proceed to Checkout
+                                </Link>
 
                                 <button className="w-full text-gray-600 mt-4 hover:text-gray-900">
                                     Use a promo code

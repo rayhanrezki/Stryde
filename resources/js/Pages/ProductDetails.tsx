@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle2, AlertCircle, X } from "lucide-react";
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
 import { Head, Link, useForm } from "@inertiajs/react";
@@ -13,6 +13,7 @@ import {
     CarouselPrevious,
 } from "@/Components/ui/carousel";
 import Footer from "@/Components/Footer";
+import { Alert, AlertTitle, AlertDescription } from "@/Components/ui/alert";
 
 interface CartItem {
     sizes(arg0: string, sizes: any): unknown;
@@ -51,6 +52,11 @@ export default function ProductDetails({
     const [selectedSize, setSelectedSize] = useState<number | null>(null); // Ukuran yang dipilih
     const [quantity, setQuantity] = useState<number>(1);
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
+    const [alertState, setAlertState] = useState<{
+        show: boolean;
+        type: "success" | "destructive";
+        message: string;
+    } | null>(null);
 
     const { data, setData, post, processing, errors } = useForm({
         product_id: product.id,
@@ -74,22 +80,48 @@ export default function ProductDetails({
 
     // Fungsi untuk menambahkan produk ke keranjang
     const handleAddToCart = () => {
-        if (currentStock > 0 && quantity > 0 && selectedSize) {
-            setData("quantity", quantity); // Perbarui jumlah produk di form
+        if (!auth.user) {
+            setAlertState({
+                show: true,
+                type: "destructive",
+                message: "You must be logged in to add items to cart",
+            });
+            setTimeout(() => setAlertState(null), 3000);
+            return;
+        }
 
-            console.log("Data sent to backend:", data); // Debugging
+        if (currentStock > 0 && quantity > 0 && selectedSize) {
+            setData("quantity", quantity);
 
             post(route("cart.add"), {
-                onSuccess: () => {
-                    alert("Item added to cart successfully!");
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: (page) => {
+                    setAlertState({
+                        show: true,
+                        type: "success",
+                        message: "Item added to cart successfully!",
+                    });
+
+                    setTimeout(() => {
+                        setAlertState(null);
+                    }, 3000);
                 },
                 onError: (errors: any) => {
-                    console.error(errors); // Debugging untuk error backend
-                    alert("Failed to add item to cart.");
+                    console.error(errors);
+                    setAlertState({
+                        show: true,
+                        type: "destructive",
+                        message: "Failed to add item to cart.",
+                    });
                 },
             });
         } else {
-            alert("Please select a valid size and quantity.");
+            setAlertState({
+                show: true,
+                type: "destructive",
+                message: "Please select a valid size and quantity.",
+            });
         }
     };
 
@@ -97,6 +129,38 @@ export default function ProductDetails({
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title={product.name} />
             <Navbar user={auth?.user} cartItems={cartItems} />
+            {alertState?.show && (
+                <div className="fixed inset-x-0 top-24 mx-auto z-50 max-w-md animate-in fade-in slide-in-from-top-2">
+                    <Alert
+                        variant={alertState.type}
+                        className={`pr-12 shadow-lg ${
+                            alertState.type === "success"
+                                ? "bg-green-500 text-white border-green-600"
+                                : "bg-red-500 text-white border-red-600"
+                        }`}
+                    >
+                        <button
+                            onClick={() => setAlertState(null)}
+                            className="absolute right-2 top-2 rounded-lg p-1 hover:bg-white/20"
+                        >
+                            <X className="h-4 w-4 text-white" />
+                        </button>
+                        {alertState.type === "success" ? (
+                            <CheckCircle2 className="h-4 w-4 text-white" />
+                        ) : (
+                            <AlertCircle className="h-4 w-4 text-white" />
+                        )}
+                        <AlertTitle className="text-white">
+                            {alertState.type === "success"
+                                ? "Success"
+                                : "Error"}
+                        </AlertTitle>
+                        <AlertDescription className="text-white/90">
+                            {alertState.message}
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
                     <Link
@@ -203,7 +267,6 @@ export default function ProductDetails({
                                     {product.description}
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
-                                    <li>Product owned by {auth.user.name}</li>
                                     <li>Pay using QRIS</li>
                                     <li>
                                         Subhanallah, Walhamdulillah,

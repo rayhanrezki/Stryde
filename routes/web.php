@@ -15,6 +15,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuoteController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 // Public product routes
@@ -79,5 +80,9 @@ Route::get('/auth/github/callback', [SocialiteController::class, 'githubCallback
 Route::get('/fetch-quote', [QuoteController::class, 'fetch'])
     ->middleware(['auth', 'verified', 'IsAdmin'])
     ->name('fetch.quote');
+
+Route::get('/checkout', [CheckoutController::class, 'index'])
+    ->name('checkout')
+    ->middleware(['auth']); // Only allow authenticated users
 
 require __DIR__ . '/auth.php';

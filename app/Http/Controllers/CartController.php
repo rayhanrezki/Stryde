@@ -22,9 +22,7 @@ class CartController extends Controller
         ]);
 
         $user = Auth::user();
-
         $cart = Cart::firstOrCreate(['user_id' => $user->id]);
-
         $productSize = ProductSize::findOrFail($request->product_size_id);
 
         try {
@@ -69,11 +67,11 @@ class CartController extends Controller
                 'productSize'
             ])->where('cart_id', $cart->id)->get();
 
-            // Mengirim data keranjang kembali ke frontend
-            return redirect()->route('cart')->with([
-                'success' => 'Item added to cart.',
-                'cartItems' => $cartItems,
-            ]);
+            return redirect()->back()->with([
+                'success' => true,
+                'message' => 'Item added to cart successfully',
+            ])->with('cartItems', $cartItems);
+
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
