@@ -29,18 +29,6 @@ export default function Navbar({ user, cartItems }: NavbarProps) {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    // Count the total quantity of items grouped by product_id
-    const cartItemCount = (Array.isArray(cartItems) ? cartItems : []).reduce(
-        (acc, item) => {
-            if (!acc[item.product_id]) {
-                acc[item.product_id] = 0;
-            }
-            acc[item.product_id] += item.quantity;
-            return acc;
-        },
-        {} as { [key: number]: number }
-    );
-
     const [desktopLinks, mobileLinks] = [
         <div className="hidden lg:flex items-center space-x-6 font-rubik">
             <NavLink href="/products">New Drops</NavLink>
