@@ -116,25 +116,37 @@ class CartController extends Controller
         $newQuantity = $request->quantity;
         $quantityDifference = $newQuantity - $oldQuantity;
 
-        // Mengecek jika stok tidak cukup saat menambah jumlah
         if ($quantityDifference > 0 && $quantityDifference > $productSize->stock) {
-            return back()->with('error', 'Stok tidak cukup untuk ukuran yang dipilih.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Stok tidak cukup untuk ukuran yang dipilih.',
+                'availableStock' => $productSize->stock,
+                'currentQuantity' => $oldQuantity
+            ], 400);
         }
 
-        // Memperbarui jumlah di keranjang
         $cartItem->quantity = $newQuantity;
         $cartItem->save();
 
-        // Menangani pembaruan stok berdasarkan selisih jumlah
         if ($quantityDifference > 0) {
-            // Jika jumlah item bertambah, kurangi stok
             $productSize->decrement('stock', $quantityDifference);
         } elseif ($quantityDifference < 0) {
-            // Jika jumlah item berkurang, tambah stok
             $productSize->increment('stock', abs($quantityDifference));
         }
 
-        return back()->with('success', 'Jumlah berhasil diperbarui.');
+        // Return updated cart item with its relationships
+        $updatedCartItem = CartItem::with([
+            'product' => function ($query) {
+                $query->with(['images', 'categories', 'sizes']);
+            },
+            'productSize'
+        ])->find($cartItem->id);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Jumlah berhasil diperbarui.',
+            'cartItem' => $updatedCartItem
+        ]);
     }
 
 
