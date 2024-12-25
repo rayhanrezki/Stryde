@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('dashboard');
 
 
-        Route::get('/Admin/dashboard', [DashboardController::class, 'index'])
+    Route::get('/Admin/dashboard', [DashboardController::class, 'index'])
         ->middleware(['auth', 'verified', 'IsAdmin'])
         ->name('dashboard');
 
@@ -81,8 +81,11 @@ Route::get('/fetch-quote', [QuoteController::class, 'fetch'])
     ->middleware(['auth', 'verified', 'IsAdmin'])
     ->name('fetch.quote');
 
-Route::get('/checkout', [CheckoutController::class, 'index'])
-    ->name('checkout')
-    ->middleware(['auth']); // Only allow authenticated users
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
+    Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+});
 
 require __DIR__ . '/auth.php';

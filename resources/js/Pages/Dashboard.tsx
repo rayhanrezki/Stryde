@@ -6,6 +6,7 @@ import QuoteFetch from "@/Components/QuoteFetch";
 interface Props {
     totalProducts: number;
     totalUsers: number;
+    totalSales: number;
     user: {
         id: number;
         name: string;
@@ -14,7 +15,11 @@ interface Props {
     };
 }
 
-export default function Dashboard({ totalProducts, totalUsers }: Props) {
+export default function Dashboard({
+    totalProducts,
+    totalUsers,
+    totalSales,
+}: Props) {
     return (
         <AdminLayout>
             <Head title="Dashboard" />
@@ -70,7 +75,9 @@ export default function Dashboard({ totalProducts, totalUsers }: Props) {
                                 <p className="text-sm text-gray-600">
                                     Total Orders
                                 </p>
-                                <p className="text-2xl font-semibold">24</p>
+                                <p className="text-2xl font-semibold">
+                                    {totalSales}
+                                </p>
                             </div>
                         </div>
                     </div>
