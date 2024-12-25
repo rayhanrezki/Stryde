@@ -256,19 +256,18 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                     onClick={() =>
                                                         updateQuantity(
                                                             cartItem.id,
-                                                            Math.max(
-                                                                cartItem.quantity -
-                                                                    1,
+                                                            cartItem.quantity -
                                                                 1
-                                                            )
                                                         )
                                                     }
                                                 >
                                                     -
                                                 </button>
+
                                                 <span className="text-lg font-semibold">
                                                     {cartItem.quantity}
                                                 </span>
+
                                                 <button
                                                     className="text-gray-600 hover:text-gray-900"
                                                     onClick={() =>

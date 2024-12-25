@@ -71,7 +71,6 @@ class CartController extends Controller
                 'success' => true,
                 'message' => 'Item added to cart successfully',
             ])->with('cartItems', $cartItems);
-
         } catch (\Exception $e) {
             return back()->with('error', $e->getMessage());
         }
@@ -117,20 +116,27 @@ class CartController extends Controller
         $newQuantity = $request->quantity;
         $quantityDifference = $newQuantity - $oldQuantity;
 
+        // Mengecek jika stok tidak cukup saat menambah jumlah
         if ($quantityDifference > 0 && $quantityDifference > $productSize->stock) {
-            return back()->with('error', 'Not enough stock for the selected size.');
+            return back()->with('error', 'Stok tidak cukup untuk ukuran yang dipilih.');
         }
 
+        // Memperbarui jumlah di keranjang
         $cartItem->quantity = $newQuantity;
         $cartItem->save();
 
-        $productSize->decrement('stock', $quantityDifference);
-        if ($quantityDifference < 0) {
+        // Menangani pembaruan stok berdasarkan selisih jumlah
+        if ($quantityDifference > 0) {
+            // Jika jumlah item bertambah, kurangi stok
+            $productSize->decrement('stock', $quantityDifference);
+        } elseif ($quantityDifference < 0) {
+            // Jika jumlah item berkurang, tambah stok
             $productSize->increment('stock', abs($quantityDifference));
         }
 
-        return back()->with('success', 'Quantity updated.');
+        return back()->with('success', 'Jumlah berhasil diperbarui.');
     }
+
 
     public function removeItem(Request $request)
     {
