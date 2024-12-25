@@ -20,4 +20,4 @@ class CheckoutController extends Controller
             'products' => $products
         ]);
     }
-} 
+}
