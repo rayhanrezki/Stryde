@@ -1,58 +1,38 @@
-interface CartItem {
-    id: number;
-    name: string;
-    price: number;
-    quantity: number;
+interface OrderSummaryProps {
+    summary: {
+        items: number;
+        itemsTotal: number;
+        delivery: number;
+        salesTax: number;
+        total: number;
+        formatPrice: (amount: number) => string;
+    };
 }
 
-export default function OrderSummary() {
-    // This would typically come from your cart state/store
-    const cartItems: CartItem[] = [
-        { id: 1, name: "Sample Product", price: 29.99, quantity: 2 },
-    ];
-
-    const subtotal = cartItems.reduce(
-        (sum, item) => sum + item.price * item.quantity,
-        0
-    );
-    const shipping = 5.99;
-    const tax = subtotal * 0.1; // 10% tax
-    const total = subtotal + shipping + tax;
-
+export function OrderSummary({ summary }: OrderSummaryProps) {
     return (
-        <div className="bg-white p-6 rounded-lg shadow">
-            <h2 className="text-lg font-medium mb-6">Order Summary</h2>
-
-            <div className="space-y-4">
-                {cartItems.map((item) => (
-                    <div key={item.id} className="flex justify-between">
-                        <div>
-                            <p className="font-medium">{item.name}</p>
-                            <p className="text-sm text-gray-500">
-                                Qty: {item.quantity}
-                            </p>
-                        </div>
-                        <p>${(item.price * item.quantity).toFixed(2)}</p>
-                    </div>
-                ))}
-            </div>
-
-            <div className="border-t mt-6 pt-6 space-y-4">
+        <div className="bg-white p-6 rounded-3xl shadow-sm font-rubik">
+            <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+            <div className="space-y-2">
                 <div className="flex justify-between">
-                    <p>Subtotal</p>
-                    <p>${subtotal.toFixed(2)}</p>
+                    <span>Items ({summary.items})</span>
+                    <span>{summary.formatPrice(summary.itemsTotal)}</span>
                 </div>
                 <div className="flex justify-between">
-                    <p>Shipping</p>
-                    <p>${shipping.toFixed(2)}</p>
+                    <span>Delivery</span>
+                    <span className="text-green-600">Free</span>
                 </div>
                 <div className="flex justify-between">
-                    <p>Tax</p>
-                    <p>${tax.toFixed(2)}</p>
+                    <span>Sales Tax</span>
+                    <span>
+                        {summary.salesTax
+                            ? summary.formatPrice(summary.salesTax)
+                            : "-"}
+                    </span>
                 </div>
-                <div className="flex justify-between font-medium text-lg">
-                    <p>Total</p>
-                    <p>${total.toFixed(2)}</p>
+                <div className="flex justify-between font-semibold text-lg pt-2 border-t">
+                    <span>Total</span>
+                    <span>{summary.formatPrice(summary.total)}</span>
                 </div>
             </div>
         </div>
