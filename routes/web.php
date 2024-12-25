@@ -8,6 +8,7 @@ use App\Http\Controllers\MainController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\IsAdmin;
+use App\Http\Controllers\RatingController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 
@@ -51,4 +52,8 @@ Route::middleware('auth')->get('/main', function () {
         return redirect()->route('admin.dashboard');
     }
     return redirect()->route('main');
+
+    //rating
+    Route::get('/ratings', [RatingController::class, 'index']);
+    Route::post('/ratings', [RatingController::class, 'store']);
 });

@@ -5,9 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Rating;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\JsonResponse;
 
 class RatingController extends Controller
 {
+
+    public function index(): JsonResponse
+    {
+        $ratings = Rating::with(['product', 'user'])->get();
+
+        return response()->json([
+            'data' => $ratings
+        ]);
+    }
     public function store(Request $request)
     {
         // Validasi input
