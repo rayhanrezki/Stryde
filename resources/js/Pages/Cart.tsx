@@ -35,6 +35,15 @@ interface Props extends PageProps {
     cartItems: CartItem[]; // Menggunakan tipe CartItem[]
 }
 
+const formatToIDR = (amount: number): string => {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+    }).format(amount);
+};
+
 export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
     const [loading, setLoading] = useState(false);
@@ -133,8 +142,8 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
             (acc, item) => acc + parseFloat(item.product.price) * item.quantity,
             0
         );
-        const delivery = 6.99;
-        const salesTax = 0; // Static for now
+        const delivery = 9000;
+        const salesTax = 0;
         const total = subtotal + delivery + salesTax;
 
         return { itemCount, subtotal, delivery, salesTax, total };
@@ -151,22 +160,12 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
                         <h1 className="text-2xl font-bold mb-2">
-                            Saving to celebrate
+                            Step into Stryde
                         </h1>
                         <p className="text-gray-600">
-                            Enjoy up to 60% off thousands of styles during the
-                            End of Year sale - while supplies last. No code
-                            needed.
+                            Discover the latest sneaker trends and find your
+                            stride.
                         </p>
-                        <div className="flex gap-2 mt-2">
-                            <button className="text-blue-600 hover:underline">
-                                Join us
-                            </button>
-                            <span className="text-gray-600">or</span>
-                            <button className="text-blue-600 hover:underline">
-                                Sign-in
-                            </button>
-                        </div>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-6">
@@ -175,10 +174,22 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                 <h2 className="text-xl font-semibold mb-2">
                                     Your Bag
                                 </h2>
-                                <p className="text-gray-600 mb-6">
-                                    Items in your bag not reserved - check out
-                                    now to make them yours.
-                                </p>
+                                {cartItemsState.length > 0 ? (
+                                    <p className="text-gray-600 mb-6">
+                                        Items in your bag not reserved - check
+                                        out now to make them yours.
+                                    </p>
+                                ) : (
+                                    <p className="text-gray-600 mb-6">
+                                        Your bag is empty.{" "}
+                                        <Link
+                                            href={route("products.list")}
+                                            className="text-blue-600 hover:underline"
+                                        >
+                                            Start shopping now!
+                                        </Link>
+                                    </p>
+                                )}
 
                                 {cartItemsState.map((cartItem) => (
                                     <div
@@ -230,10 +241,12 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                     </p>
                                                 </div>
                                                 <span className="text-blue-600 font-semibold">
-                                                    $
-                                                    {parseFloat(
-                                                        cartItem.product.price.toString()
-                                                    ).toFixed(2)}
+                                                    {formatToIDR(
+                                                        parseFloat(
+                                                            cartItem.product
+                                                                .price
+                                                        )
+                                                    )}
                                                 </span>
                                             </div>
 
@@ -298,7 +311,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                             {orderSummary.itemCount} ITEM
                                         </span>
                                         <span>
-                                            ${orderSummary.subtotal.toFixed(2)}
+                                            {formatToIDR(orderSummary.subtotal)}
                                         </span>
                                     </div>
 
@@ -307,7 +320,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                             Total
                                         </span>
                                         <span className="font-semibold">
-                                            ${orderSummary.total.toFixed(2)}
+                                            {formatToIDR(orderSummary.total)}
                                         </span>
                                     </div>
                                 </div>
@@ -318,10 +331,6 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                 >
                                     Proceed to Checkout
                                 </Link>
-
-                                <button className="w-full text-gray-600 mt-4 hover:text-gray-900">
-                                    Use a promo code
-                                </button>
                             </div>
                         </div>
                     </div>
