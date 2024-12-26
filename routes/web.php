@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\InvoiceController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 // Public product routes
@@ -91,5 +92,7 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
     ->name('cart.update-quantity')
     ->middleware(['auth']);
+
+    Route::get('/invoice', [InvoiceController::class, 'index']);
 
 require __DIR__ . '/auth.php';
