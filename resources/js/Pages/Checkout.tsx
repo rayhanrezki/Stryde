@@ -24,6 +24,18 @@ interface Props extends PageProps {
 
 export default function Checkout({ auth, cart, products }: Props) {
     const [isProcessing, setIsProcessing] = useState(false);
+    const [formData, setFormData] = useState({
+        email: "",
+        firstName: "",
+        lastName: "",
+        address: "",
+        phone: "",
+        deliveryOption: "standard",
+        sameAsBilling: true,
+        isOver13: false,
+        newsletter: false,
+    });
+
     const cartItemsState = cart?.items || [];
 
     const cartItem = cart?.items[0];
@@ -45,10 +57,14 @@ export default function Checkout({ auth, cart, products }: Props) {
         setIsProcessing(true);
 
         try {
-            const response = await axios.post("/checkout/process");
+            const response = await axios.post("/checkout/process", {
+                ...formData, // Send form data to the backend
+                paymentStatus: "pending", // Add default values as needed
+                paymentMethod: "transfer", // Add default values as needed
+            });
 
             if (response.status === 200) {
-                alert(response.data.message); // Menampilkan pesan sukses
+                alert(response.data.message); // Show success message
             } else {
                 alert("Payment failed! Please try again.");
             }
@@ -77,6 +93,8 @@ export default function Checkout({ auth, cart, products }: Props) {
                         <CheckoutForm
                             isProcessing={isProcessing}
                             setIsProcessing={setIsProcessing}
+                            formData={formData} // Pass formData to the CheckoutForm
+                            setFormData={setFormData} // Pass setFormData to handle input changes
                         />
                         <button
                             onClick={handleCheckout}

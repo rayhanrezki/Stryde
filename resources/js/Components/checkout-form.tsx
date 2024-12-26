@@ -1,45 +1,55 @@
-import { useState } from "react";
+import { useForm, usePage } from "@inertiajs/react";
 
 interface CheckoutFormProps {
     isProcessing: boolean;
-    setIsProcessing: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsProcessing: (isProcessing: boolean) => void;
+    formData: {
+        email: string;
+        firstName: string;
+        lastName: string;
+        address: string;
+        phone: string;
+        deliveryOption: string;
+        sameAsBilling: boolean;
+        isOver13: boolean;
+    };
+    setFormData: (formData: any) => void;
 }
 
 export function CheckoutForm({
     isProcessing,
     setIsProcessing,
+    formData,
+    setFormData,
 }: CheckoutFormProps) {
-    const [formData, setFormData] = useState({
-        email: "",
-        firstName: "",
-        lastName: "",
-        address: "",
-        phone: "",
-        deliveryOption: "standard",
-        sameAsBilling: true,
-        isOver13: false,
-        newsletter: false,
-    });
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log("Form submitted:", formData);
     };
+    const user = usePage().props.auth.user;
+
+    const { data } = useForm({
+        name: user.name,
+        email: user.email,
+        address: user.address,
+        phone: user.phone,
+    });
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 font-rubik">
+            {/* Form fields */}
             <div>
                 <div className="space-y-4">
                     <h2 className="text-2xl font-semibold">Contact Details</h2>
                     <p className="text-gray-600">
-                        We will use these details to keep you inform about your
-                        delivery.
+                        We will use these details to keep you informed about
+                        your delivery.
                     </p>
                     <input
                         type="email"
                         placeholder="Email"
                         className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 font-rubik"
-                        value={formData.email}
+                        value={data.email}
                         onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
                         }
@@ -79,16 +89,13 @@ export function CheckoutForm({
                 </div>
                 <input
                     type="text"
-                    placeholder="Find Delivery Address*"
+                    placeholder="Delivery Address*"
                     className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 mt-4 font-rubik"
                     value={formData.address}
                     onChange={(e) =>
                         setFormData({ ...formData, address: e.target.value })
                     }
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                    Start typing your street address or zip code for suggestion
-                </p>
                 <input
                     type="tel"
                     placeholder="Phone Number*"
@@ -98,9 +105,6 @@ export function CheckoutForm({
                         setFormData({ ...formData, phone: e.target.value })
                     }
                 />
-                <p className="text-sm text-gray-500 mt-1">
-                    E.g. (123) 456-7890
-                </p>
             </div>
 
             <div>
@@ -124,9 +128,6 @@ export function CheckoutForm({
                         />
                         <span className="font-medium">Standard Delivery</span>
                         <span className="float-right text-green-600">Free</span>
-                        <p className="text-sm text-gray-500 mt-1">
-                            Enter your address to see when you'll get your order
-                        </p>
                     </label>
                 </div>
             </div>

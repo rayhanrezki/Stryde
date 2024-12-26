@@ -7,7 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Payment;
 use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -18,7 +17,7 @@ class CheckoutController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $cart = Auth::user()->cart;
+        $cart = $user->cart;
         $products = Product::with(['images', 'sizes', 'categories'])
             ->whereIn('id', $cart->items->pluck('product_id'))
             ->get();
@@ -37,45 +36,69 @@ class CheckoutController extends Controller
         $cartItems = $cart->items;
 
         // Validasi jika tidak ada item di cart
-        if ($cart->items->isEmpty()) {
+        if ($cartItems->isEmpty()) {
             return redirect()->route('checkout.index')->withErrors(['message' => 'Cart is empty!']);
         }
+
+        $validated = $request->validate([
+            'firstName' => 'required|string',
+            'lastName' => 'required|string',
+            'address' => 'required|string',
+            'phone' => 'required|string',
+            'deliveryOption' => 'required|string',
+            'sameAsBilling' => 'boolean',
+            'isOver13' => 'required|boolean',
+            'newsletter' => 'required|boolean',
+            'paymentStatus' => 'string|nullable', // Allow null or string
+            'paymentMethod' => 'string|nullable', // Allow null or string
+        ]);
 
         DB::beginTransaction();
 
         try {
-
             foreach ($cartItems as $item) {
                 $orderData = [
                     'user_id' => $user->id,
+                    'email' => $user->email,
+                    'first_name' => $validated['firstName'],
+                    'last_name' => $validated['lastName'],
+                    'address' => $validated['address'],
+                    'phone' => $validated['phone'],
+                    'delivery_option' => $validated['deliveryOption'],
+                    'same_as_billing' => $validated['sameAsBilling'],
+                    'is_over_13' => $validated['isOver13'],
+                    'newsletter' => $validated['newsletter'],
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'total_amount' => $item->product->price * $item->quantity,
-                    'status' => 'completed',
-                    'email' => $user->email,
-                    'name' => $user->name,
-                    'shipping_address' => $user->address,
-                    'payment' => 'transfer',
+                    'status' => $validated['paymentStatus'] ?? 'pending',  // Default value if null
+                    'payment' => $validated['paymentMethod'] ?? 'transfer', // Default value if null
                     'order_date' => Carbon::now(),
                     'created_at' => now(),
                     'updated_at' => now(),
                 ];
 
+                Order::create($orderData);
+
                 // Log untuk memeriksa data order
                 Log::info('Order data:', $orderData);
-
-                Order::create($orderData);
             }
-            // Hapus item dari cart
+
+            // Hapus item dari cart jika semua order berhasil dibuat
             CartItem::where('cart_id', $cart->id)->delete();
 
             DB::commit();
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Payment successful!',
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Error processing checkout', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
             return response()->json([
                 'status' => 'error',
                 'message' => 'Payment failed! Please try again.',
