@@ -11,7 +11,7 @@ import Footer from "@/Components/Footer";
 import { PageProps } from "@/types";
 
 interface CartItem {
-    sizes(arg0: string, sizes: any): unknown;
+    sizes: string;
     id: number;
     product_id: number;
     product_size_id: number;

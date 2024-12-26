@@ -144,7 +144,7 @@ class CartController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Jumlah berhasil diperbarui.',
+            'message' => 'Quantity updated.',
             'cartItem' => $updatedCartItem
         ]);
     }
