@@ -35,10 +35,19 @@ interface Props {
 }
 
 export default function ProductDashboard({ products }: Props) {
+    const [searchQuery, setSearchQuery] = useState("");
     const [productToDelete, setProductToDelete] = useState<string | null>(null);
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    const filteredProducts = products.filter(
+        (product) =>
+            product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            product.description
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+    );
 
     const getStockPercentage = () => {
         return 75;
@@ -95,7 +104,8 @@ export default function ProductDashboard({ products }: Props) {
                     <div>
                         <h1 className="text-2xl font-bold">Products</h1>
                         <p className="text-gray-600">
-                            {products.length} total products
+                            {filteredProducts.length} of {products.length}{" "}
+                            products
                         </p>
                     </div>
                     <Link href={route("products.create")}>
@@ -116,6 +126,8 @@ export default function ProductDashboard({ products }: Props) {
                         <input
                             type="text"
                             placeholder="Search products..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
                             className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -123,7 +135,7 @@ export default function ProductDashboard({ products }: Props) {
 
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {products.map((product) => (
+                    {filteredProducts.map((product) => (
                         <div
                             key={product.id}
                             className="bg-white p-6 rounded-xl"

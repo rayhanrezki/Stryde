@@ -23,6 +23,12 @@ class User extends Authenticatable
         'password',
         'address',
         'phone',
+        'google_id',
+        'google_token',
+        'google_refresh_token',
+        'github_id',
+        'github_token',
+        'github_refresh_token',
 
     ];
 
@@ -48,5 +54,10 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
         ];
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class); // Relasi satu user memiliki satu cart
     }
 }

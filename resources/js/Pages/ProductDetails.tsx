@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Heart, ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle2, AlertCircle, X } from "lucide-react";
 import Navbar from "@/Components/Navbar";
 import { Product } from "@/types/product";
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
+import RecommendedProducts from "@/Components/RecommendedProducts";
+import { PageProps } from "@/types";
 import {
     Carousel,
     CarouselContent,
@@ -10,29 +12,155 @@ import {
     CarouselNext,
     CarouselPrevious,
 } from "@/Components/ui/carousel";
+import Footer from "@/Components/Footer";
+import { Alert, AlertTitle, AlertDescription } from "@/Components/ui/alert";
 
-interface Props {
+interface CartItem {
+    sizes(arg0: string, sizes: any): unknown;
+    id: number;
+    product_id: number;
+    product_size_id: number;
+    quantity: number;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
+}
+
+interface Props extends PageProps {
     product: Product;
     recommendedProducts: Product[];
+    cartItems: CartItem[];
 }
 
 export default function ProductDetails({
+    auth,
     product,
     recommendedProducts,
+    cartItems,
 }: Props) {
-    const [selectedSize, setSelectedSize] = useState<string>("");
+    const [selectedSize, setSelectedSize] = useState<number | null>(null); // Ukuran yang dipilih
+    const [quantity, setQuantity] = useState<number>(1);
+    const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
+    const [alertState, setAlertState] = useState<{
+        show: boolean;
+        type: "success" | "destructive";
+        message: string;
+    } | null>(null);
 
+    const { data, setData, post, processing, errors } = useForm({
+        product_id: product.id,
+        product_size_id: null as number | null, // ID ukuran awal (null hingga ukuran dipilih)
+        quantity: 1,
+    });
+
+    // Fungsi untuk mendapatkan stok berdasarkan ukuran
     const getCurrentStock = () => {
-        const size = product.sizes.find((s) => s.size === selectedSize);
+        const size = product.sizes.find((s) => s.id === selectedSize); // Cari berdasarkan ID ukuran
         return size ? size.stock : 0;
     };
 
     const currentStock = getCurrentStock();
 
+    // Fungsi untuk menangani pemilihan ukuran
+    const handleSizeSelection = (sizeId: number) => {
+        setSelectedSize(sizeId); // Simpan ukuran yang dipilih
+        setData("product_size_id", sizeId); // Perbarui product_size_id di form
+    };
+
+    // Fungsi untuk menambahkan produk ke keranjang
+    const handleAddToCart = () => {
+        if (!auth.user) {
+            setAlertState({
+                show: true,
+                type: "destructive",
+                message: "You must be logged in to add items to cart",
+            });
+            setTimeout(() => setAlertState(null), 3000);
+            return;
+        }
+
+        if (currentStock > 0 && quantity > 0 && selectedSize) {
+            setData("quantity", quantity);
+
+            post(route("cart.add"), {
+                preserveScroll: true,
+                preserveState: true,
+                onSuccess: (page) => {
+                    setAlertState({
+                        show: true,
+                        type: "success",
+                        message: "Item added to cart successfully!",
+                    });
+
+                    setTimeout(() => {
+                        setAlertState(null);
+                    }, 3000);
+                },
+                onError: (errors: any) => {
+                    console.error(errors);
+                    setAlertState({
+                        show: true,
+                        type: "destructive",
+                        message: "Failed to add item to cart.",
+                    });
+                },
+            });
+        } else {
+            setAlertState({
+                show: true,
+                type: "destructive",
+                message: "Please select a valid size and quantity.",
+            });
+        }
+    };
+
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title={product.name} />
-            <Navbar />
+            <Navbar user={auth?.user} cartItems={cartItems} />
+            {alertState?.show && (
+                <div className="fixed inset-x-0 top-24 mx-auto z-50 max-w-md animate-in fade-in slide-in-from-top-2">
+                    <Alert
+                        variant={alertState.type}
+                        className={`pr-12 shadow-lg ${
+                            alertState.type === "success"
+                                ? "bg-green-500 text-white border-green-600"
+                                : "bg-red-500 text-white border-red-600"
+                        }`}
+                    >
+                        <button
+                            onClick={() => setAlertState(null)}
+                            className="absolute right-2 top-2 rounded-lg p-1 hover:bg-white/20"
+                        >
+                            <X className="h-4 w-4 text-white" />
+                        </button>
+                        {alertState.type === "success" ? (
+                            <CheckCircle2 className="h-4 w-4 text-white" />
+                        ) : (
+                            <AlertCircle className="h-4 w-4 text-white" />
+                        )}
+                        <AlertTitle className="text-white">
+                            {alertState.type === "success"
+                                ? "Success"
+                                : "Error"}
+                        </AlertTitle>
+                        <AlertDescription className="text-white/90">
+                            {alertState.message}
+                        </AlertDescription>
+                    </Alert>
+                </div>
+            )}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="mb-4">
                     <Link
@@ -45,7 +173,7 @@ export default function ProductDetails({
                 </div>
                 <div className="bg-white rounded-xl shadow-lg overflow-hidden">
                     <div className="grid md:grid-cols-2 gap-8">
-                        {/* Product Images Carousel */}
+                        {/* Carousel untuk gambar produk */}
                         <div className="p-4">
                             <Carousel className="w-full max-w-xl mx-auto">
                                 <CarouselContent>
@@ -68,7 +196,7 @@ export default function ProductDetails({
                             </Carousel>
                         </div>
 
-                        {/* Product Info */}
+                        {/* Info produk */}
                         <div className="p-8 space-y-6">
                             <h1 className="text-2xl font-bold font-rubik">
                                 {product.name}
@@ -79,23 +207,23 @@ export default function ProductDetails({
 
                             <p className="text-gray-600">
                                 {selectedSize
-                                    ? `Stock Available for size ${selectedSize}: ${currentStock}`
+                                    ? `Stock Available for selected size: ${currentStock}`
                                     : "Select a size to see available stock"}
                             </p>
 
-                            {/* Size Selector */}
+                            {/* Pilih ukuran produk */}
                             <div className="grid grid-cols-2 gap-2">
                                 {product.sizes.map((size) => (
                                     <button
                                         key={size.id}
                                         className={`p-3 border rounded-lg ${
-                                            selectedSize === size.size
+                                            selectedSize === size.id
                                                 ? "border-blue-600 bg-blue-50"
                                                 : "hover:border-gray-400"
                                         }`}
                                         onClick={() =>
-                                            setSelectedSize(size.size)
-                                        }
+                                            handleSizeSelection(size.id)
+                                        } // Memperbarui ukuran yang dipilih
                                     >
                                         <span className="font-medium">
                                             {size.size}
@@ -107,22 +235,21 @@ export default function ProductDetails({
                                 ))}
                             </div>
 
-                            {/* Action Buttons */}
+                            {/* Tombol aksi */}
                             <div className="flex flex-col gap-2 w-full">
-                                <div className="flex gap-2">
-                                    <button
-                                        className="flex-1 bg-[#2A2A2A] text-white py-3 px-4 rounded-md font-medium hover:bg-[#404040] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                                        disabled={
-                                            currentStock === 0 || !selectedSize
-                                        }
-                                    >
-                                        {!selectedSize
-                                            ? "SELECT SIZE"
-                                            : currentStock === 0
-                                            ? "OUT OF STOCK"
-                                            : "ADD TO CART"}
-                                    </button>
-                                </div>
+                                <button
+                                    className="flex-1 bg-[#2A2A2A] text-white py-3 px-4 rounded-md font-medium hover:bg-[#404040] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                                    disabled={
+                                        currentStock === 0 || !selectedSize
+                                    }
+                                    onClick={handleAddToCart}
+                                >
+                                    {!selectedSize
+                                        ? "SELECT SIZE"
+                                        : currentStock === 0
+                                        ? "OUT OF STOCK"
+                                        : "ADD TO CART"}
+                                </button>
                                 <button
                                     className="w-full bg-[#4263EB] text-white py-3 px-4 rounded-md font-medium hover:bg-[#3653cc] transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
                                     disabled={!selectedSize}
@@ -131,6 +258,7 @@ export default function ProductDetails({
                                 </button>
                             </div>
 
+                            {/* Deskripsi produk */}
                             <div className="space-y-4 pt-6 border-t">
                                 <h2 className="font-medium">
                                     ABOUT THE PRODUCT
@@ -139,8 +267,7 @@ export default function ProductDetails({
                                     {product.description}
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
-                                    <li>Product Ini Punya rafi</li>
-                                    <li>Bayar QRIS</li>
+                                    <li>Pay using QRIS</li>
                                     <li>
                                         Subhanallah, Walhamdulillah,
                                         Walailahailallah
@@ -152,49 +279,8 @@ export default function ProductDetails({
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <h2 className="text-2xl font-rubik font-bold mb-6">
-                    You May Also Like
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {recommendedProducts.map((product) => (
-                        <div key={product.id} className="space-y-4">
-                            {/* Product Card */}
-                            <div className="bg-[#fafafa] rounded-[20px] p-2 relative">
-                                <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
-                                    <img
-                                        src={
-                                            product.images[0]?.image_path
-                                                ? `/storage/${product.images[0].image_path}`
-                                                : "/placeholder.jpg"
-                                        }
-                                        alt={product.name}
-                                        className="absolute inset-0 w-full h-full object-cover"
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Product Info */}
-                            <div className="space-y-2">
-                                <h3 className="font-semibold font-rubik text-base line-clamp-2">
-                                    {product.name}
-                                </h3>
-                                <p className="text-blue-600 font-bold">
-                                    Rp {product.price.toLocaleString("id-ID")}
-                                </p>
-                                <Link
-                                    href={route("products.show", product.slug)}
-                                    className="block"
-                                >
-                                    <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
-                                        VIEW PRODUCT
-                                    </button>
-                                </Link>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <RecommendedProducts recommendedProducts={recommendedProducts} />
+            <Footer />
         </div>
     );
 }

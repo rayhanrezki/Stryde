@@ -8,6 +8,8 @@ export interface User {
     id: number;
     name: string;
     email: string;
+    address?: string;
+    phone?: string;
     email_verified_at: string | null;
     is_admin: boolean;
 }

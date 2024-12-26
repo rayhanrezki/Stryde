@@ -1,20 +1,63 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import Navbar from "@/Components/Navbar";
 import { Product, Category } from "@/types/product";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import Footer from "@/Components/Footer";
+import { PageProps } from "@/types";
 
-interface Props {
-    products: Product[];
-    totalItems: number;
+interface CartItem {
+    sizes(arg0: string, sizes: any): unknown;
+    id: number;
+    product_id: number;
+    product_size_id: number;
+    quantity: number;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
 }
 
-export default function ProductList({ products }: Props) {
+interface Props extends PageProps {
+    products: Product[];
+
+    cartItems: CartItem[];
+}
+
+export default function ProductList({ auth, products, cartItems }: Props) {
     const [filters, setFilters] = useState({
         size: "",
         categories: [] as number[],
     });
 
-    // Get unique sizes and categories
+    useEffect(() => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const categoryParam = urlParams.get("category");
+
+        if (categoryParam) {
+            const category = availableCategories.find(
+                (cat: Category) =>
+                    cat.name.toLowerCase() === categoryParam.toLowerCase()
+            );
+
+            if (category) {
+                setFilters((prev) => ({
+                    ...prev,
+                    categories: [category.id],
+                }));
+            }
+        }
+    }, []);
+
     const availableSizes = useMemo(() => {
         return Array.from(
             new Set(
@@ -62,30 +105,60 @@ export default function ProductList({ products }: Props) {
                 size: prev.size === value ? "" : (value as string),
             }));
         } else {
+            const newCategories = filters.categories.includes(value as number)
+                ? filters.categories.filter((id) => id !== value)
+                : [...filters.categories, value as number];
+
             setFilters((prev) => ({
                 ...prev,
-                categories: prev.categories.includes(value as number)
-                    ? prev.categories.filter((id) => id !== value)
-                    : [...prev.categories, value as number],
+                categories: newCategories,
             }));
+
+            const category = availableCategories.find(
+                (cat: Category) => cat.id === value
+            );
+            if (category) {
+                const url = new URL(window.location.href);
+                if (newCategories.includes(category.id)) {
+                    url.searchParams.set(
+                        "category",
+                        category.name.toLowerCase()
+                    );
+                } else {
+                    url.searchParams.delete("category");
+                }
+                router.get(
+                    url.pathname + url.search,
+                    {},
+                    { preserveState: true }
+                );
+            }
         }
     };
 
     const clearFilters = (type?: "size" | "categories") => {
         if (!type) {
             setFilters({ size: "", categories: [] });
+            router.get(window.location.pathname, {}, { preserveState: true });
         } else {
             setFilters((prev) => ({
                 ...prev,
                 [type]: type === "size" ? "" : [],
             }));
+            if (type === "categories") {
+                router.get(
+                    window.location.pathname,
+                    {},
+                    { preserveState: true }
+                );
+            }
         }
     };
 
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title="Products" />
-            <Navbar />
+            <Navbar user={auth?.user} cartItems={cartItems} />
 
             {/* Hero Banner */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -222,7 +295,7 @@ export default function ProductList({ products }: Props) {
                     </div>
 
                     {/* Product Grid */}
-                    <div className="flex-1">
+                    <div className="flex-1 mb-20">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredProducts.map((product) => (
                                 <div key={product.id} className="space-y-4">
@@ -278,6 +351,7 @@ export default function ProductList({ products }: Props) {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }

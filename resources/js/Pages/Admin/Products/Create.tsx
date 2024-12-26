@@ -1,9 +1,10 @@
 import { Head, useForm, Link } from "@inertiajs/react";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { PageProps } from "@/types";
-import { FormEvent, useState } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import axios from "axios";
 import { Category, Size, ProductFormData } from "@/types/product";
+import ImageDropzone from "@/Components/ImageDropzone";
 
 interface Props extends PageProps {
     categories: Category[];
@@ -50,29 +51,6 @@ export default function Create({ categories }: Props) {
         });
 
         post(route("products.store"));
-    };
-
-    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files.length > 0) {
-            const validFiles = Array.from(e.target.files).filter((file) => {
-                const isValidType = [
-                    "image/jpeg",
-                    "image/png",
-                    "image/gif",
-                    "image/jpg",
-                ].includes(file.type);
-                const isValidSize = file.size <= 2 * 1024 * 1024;
-                return isValidType && isValidSize;
-            });
-
-            if (validFiles.length !== e.target.files.length) {
-                alert(
-                    "Some files were skipped. Please ensure all files are images under 2MB."
-                );
-            }
-
-            setData("images", validFiles);
-        }
     };
 
     const addSizeStock = () => {
@@ -207,23 +185,10 @@ export default function Create({ categories }: Props) {
                         )}
                     </div>
 
-                    <div>
-                        <label className="block text-sm font-medium mb-2">
-                            Images
-                        </label>
-                        <input
-                            type="file"
-                            multiple
-                            onChange={handleImageChange}
-                            className="w-full border rounded-lg px-3 py-2"
-                            accept="image/*"
-                        />
-                        {errors.images && (
-                            <p className="text-red-500 text-sm mt-1">
-                                {errors.images}
-                            </p>
-                        )}
-                    </div>
+                    <ImageDropzone
+                        onImagesChange={(files) => setData("images", files)}
+                        error={errors.images}
+                    />
 
                     <div>
                         <div className="flex justify-between items-center mb-4">

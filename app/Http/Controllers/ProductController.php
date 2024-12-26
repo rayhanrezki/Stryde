@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Models\Product;
+use App\Models\CartItem;
 use App\Models\Category;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -14,7 +16,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with('images')->latest()->get();
-        
+
         return Inertia::render('Admin/ProductDashboard', [
             'products' => $products
         ]);
@@ -106,7 +108,7 @@ class ProductController extends Controller
         if ($request->has('existingImages')) {
             $existingImages = json_decode($request->existingImages, true);
             $existingImageIds = collect($existingImages)->pluck('id');
-            
+
             // Menghapus gambar yang tidak ada dalam array existingImages
             $product->images()
                 ->whereNotIn('id', $existingImageIds)
@@ -129,7 +131,7 @@ class ProductController extends Controller
 
         // Memperbarui ukuran dan stok
         $sizes = json_decode($request->sizes, true);
-        $product->sizes()->delete(); 
+        $product->sizes()->delete();
         foreach ($sizes as $size) {
             $product->sizes()->create([
                 'size' => $size['size'],
@@ -157,12 +159,11 @@ class ProductController extends Controller
             foreach ($product->images as $image) {
                 Storage::disk('public')->delete($image->image_path);
             }
-            
+
             $product->delete();
 
             return redirect()->route('products.index')
                 ->with('message', 'Product deleted successfully');
-            
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', 'Failed to delete product');
@@ -184,6 +185,8 @@ class ProductController extends Controller
     // Menampilkan detail produk berdasarkan slug
     public function show($slug)
     {
+        $user = Auth::user();
+        $cartItems = $user ? CartItem::where('cart_id', $user->id)->get() : [];
         $product = Product::with(['images', 'sizes', 'categories'])
             ->where('slug', $slug)
             ->firstOrFail();
@@ -197,33 +200,48 @@ class ProductController extends Controller
 
         return Inertia::render('ProductDetails', [
             'product' => $product,
-            'recommendedProducts' => $recommendedProducts
+            'recommendedProducts' => $recommendedProducts,
+            'auth' => [
+                'user' => $user,
+            ],
+            'cartItems' => $cartItems,
         ]);
     }
 
     // Menampilkan halaman utama dengan produk terbaru
+    // Menampilkan halaman utama dengan produk terbaru
     public function main()
     {
+        $user = Auth::user();
+        $cartItems = $user ? CartItem::where('cart_id', $user->id)->get() : [];
+
         $latestProducts = Product::with('images')
             ->latest()
             ->take(4)
             ->get();
 
         return Inertia::render('Main', [
-            'latestProducts' => $latestProducts
+            'latestProducts' => $latestProducts,
+            'auth' => ['user' => $user],
+            'cartItems' => $cartItems,
         ]);
     }
 
     // Menampilkan daftar semua produk untuk halaman publik
     public function list()
     {
+
+        $user = Auth::user();
+        $cartItems = $user ? CartItem::where('cart_id', $user->id)->get() : [];
         $products = Product::with(['images', 'sizes', 'categories'])
             ->latest()
             ->get();
 
         return Inertia::render('ProductList', [
             'products' => $products,
-            'totalItems' => $products->count()
+            'totalItems' => $products->count(),
+            'auth' => ['user' => $user],
+            'cartItems' => $cartItems,
         ]);
     }
 }

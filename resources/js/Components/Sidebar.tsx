@@ -3,101 +3,113 @@ import {
     LayoutDashboard,
     Package,
     ListOrdered,
-    ChevronDown,
+    Grid2x2,
+    Menu,
+    X,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Sidebar() {
-    const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+    // Close sidebar when screen size becomes larger
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth >= 768) {
+                setIsMobileMenuOpen(false);
+            }
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const navigationLinks = [
+        {
+            href: route("dashboard"),
+            icon: <LayoutDashboard size={20} />,
+            text: "DASHBOARD",
+            active: route().current("dashboard"),
+        },
+        {
+            href: route("products.index"),
+            icon: <Package size={20} />,
+            text: "ALL PRODUCTS",
+            active: route().current("products.index"),
+        },
+        {
+            href: "#",
+            icon: <ListOrdered size={20} />,
+            text: "ORDER LIST",
+            active: false,
+        },
+        {
+            href: route("categories.index"),
+            icon: <Grid2x2 size={20} />,
+            text: "Categories",
+            active: route().current("categories.index"),
+        },
+    ];
 
     return (
-        <aside className="fixed left-0 top-0 h-screen w-[240px] bg-white border-r">
-            {/* Logo */}
-            <div className="p-5 border-b">
-                <a className="text-xl font-bold font-rubik" href="/">
-                    Stryde
-                </a>
-            </div>
-
-            {/* Main Navigation */}
-            <nav className="p-4 space-y-2">
-                <Link
-                    href={route("dashboard")}
-                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        route().current("dashboard")
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                >
-                    <LayoutDashboard size={20} />
-                    <span className="font-medium font-rubik">DASHBOARD</span>
-                </Link>
-
-                <Link
-                    href={route("products.index")}
-                    className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
-                        route().current("products.index")
-                            ? "bg-blue-50 text-blue-600"
-                            : "text-gray-700 hover:bg-gray-100"
-                    }`}
-                >
-                    <Package size={20} />
-                    <span className="font-medium font-rubik">ALL PRODUCTS</span>
-                </Link>
-
-                <Link
-                    href="#"
-                    className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                    <ListOrdered size={20} />
-                    <span className="font-medium font-rubik">ORDER LIST</span>
-                </Link>
-            </nav>
-
-            {/* Categories */}
-            <div className="p-4">
-                <button
-                    onClick={() => setIsCategoriesOpen(!isCategoriesOpen)}
-                    className="flex items-center justify-between w-full p-3 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-                >
-                    <span className="font-medium">Categories</span>
-                    <ChevronDown
-                        size={20}
-                        className={`transform transition-transform ${
-                            isCategoriesOpen ? "rotate-180" : ""
-                        }`}
-                    />
-                </button>
-
-                {isCategoriesOpen && (
-                    <div className="mt-2 ml-3 space-y-1">
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Running
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Basketball
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Training
-                        </Link>
-                        <Link
-                            href="#"
-                            className="block p-3 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-                        >
-                            Lifestyle
-                        </Link>
-                    </div>
+        <>
+            {/* Hamburger Menu Button - Visible on Mobile */}
+            <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden fixed top-4 right-4 z-50 p-2 rounded-lg bg-white shadow-md"
+            >
+                {isMobileMenuOpen ? (
+                    <X size={24} className="text-gray-600" />
+                ) : (
+                    <Menu size={24} className="text-gray-600" />
                 )}
-            </div>
-        </aside>
+            </button>
+
+            {/* Overlay - Visible when mobile menu is open */}
+            {isMobileMenuOpen && (
+                <div
+                    className="md:hidden fixed inset-0 bg-black/50 z-40"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                />
+            )}
+
+            {/* Sidebar */}
+            <aside
+                className={`
+                fixed left-0 top-0 h-screen bg-white border-r z-40 w-[240px]
+                transition-transform duration-300 ease-in-out
+                ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
+                md:translate-x-0
+            `}
+            >
+                {/* Logo */}
+                <div className="p-5 border-b">
+                    <a className="text-xl font-bold font-rubik" href="/">
+                        Stryde
+                    </a>
+                </div>
+
+                {/* Main Navigation */}
+                <nav className="p-4 space-y-2">
+                    {navigationLinks.map((link, index) => (
+                        <Link
+                            key={index}
+                            href={link.href}
+                            className={`flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                                link.active
+                                    ? "bg-blue-50 text-blue-600"
+                                    : "text-gray-700 hover:bg-gray-100"
+                            }`}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                            {link.icon}
+                            <span className="font-medium font-rubik">
+                                {link.text}
+                            </span>
+                        </Link>
+                    ))}
+                </nav>
+            </aside>
+        </>
     );
 }

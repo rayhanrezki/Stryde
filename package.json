@@ -36,7 +36,9 @@
         "embla-carousel-react": "^8.5.1",
         "framer-motion": "^11.11.15",
         "lucide-react": "^0.456.0",
+        "react-dropzone": "^14.3.5",
         "tailwind-merge": "^2.5.4",
         "tailwindcss-animate": "^1.0.7"
-    }
+    },
+    "proxy": "https://api.api-ninjas.com"
 }

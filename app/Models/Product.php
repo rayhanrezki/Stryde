@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -9,7 +10,14 @@ use Illuminate\Support\Str;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'slug', 'description', 'price'];
+    use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'price',
+        // add other fields as needed
+    ];
 
     protected static function boot()
     {
