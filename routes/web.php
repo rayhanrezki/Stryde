@@ -16,7 +16,6 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\CheckoutController;
-use App\Http\Middleware\IsAdmin;
 use App\Http\Controllers\RatingController;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
