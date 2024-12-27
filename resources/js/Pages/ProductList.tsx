@@ -160,13 +160,15 @@ export default function ProductList({ auth, products, cartItems }: Props) {
             <Head title="Products" />
             <Navbar user={auth?.user} cartItems={cartItems} />
 
-            {/* Hero Banner */}
+            {/* Hero Banner - Make responsive */}
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="relative overflow-hidden bg-black text-white rounded-lg mb-8">
-                    <div className="container mx-auto px-6 py-16 relative z-10">
+                    <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
                         <p className="text-sm mb-2">Sneaker Of The Year</p>
-                        <h1 className="text-5xl font-bold mb-4">Get 30% off</h1>
-                        <p className="max-w-md">
+                        <h1 className="text-3xl sm:text-5xl font-bold mb-4">
+                            Get 30% off
+                        </h1>
+                        <p className="max-w-md text-sm sm:text-base">
                             Sneakers made with your comfort in mind so you can
                             put all of your focus into your next session
                         </p>
@@ -174,17 +176,19 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                     <img
                         src="/images/NIKE_AIR_MAX.png"
                         alt=""
-                        className="absolute right-0 top-0 h-full w-1/2 object-cover object-center"
+                        className="absolute right-0 top-0 h-full w-1/2 object-cover object-center hidden sm:block"
                     />
                 </div>
             </div>
 
             {/* Main Content */}
-            <div className="container mx-auto px-6">
-                <div className="flex justify-between items-center mb-8">
+            <div className="container mx-auto px-4 sm:px-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4 sm:gap-0">
                     <div>
-                        <h2 className="text-2xl font-bold">Life Style Shoes</h2>
-                        <p className="text-gray-600">
+                        <h2 className="text-xl sm:text-2xl font-bold">
+                            Life Style Shoes
+                        </h2>
+                        <p className="text-gray-600 text-sm sm:text-base">
                             {filteredProducts.length} items
                             {(filters.size ||
                                 filters.categories.length > 0) && (
@@ -196,9 +200,9 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                             )}
                         </p>
                     </div>
-                    <div className="relative">
+                    <div className="relative w-full sm:w-auto">
                         <select
-                            className="appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 pr-8"
+                            className="w-full sm:w-auto appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 pr-8"
                             defaultValue="trending"
                         >
                             <option value="trending">TRENDING</option>
@@ -213,10 +217,10 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                     </div>
                 </div>
 
-                <div className="flex gap-8">
-                    {/* Filters Sidebar */}
-                    <div className="w-64 flex-shrink-0">
-                        <div className="mb-6">
+                <div className="flex flex-col sm:flex-row gap-8">
+                    {/* Filters Sidebar - Make collapsible on mobile */}
+                    <div className="w-full sm:w-64 flex-shrink-0">
+                        <div className="mb-6 bg-white sm:bg-transparent p-4 sm:p-0 rounded-lg">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="font-semibold">SIZE</h3>
                                 {filters.size && (
@@ -228,7 +232,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                                     </button>
                                 )}
                             </div>
-                            <div className="grid grid-cols-5 gap-2">
+                            <div className="grid grid-cols-6 sm:grid-cols-5 gap-2">
                                 {availableSizes.map((size) => (
                                     <button
                                         key={size}
@@ -247,7 +251,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                             </div>
                         </div>
 
-                        <div>
+                        <div className="bg-white sm:bg-transparent p-4 sm:p-0 rounded-lg">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="font-semibold">CATEGORIES</h3>
                                 {filters.categories.length > 0 && (
@@ -296,9 +300,12 @@ export default function ProductList({ auth, products, cartItems }: Props) {
 
                     {/* Product Grid */}
                     <div className="flex-1 mb-20">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                             {filteredProducts.map((product) => (
-                                <div key={product.id} className="space-y-4">
+                                <div
+                                    key={product.id}
+                                    className="space-y-3 sm:space-y-4"
+                                >
                                     {/* Card with image */}
                                     <div className="bg-[#fafafa] rounded-[20px] p-2 relative">
                                         <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
@@ -316,8 +323,8 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                                     </div>
 
                                     {/* Product Info Below Card */}
-                                    <div className="space-y-3">
-                                        <h3 className="font-medium text-base line-clamp-2">
+                                    <div className="space-y-2 sm:space-y-3">
+                                        <h3 className="font-medium text-sm sm:text-base line-clamp-2">
                                             {product.name}
                                         </h3>
                                         <div className="flex flex-wrap gap-1">
@@ -339,7 +346,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                                             href={`/products/${product.slug}`}
                                             className="block"
                                         >
-                                            <button className="w-full bg-zinc-900 text-white py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-sm font-medium transition-colors">
+                                            <button className="w-full bg-zinc-900 text-white py-2 sm:py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-xs sm:text-sm font-medium transition-colors">
                                                 VIEW PRODUCT - Rp{" "}
                                                 {product.price}
                                             </button>
