@@ -17,16 +17,11 @@ class Order extends Model
         'last_name',
         'address',
         'phone',
-        'delivery_option',
-        'same_as_billing',
-        'is_over_13',
-        'newsletter',
         'product_id',
         'quantity',
         'total_amount',
         'status',
         'snap_token',
-        'payment',
         'order_date',
     ];
 

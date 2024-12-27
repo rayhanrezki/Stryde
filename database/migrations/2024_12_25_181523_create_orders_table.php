@@ -19,16 +19,11 @@ return new class extends Migration
             $table->string('last_name');   // Kolom baru
             $table->string('address');     // Kolom baru
             $table->string('phone');       // Kolom baru
-            $table->string('delivery_option')->default('standard'); // Kolom baru
-            $table->boolean('same_as_billing')->default(true); // Kolom baru
-            $table->boolean('is_over_13')->default(false); // Kolom baru
-            $table->boolean('newsletter')->default(false); // Kolom baru
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('quantity');
             $table->decimal('total_amount', 10, 2);
             $table->string('status')->default('pending');
             $table->string('snap_token')->nullable(); // Kolom baru
-            $table->string('payment')->default('transfer');
             $table->date('order_date');
             $table->timestamps();
         });

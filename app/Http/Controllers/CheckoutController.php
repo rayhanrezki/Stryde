@@ -45,12 +45,7 @@ class CheckoutController extends Controller
             'lastName' => 'required|string',
             'address' => 'required|string',
             'phone' => 'required|string',
-            'deliveryOption' => 'required|string',
-            'sameAsBilling' => 'boolean',
-            'isOver13' => 'required|boolean',
-            'newsletter' => 'required|boolean',
             'paymentStatus' => 'string|nullable', // Allow null or string
-            'paymentMethod' => 'string|nullable', // Allow null or string
         ]);
 
         DB::beginTransaction();
@@ -107,16 +102,11 @@ class CheckoutController extends Controller
                     'last_name' => $validated['lastName'],
                     'address' => $validated['address'],
                     'phone' => $validated['phone'],
-                    'delivery_option' => $validated['deliveryOption'],
-                    'same_as_billing' => $validated['sameAsBilling'],
-                    'is_over_13' => $validated['isOver13'],
-                    'newsletter' => $validated['newsletter'],
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'total_amount' => $totalAmount,
                     'status' => $validated['paymentStatus'] ?? 'pending',  // Default value if null
                     'snap_token' => $snapToken,
-                    'payment' => $validated['paymentMethod'] ?? 'transfer', // Default value if null
                     'order_date' => Carbon::now(),
                     'created_at' => now(),
                     'updated_at' => now(),
