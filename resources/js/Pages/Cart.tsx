@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Head, usePage, Link } from "@inertiajs/react";
 import { Trash2 } from "lucide-react";
 import RecommendedProducts from "@/Components/RecommendedProducts";
+import axios from "axios";
+import { toast } from "react-hot-toast";
 
 import { Product, ProductSize } from "@/types/product";
 import Navbar from "@/Components/Navbar";
@@ -9,7 +11,7 @@ import Footer from "@/Components/Footer";
 import { PageProps } from "@/types";
 
 interface CartItem {
-    sizes(arg0: string, sizes: any): unknown;
+    sizes: string;
     id: number;
     product_id: number;
     product_size_id: number;
@@ -87,40 +89,66 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
         form.submit();
     };
 
-    const updateQuantity = (id: number, quantity: number) => {
-        // Membuat form untuk mengirimkan data ke server
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/cart/update";
+    const handleQuantityChange = async (
+        cartItemId: number,
+        newQuantity: number
+    ) => {
+        try {
+            // Find the current cart item to check its current quantity
+            const currentItem = cartItemsState.find(
+                (item) => item.id === cartItemId
+            );
+            if (!currentItem) return;
 
-        // Menambahkan CSRF token
-        const csrfToken =
-            document
-                .querySelector('meta[name="csrf-token"]')
-                ?.getAttribute("content") || "";
+            // Prevent negative quantities
+            if (newQuantity < 1) {
+                toast.error("Quantity cannot be less than 1");
+                return;
+            }
 
-        const csrfInput = document.createElement("input");
-        csrfInput.type = "hidden";
-        csrfInput.name = "_token";
-        csrfInput.value = csrfToken;
+            const response = await axios.post("/cart/update-quantity", {
+                cart_item_id: cartItemId,
+                quantity: newQuantity,
+            });
 
-        // Menambahkan ID item dan kuantitas
-        const idInput = document.createElement("input");
-        idInput.type = "hidden";
-        idInput.name = "cart_item_id";
-        idInput.value = id.toString();
-
-        const quantityInput = document.createElement("input");
-        quantityInput.type = "hidden";
-        quantityInput.name = "quantity";
-        quantityInput.value = quantity.toString();
-
-        form.appendChild(csrfInput);
-        form.appendChild(idInput);
-        form.appendChild(quantityInput);
-
-        document.body.appendChild(form);
-        form.submit();
+            if (response.data.success) {
+                setCartItems((currentItems) =>
+                    currentItems.map((item) =>
+                        item.id === cartItemId
+                            ? { ...item, quantity: newQuantity }
+                            : item
+                    )
+                );
+                toast.success(response.data.message);
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error) && error.response?.data) {
+                // If we get a stock limit error, reset the quantity to the available amount
+                if (error.response.data.availableStock !== undefined) {
+                    const maxQuantity =
+                        error.response.data.currentQuantity +
+                        error.response.data.availableStock;
+                    setCartItems((currentItems) =>
+                        currentItems.map((item) =>
+                            item.id === cartItemId
+                                ? {
+                                      ...item,
+                                      quantity:
+                                          error.response?.data
+                                              .currentQuantity ??
+                                          error.response?.data.currentQuantity,
+                                  }
+                                : item
+                        )
+                    );
+                    toast.error(`Maximum available quantity is ${maxQuantity}`);
+                } else {
+                    toast.error(error.response.data.message);
+                }
+            } else {
+                toast.error("An error occurred while updating quantity");
+            }
+        }
     };
 
     const calculateOrderSummary = () => {
@@ -254,7 +282,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                 <button
                                                     className="text-gray-600 hover:text-gray-900"
                                                     onClick={() =>
-                                                        updateQuantity(
+                                                        handleQuantityChange(
                                                             cartItem.id,
                                                             cartItem.quantity -
                                                                 1
@@ -271,7 +299,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                 <button
                                                     className="text-gray-600 hover:text-gray-900"
                                                     onClick={() =>
-                                                        updateQuantity(
+                                                        handleQuantityChange(
                                                             cartItem.id,
                                                             cartItem.quantity +
                                                                 1

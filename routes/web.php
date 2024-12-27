@@ -88,4 +88,8 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
 });
 
+Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
+    ->name('cart.update-quantity')
+    ->middleware(['auth']);
+
 require __DIR__ . '/auth.php';
