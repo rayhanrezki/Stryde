@@ -1,4 +1,11 @@
 import { useForm, usePage } from "@inertiajs/react";
+import { useState } from "react";
+import {
+    GoogleMap,
+    useJsApiLoader,
+    StandaloneSearchBox,
+} from "@react-google-maps/api";
+import { useRef } from "react";
 
 interface CheckoutFormProps {
     isProcessing: boolean;
@@ -34,6 +41,21 @@ export function CheckoutForm({
         address: user.address,
         phone: user.phone,
     });
+
+    const apiKey = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
+    const inputref = useRef<any>(null);
+    const { isLoaded } = useJsApiLoader({
+        id: "google-map-script",
+        googleMapsApiKey: apiKey,
+        libraries: ["places"],
+    });
+
+    console.log(isLoaded);
+
+    const handleOnPlacesChanged = () => {
+        let address = inputref.current!.getPlaces();
+        console.log("address", address);
+    };
 
     return (
         <form onSubmit={handleSubmit} className="space-y-6 font-rubik">
@@ -96,6 +118,32 @@ export function CheckoutForm({
                         setFormData({ ...formData, address: e.target.value })
                     }
                 />
+
+                {isLoaded && (
+                    <StandaloneSearchBox
+                        onLoad={(ref) => (inputref.current = ref)}
+                        onPlacesChanged={handleOnPlacesChanged}
+                    >
+                        <div>
+                            <input
+                                type="text"
+                                placeholder="Find Delivery Address*"
+                                className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 mt-4 font-rubik"
+                                value={formData.address}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        address: e.target.value,
+                                    })
+                                }
+                            />
+                            <p className="text-sm text-gray-500 mt-1">
+                                Start typing your street address or zip code for
+                                suggestion
+                            </p>
+                        </div>
+                    </StandaloneSearchBox>
+                )}
                 <input
                     type="tel"
                     placeholder="Phone Number*"
