@@ -27,6 +27,7 @@ return new class extends Migration
             $table->integer('quantity');
             $table->decimal('total_amount', 10, 2);
             $table->string('status')->default('pending');
+            $table->string('snap_token')->nullable(); // Kolom baru
             $table->string('payment')->default('transfer');
             $table->date('order_date');
             $table->timestamps();

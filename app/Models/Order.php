@@ -25,6 +25,7 @@ class Order extends Model
         'quantity',
         'total_amount',
         'status',
+        'snap_token',
         'payment',
         'order_date',
     ];

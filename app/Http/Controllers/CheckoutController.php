@@ -55,7 +55,50 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
 
+
+
+        $totalAmount = 0;
+
+        // Siapkan data untuk Midtrans
+        $items = [];
+        foreach ($cartItems as $item) {
+            $totalAmount += $item->product->price * $item->quantity;
+
+            $items[] = [
+                'id' => $item->product_id,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+                'name' => $item->product->name,
+            ];
+        }
+
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = false;
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = true;
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = true;
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => rand(),
+                'gross_amount' => $totalAmount,
+            ),
+            'customer_details' => array(
+                'first_name' => $validated['firstName'],
+                'last_name' => $validated['lastName'],
+                'email' => $user->email,
+                'phone' => $validated['phone'],
+            ),
+
+        );
+
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+
         try {
+
             foreach ($cartItems as $item) {
                 $orderData = [
                     'user_id' => $user->id,
@@ -70,8 +113,9 @@ class CheckoutController extends Controller
                     'newsletter' => $validated['newsletter'],
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
-                    'total_amount' => $item->product->price * $item->quantity,
+                    'total_amount' => $totalAmount,
                     'status' => $validated['paymentStatus'] ?? 'pending',  // Default value if null
+                    'snap_token' => $snapToken,
                     'payment' => $validated['paymentMethod'] ?? 'transfer', // Default value if null
                     'order_date' => Carbon::now(),
                     'created_at' => now(),

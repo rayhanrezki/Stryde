@@ -103,7 +103,7 @@ export default function Checkout({ auth, cart, products }: Props) {
                                 isProcessing ? "bg-gray-400" : "bg-blue-500"
                             } rounded hover:bg-blue-600`}
                         >
-                            {isProcessing ? "Processing..." : "Checkout"}
+                            {isProcessing ? "Processing..." : "PAY"}
                         </button>
                     </div>
                     <div>
