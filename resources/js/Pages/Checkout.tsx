@@ -1,4 +1,11 @@
 import { useState } from "react";
+
+// Extend the Window interface to include the snap property
+declare global {
+    interface Window {
+        snap: any;
+    }
+}
 import { CheckoutForm } from "@/Components/checkout-form";
 import { OrderDetails } from "@/Components/order-details";
 import { OrderSummary } from "@/Components/order-summary";
@@ -52,6 +59,48 @@ export default function Checkout({ auth, cart, products }: Props) {
         formatPrice: formatIDR,
     };
 
+    // Payment Button Component
+    const PaymentButton = () => {
+        const [paymentStatus, setPaymentStatus] = useState("");
+
+        const handlePayment = () => {
+            // Replace TRANSACTION_TOKEN_HERE with your actual transaction token
+            window.snap.pay("TRANSACTION_TOKEN_HERE", {
+                onSuccess: (result: any) => {
+                    setPaymentStatus("Payment success!");
+                    console.log(result);
+                },
+                onPending: (result: any) => {
+                    setPaymentStatus("Waiting for your payment...");
+                    console.log(result);
+                },
+                onError: (result: any) => {
+                    setPaymentStatus("Payment failed!");
+                    console.log(result);
+                },
+                onClose: () => {
+                    setPaymentStatus(
+                        "You closed the popup without finishing the payment"
+                    );
+                },
+            });
+        };
+
+        return (
+            <div>
+                <button
+                    onClick={handlePayment}
+                    className={`mt-4 w-full px-4 py-2 text-white ${
+                        isProcessing ? "bg-gray-400" : "bg-blue-500"
+                    } rounded hover:bg-blue-600`}
+                    disabled={isProcessing}
+                >
+                    {isProcessing ? "Processing..." : "Pay Now"}
+                </button>
+                {paymentStatus && <p>{paymentStatus}</p>}
+            </div>
+        );
+    };
     const handleCheckout = async () => {
         if (isProcessing) return; // Prevent multiple clicks
         setIsProcessing(true);
@@ -105,6 +154,8 @@ export default function Checkout({ auth, cart, products }: Props) {
                         >
                             {isProcessing ? "Processing..." : "Checkout"}
                         </button>
+                        <PaymentButton />{" "}
+                        {/* Add the PaymentButton component */}
                     </div>
                     <div>
                         <OrderSummary summary={orderSummary} />

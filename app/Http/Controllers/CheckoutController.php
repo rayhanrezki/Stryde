@@ -53,7 +53,49 @@ class CheckoutController extends Controller
             'paymentMethod' => 'string|nullable', // Allow null or string
         ]);
 
+
         DB::beginTransaction();
+
+        $totalAmount = 0;
+
+        // Siapkan data untuk Midtrans
+        $items = [];
+        foreach ($cartItems as $item) {
+            $totalAmount += $item->product->price * $item->quantity;
+
+            $items[] = [
+                'id' => $item->product_id,
+                'price' => $item->product->price,
+                'quantity' => $item->quantity,
+                'name' => $item->product->name,
+            ];
+        }
+
+
+        \Midtrans\Config::$serverKey = env('MIDTRANS_SERVER_KEY');
+        \Midtrans\Config::$isProduction = false;
+        \Midtrans\Config::$isSanitized = true;
+        \Midtrans\Config::$is3ds = true;
+
+
+        // Data transaksi untuk Midtrans
+        $params = [
+            'transaction_details' => [
+                'order_id' => uniqid()::Order(),
+                'gross_amount' => $totalAmount,
+            ],
+            'customer_details' => [
+                'first_name' => $validated['firstName'],
+                'last_name' => $validated['lastName'],
+                'email' => $user->email,
+                'phone' => $validated['phone'],
+                'billing_address' => $validated['address'], // Opsional jika didukung Midtrans
+            ],
+            'item_details' => $items,
+        ];
+
+        $snapUrl = \Midtrans\Snap::createTransaction($params)->redirect_url;
+
 
         try {
             foreach ($cartItems as $item) {
