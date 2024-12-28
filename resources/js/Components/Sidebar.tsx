@@ -1,4 +1,4 @@
-import { Link } from "@inertiajs/react";
+import { Link, router } from "@inertiajs/react";
 import {
     LayoutDashboard,
     Package,
@@ -6,6 +6,7 @@ import {
     Grid2x2,
     Menu,
     X,
+    LogOut,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 
@@ -77,7 +78,7 @@ export default function Sidebar() {
             <aside
                 className={`
                 fixed left-0 top-0 h-screen bg-white border-r z-40 w-[240px]
-                transition-transform duration-300 ease-in-out
+                transition-transform duration-300 ease-in-out flex flex-col
                 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}
                 md:translate-x-0
             `}
@@ -90,7 +91,7 @@ export default function Sidebar() {
                 </div>
 
                 {/* Main Navigation */}
-                <nav className="p-4 space-y-2">
+                <nav className="p-4 space-y-2 flex-1">
                     {navigationLinks.map((link, index) => (
                         <Link
                             key={index}
@@ -109,6 +110,17 @@ export default function Sidebar() {
                         </Link>
                     ))}
                 </nav>
+
+                {/* Logout Button */}
+                <div className="p-4 border-t">
+                    <button
+                        onClick={() => router.post(route("logout"))}
+                        className="flex items-center gap-3 p-3 rounded-lg transition-colors w-full text-gray-700 hover:bg-gray-100"
+                    >
+                        <LogOut size={20} />
+                        <span className="font-medium font-rubik">LOGOUT</span>
+                    </button>
+                </div>
             </aside>
         </>
     );

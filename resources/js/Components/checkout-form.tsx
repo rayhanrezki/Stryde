@@ -109,15 +109,6 @@ export function CheckoutForm({
                         }
                     />
                 </div>
-                <input
-                    type="text"
-                    placeholder="Delivery Address*"
-                    className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 mt-4 font-rubik"
-                    value={formData.address}
-                    onChange={(e) =>
-                        setFormData({ ...formData, address: e.target.value })
-                    }
-                />
 
                 {isLoaded && (
                     <StandaloneSearchBox
@@ -144,6 +135,7 @@ export function CheckoutForm({
                         </div>
                     </StandaloneSearchBox>
                 )}
+
                 <input
                     type="tel"
                     placeholder="Phone Number*"
