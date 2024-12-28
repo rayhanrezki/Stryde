@@ -4,18 +4,24 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
     public function index()
     {
         // Contoh data auth user
-        $authUser = [
-            'id' => 1,
-            'name' => 'ray',
-            'email' => 'ray@gmail.com',
-            'email_verified_at' => '2023-01-01T00:00:00Z',
-            'is_admin' => false,
+        $user = Auth::user();
+
+        // Contoh data order
+        $order = [
+            [
+                'id' => 1,
+                'order_date' => now(),
+                'address' => 'Jl. Example ',
+                'phone' => '08123456789',
+                'products_id' => ['101'], // Assuming a single product ordered
+            ],
         ];
 
         // Contoh data cart
@@ -37,7 +43,7 @@ class InvoiceController extends Controller
                 'id' => 101,
                 'name' => 'Product 1',
                 'description' => 'Description for Product 1',
-                'price' => '150000',
+                'price' => 150000,
                 'sizes' => [
                     ['id' => 201, 'size' => 'M', 'stock' => 10],
                 ],
@@ -52,9 +58,10 @@ class InvoiceController extends Controller
 
         // Render halaman dengan data
         return Inertia::render('Invoice', [
-            'auth' => ['user' => $authUser],
+            'auth' => $user,
+            'order' => $order, // Pass the order data to the component
             'cart' => $cart,
-            'products' => $products,
+            'products' => $products, // Pass the products data to the component
         ]);
     }
 }

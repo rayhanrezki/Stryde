@@ -54,6 +54,24 @@ export interface Cart {
     items: CartItem[]; // Array of CartItems
 }
 
+export interface Order {
+    id: number;
+    user_id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    address: string;
+    phone: string;
+    products_id: number;
+    quantity: number;
+    total_amount: number;
+    snap_token: string;
+    status: string;
+    order_date: string;
+    created_at: string;
+    updated_at: string;
+}
+
 interface Props extends PageProps {
     cart: Cart;
     recommendedProducts: Product[];

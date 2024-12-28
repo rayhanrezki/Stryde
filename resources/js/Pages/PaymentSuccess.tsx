@@ -47,10 +47,10 @@ export default function PaymentSuccess({ orderDetails }: Props) {
                         View Order Status
                     </Link>
                     <Link
-                        href="/"
+                        href="/invoice" // Update URL untuk mencetak invoice
                         className="block w-full border border-black text-black py-2 px-4 rounded hover:bg-gray-100"
                     >
-                        Continue Shopping
+                        Cetak Invoice
                     </Link>
                 </div>
             </div>

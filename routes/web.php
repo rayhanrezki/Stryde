@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/update-status', [CheckoutController::class, 'updateStatus'])
         ->name('checkout.update-status');
 });
+Route::get('/invoice', [CheckoutController::class, 'showInvoice'])->name('invoice.show');
 
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
     ->name('cart.update-quantity')
@@ -103,8 +104,6 @@ Route::get('/payment/success', function (Request $request) {
         'orderDetails' => $request->orderDetails
     ]);
 })->name('payment.success');
-
-Route::get('/invoice', [InvoiceController::class, 'index']);
 
 
 require __DIR__ . '/auth.php';
