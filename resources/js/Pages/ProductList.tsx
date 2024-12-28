@@ -304,10 +304,10 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                             {filteredProducts.map((product) => (
                                 <div
                                     key={product.id}
-                                    className="space-y-3 sm:space-y-4"
+                                    className="flex flex-col h-full"
                                 >
                                     {/* Card with image */}
-                                    <div className="bg-[#fafafa] rounded-[20px] p-2 relative">
+                                    <div className="bg-[#fafafa] rounded-[20px] p-2 relative mb-2 sm:mb-4">
                                         <div className="aspect-square relative bg-neutral-50 rounded-[16px] overflow-hidden">
                                             <img
                                                 src={
@@ -327,32 +327,38 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                                     </div>
 
                                     {/* Product Info Below Card */}
-                                    <div className="space-y-2 sm:space-y-3">
-                                        <h3 className="font-medium text-sm sm:text-base line-clamp-2">
-                                            {product.name}
-                                        </h3>
-                                        <div className="flex flex-wrap gap-1">
-                                            {product.categories.map(
-                                                (category: {
-                                                    id: number;
-                                                    name: string;
-                                                }) => (
-                                                    <span
-                                                        key={category.id}
-                                                        className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
-                                                    >
-                                                        {category.name}
-                                                    </span>
-                                                )
-                                            )}
+                                    <div className="flex flex-col flex-1 justify-between min-h-[120px]">
+                                        <div className="space-y-1 sm:space-y-2">
+                                            <h3 className="font-medium text-sm sm:text-base line-clamp-2 min-h-[32px] sm:min-h-[40px]">
+                                                {product.name}
+                                            </h3>
+                                            <div className="flex flex-wrap gap-1 min-h-[24px]">
+                                                {product.categories.map(
+                                                    (category: {
+                                                        id: number;
+                                                        name: string;
+                                                    }) => (
+                                                        <span
+                                                            key={category.id}
+                                                            className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full"
+                                                        >
+                                                            {category.name}
+                                                        </span>
+                                                    )
+                                                )}
+                                            </div>
                                         </div>
                                         <Link
                                             href={`/products/${product.slug}`}
-                                            className="block"
+                                            className="block mt-2"
                                         >
-                                            <button className="w-full bg-zinc-900 text-white py-2 sm:py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-xs sm:text-sm font-medium transition-colors">
-                                                VIEW PRODUCT - Rp{" "}
-                                                {product.price}
+                                            <button className="w-full bg-zinc-900 text-white h-8 sm:h-10 px-4 rounded-md hover:bg-zinc-900/90 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center">
+                                                <span className="truncate">
+                                                    VIEW PRODUCT - Rp{" "}
+                                                    {product.price.toLocaleString(
+                                                        "id-ID"
+                                                    )}
+                                                </span>
                                             </button>
                                         </Link>
                                     </div>

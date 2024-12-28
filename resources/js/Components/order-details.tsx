@@ -26,7 +26,7 @@ export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
 
                 return (
                     <div key={cartItem.id} className="flex gap-4 mb-4">
-                        <div className="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden">
+                        <div className="min-w-[128px] w-32 h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                             <img
                                 src={
                                     product.images && product.images.length > 0
@@ -38,12 +38,14 @@ export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
                                         : "/placeholder.jpg"
                                 }
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover object-center"
                             />
                         </div>
-                        <div>
-                            <h3 className="font-semibold">{product.name}</h3>
-                            <p className="text-gray-600">
+                        <div className="flex-1 min-w-0">
+                            <h3 className="font-semibold truncate">
+                                {product.name}
+                            </h3>
+                            <p className="text-gray-600 line-clamp-2">
                                 {product.description}
                             </p>
                             <div className="flex gap-4 mt-1">

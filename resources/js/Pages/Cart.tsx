@@ -184,22 +184,22 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
             <Head title="Shopping Cart" />
             <Navbar user={auth?.user} cartItems={cartItemsState} />
 
-            <div className="min-h-screen bg-[#e7e7e3] p-6 py-24">
+            <div className="min-h-screen bg-[#e7e7e3] p-4 sm:p-6 py-24">
                 <div className="max-w-6xl mx-auto">
                     <div className="mb-8">
-                        <h1 className="text-2xl font-bold mb-2">
+                        <h1 className="text-xl sm:text-2xl font-bold mb-2">
                             Step into Stryde
                         </h1>
-                        <p className="text-gray-600">
+                        <p className="text-sm sm:text-base text-gray-600">
                             Discover the latest sneaker trends and find your
                             stride.
                         </p>
                     </div>
 
-                    <div className="grid md:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
                         <div className="md:col-span-2">
-                            <div className="bg-white rounded-lg p-6 shadow-sm">
-                                <h2 className="text-xl font-semibold mb-2">
+                            <div className="bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+                                <h2 className="text-lg sm:text-xl font-semibold mb-2">
                                     Your Bag
                                 </h2>
                                 {cartItemsState.length > 0 ? (
@@ -222,9 +222,9 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                 {cartItemsState.map((cartItem) => (
                                     <div
                                         key={cartItem.id}
-                                        className="flex gap-6 mb-6"
+                                        className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 border-b pb-6 last:border-b-0"
                                     >
-                                        <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden">
+                                        <div className="w-full sm:w-32 h-48 sm:h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                                             <img
                                                 src={
                                                     cartItem.product.images &&
@@ -238,18 +238,18 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                         : "/placeholder.jpg"
                                                 }
                                                 alt={cartItem.product.name}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-cover object-center"
                                             />
                                         </div>
 
-                                        <div className="flex-1">
-                                            <div className="flex justify-between items-start">
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
                                                 <div>
-                                                    <h3 className="font-semibold text-lg">
+                                                    <h3 className="font-semibold text-lg truncate">
                                                         {cartItem.product.name}
                                                     </h3>
 
-                                                    <p className="text-gray-600">
+                                                    <p className="text-sm text-gray-600">
                                                         {cartItem.product
                                                             .categories &&
                                                         cartItem.product
@@ -258,14 +258,14 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                             ? `Category: ${cartItem.product.categories[0]?.name}`
                                                             : "No category available"}
                                                     </p>
-                                                    <p className="text-gray-600">
+                                                    <p className="text-sm text-gray-600 line-clamp-2">
                                                         {
                                                             cartItem.product
                                                                 .description
                                                         }
                                                     </p>
 
-                                                    <p className="text-gray-600">
+                                                    <p className="text-sm text-gray-600">
                                                         Size:{" "}
                                                         {cartItem.product_size
                                                             ?.size || "N/A"}
@@ -281,39 +281,39 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                 </span>
                                             </div>
 
-                                            <div className="flex items-center gap-4 mt-4">
-                                                <button
-                                                    className="text-gray-600 hover:text-gray-900"
-                                                    onClick={() =>
-                                                        handleQuantityChange(
-                                                            cartItem.id,
-                                                            cartItem.quantity -
-                                                                1
-                                                        )
-                                                    }
-                                                >
-                                                    -
-                                                </button>
+                                            <div className="flex items-center justify-between mt-4">
+                                                <div className="flex items-center gap-4">
+                                                    <button
+                                                        className="text-gray-600 hover:text-gray-900 w-8 h-8 flex items-center justify-center"
+                                                        onClick={() =>
+                                                            handleQuantityChange(
+                                                                cartItem.id,
+                                                                cartItem.quantity -
+                                                                    1
+                                                            )
+                                                        }
+                                                    >
+                                                        -
+                                                    </button>
 
-                                                <span className="text-lg font-semibold">
-                                                    {cartItem.quantity}
-                                                </span>
+                                                    <span className="text-lg font-semibold">
+                                                        {cartItem.quantity}
+                                                    </span>
 
-                                                <button
-                                                    className="text-gray-600 hover:text-gray-900"
-                                                    onClick={() =>
-                                                        handleQuantityChange(
-                                                            cartItem.id,
-                                                            cartItem.quantity +
-                                                                1
-                                                        )
-                                                    }
-                                                >
-                                                    +
-                                                </button>
-                                            </div>
+                                                    <button
+                                                        className="text-gray-600 hover:text-gray-900 w-8 h-8 flex items-center justify-center"
+                                                        onClick={() =>
+                                                            handleQuantityChange(
+                                                                cartItem.id,
+                                                                cartItem.quantity +
+                                                                    1
+                                                            )
+                                                        }
+                                                    >
+                                                        +
+                                                    </button>
+                                                </div>
 
-                                            <div className="flex gap-4 mt-4">
                                                 <button
                                                     className="text-red-600 hover:text-red-800"
                                                     onClick={() =>
@@ -330,8 +330,8 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                         </div>
 
                         <div className="md:col-span-1">
-                            <div className="bg-[#e7e7e3] p-6">
-                                <h2 className="text-xl font-semibold mb-6">
+                            <div className="bg-white md:bg-[#e7e7e3] p-4 sm:p-6 rounded-lg md:rounded-none shadow-sm md:shadow-none">
+                                <h2 className="text-lg sm:text-xl font-semibold mb-6">
                                     Order Summary
                                 </h2>
 
