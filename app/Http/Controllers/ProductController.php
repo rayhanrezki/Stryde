@@ -14,11 +14,14 @@ class ProductController extends Controller
 {
     // Menampilkan daftar semua produk
     public function index()
+
     {
+        $user = Auth::user();
         $products = Product::with('images')->latest()->get();
 
         return Inertia::render('Admin/ProductDashboard', [
-            'products' => $products
+            'products' => $products,
+            'auth' => ['user' => $user],
         ]);
     }
 

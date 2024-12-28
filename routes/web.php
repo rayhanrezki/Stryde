@@ -91,8 +91,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::post('/checkout/update-status', [CheckoutController::class, 'updateStatus'])
         ->name('checkout.update-status');
+
+    Route::get('/invoice', [CheckoutController::class, 'showInvoice'])->name('invoice.show');
 });
-Route::get('/invoice', [CheckoutController::class, 'showInvoice'])->name('invoice.show');
+
 
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
     ->name('cart.update-quantity')

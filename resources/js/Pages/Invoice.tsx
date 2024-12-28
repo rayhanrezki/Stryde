@@ -1,6 +1,9 @@
+import { useRef } from "react";
 import Navbar from "@/Components/Navbar";
 import { PageProps } from "@/types";
 import { Order, Product, Cart } from "@/types/product";
+import { jsPDF } from "jspdf"; // Import jsPDF
+import React from "react";
 
 // Helper function to format IDR
 const formatIDR = (amount: number) => {
@@ -23,8 +26,8 @@ export default function Invoice({ auth, order, products, cart }: Props) {
     if (!orderDetails) {
         return <div>No order details found</div>;
     }
-    const orderItems = Array.isArray(orderDetails?.products_id)
-        ? orderDetails.products_id
+    const orderItems = Array.isArray(orderDetails?.product_id)
+        ? orderDetails.product_id
         : []; // Ensure products_id is an array
     const orderProducts = products;
 
@@ -54,10 +57,51 @@ export default function Invoice({ auth, order, products, cart }: Props) {
     // Cart items to send to Navbar
     const cartItemsState = cart?.items || [];
 
+    // Create a ref to capture the content of the invoice
+    const invoiceRef = useRef<HTMLDivElement>(null);
+    const downloadButtonRef = useRef<HTMLButtonElement>(null);
+
+    // Function to handle the download of the PDF
+    const downloadInvoice = () => {
+        // Temporarily hide the download button
+        if (downloadButtonRef.current) {
+            downloadButtonRef.current.style.display = "none";
+        }
+
+        const doc = new jsPDF({
+            orientation: "portrait", // Set orientation to portrait
+            unit: "mm", // Set unit to millimeters
+            format: "a4", // Set the format to A4
+        });
+
+        // Capture the content of the invoice
+        if (invoiceRef.current) {
+            doc.html(invoiceRef.current, {
+                callback: (doc) => {
+                    doc.save(`Invoice_${orderDetails.id}.pdf`);
+
+                    // After generating the PDF, restore the button visibility
+                    if (downloadButtonRef.current) {
+                        downloadButtonRef.current.style.display =
+                            "inline-block";
+                    }
+                },
+                margin: [10, 10, 10, 10], // Set margins for the PDF
+                x: 10, // Start rendering at X 10mm
+                y: 10, // Start rendering at Y 10mm
+                width: 190, // Width of the content area (A4 width minus margins)
+                windowWidth: 650, // Adjust this based on your content width
+            });
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 py-8">
             <Navbar user={auth?.user} cartItems={cartItemsState} />
-            <div className="max-w-5xl mx-auto px-6 mt-14 bg-white shadow-lg rounded-lg">
+            <div
+                ref={invoiceRef} // Add the ref to the main container
+                className="max-w-5xl mx-auto px-6 mt-14 bg-white shadow-lg rounded-lg"
+            >
                 <div className="px-6 py-8">
                     <h1 className="font-bold text-3xl my-4 text-center text-red-600">
                         Invoice
@@ -80,7 +124,7 @@ export default function Invoice({ auth, order, products, cart }: Props) {
                     <div className="mb-8">
                         <h3 className="text-lg font-semibold mb-4">Bill To:</h3>
                         <div className="text-gray-700 mb-2">
-                            {auth?.user?.name}
+                            {orderDetails.first_name} {orderDetails.last_name}
                         </div>
                         <div className="text-gray-700 mb-2">
                             {orderDetails.address}
@@ -88,7 +132,9 @@ export default function Invoice({ auth, order, products, cart }: Props) {
                         <div className="text-gray-700 mb-2">
                             {orderDetails.phone}
                         </div>
-                        <div className="text-gray-700">{auth?.user?.email}</div>
+                        <div className="text-gray-700">
+                            {orderDetails.email}
+                        </div>
                     </div>
 
                     {/* Product Table */}
@@ -110,31 +156,71 @@ export default function Invoice({ auth, order, products, cart }: Props) {
                             </tr>
                         </thead>
                         <tbody className="bg-white">
-                            {orderProducts.map((product) => {
-                                const quantity = orderItems.filter(
-                                    (id: string) => id === product.id.toString()
-                                ).length;
-                                const totalItemPrice = product.price * quantity;
-                                return (
-                                    <tr
-                                        key={product.id}
-                                        className="hover:bg-gray-100"
-                                    >
-                                        <td className="text-left text-gray-700 py-3 px-4">
-                                            {product.name}
-                                        </td>
-                                        <td className="text-right text-gray-700 py-3 px-4">
-                                            {formatIDR(product.price)}
-                                        </td>
-                                        <td className="text-right text-gray-700 py-3 px-4">
-                                            {quantity}
-                                        </td>
-                                        <td className="text-right text-gray-700 py-3 px-4">
-                                            {formatIDR(totalItemPrice)}
+                            {Object.entries(
+                                orderProducts.reduce((acc, product) => {
+                                    const createdAt = orderDetails.created_at; // Gunakan created_at sebagai kunci
+                                    if (!acc[createdAt]) {
+                                        acc[createdAt] = [];
+                                    }
+                                    acc[createdAt].push(product); // Tambahkan produk ke grup berdasarkan created_at
+                                    return acc;
+                                }, {} as Record<string, Product[]>)
+                            ).map(([createdAt, products]) => (
+                                <React.Fragment key={createdAt}>
+                                    {/* Header untuk grup berdasarkan created_at */}
+                                    <tr>
+                                        <td
+                                            className="text-left font-bold text-gray-700 py-3 px-4"
+                                            colSpan={4}
+                                        >
+                                            Created At:{" "}
+                                            {new Date(createdAt).toLocaleString(
+                                                "id-ID",
+                                                {
+                                                    day: "2-digit",
+                                                    month: "2-digit",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                    second: "2-digit",
+                                                }
+                                            )}
                                         </td>
                                     </tr>
-                                );
-                            })}
+
+                                    {/* Tampilkan produk dalam grup */}
+                                    {products.map((product) => {
+                                        const quantity = orderItems.filter(
+                                            (id: string) =>
+                                                id === product.id.toString()
+                                        ).length;
+                                        const totalItemPrice =
+                                            product.price * quantity;
+
+                                        return (
+                                            <tr
+                                                key={product.id}
+                                                className="hover:bg-gray-100"
+                                            >
+                                                <td className="text-left text-gray-700 py-3 px-4">
+                                                    {product.name}
+                                                </td>
+                                                <td className="text-right text-gray-700 py-3 px-4">
+                                                    {formatIDR(product.price)}
+                                                </td>
+                                                <td className="text-right text-gray-700 py-3 px-4">
+                                                    {orderDetails.quantity}
+                                                </td>
+                                                <td className="text-right text-gray-700 py-3 px-4">
+                                                    {formatIDR(
+                                                        orderDetails.total_amount
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </React.Fragment>
+                            ))}
                         </tbody>
                         <tfoot className="bg-gray-200">
                             <tr>
@@ -145,7 +231,7 @@ export default function Invoice({ auth, order, products, cart }: Props) {
                                     Total
                                 </td>
                                 <td className="text-right font-bold text-gray-700 py-3 px-4">
-                                    {formatIDR(orderSummary.total)}
+                                    {formatIDR(orderDetails.total_amount)}
                                 </td>
                             </tr>
                         </tfoot>
@@ -163,7 +249,11 @@ export default function Invoice({ auth, order, products, cart }: Props) {
 
                     {/* Action Buttons */}
                     <div className="flex justify-end mt-6">
-                        <button className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">
+                        <button
+                            ref={downloadButtonRef}
+                            onClick={downloadInvoice} // Attach downloadInvoice to the button
+                            className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700"
+                        >
                             Download Invoice
                         </button>
                     </div>

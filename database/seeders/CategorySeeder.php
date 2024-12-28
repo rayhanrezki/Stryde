@@ -10,15 +10,13 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        $categories = [
-            'Men',
-            'Women'
-        ];
-
-        foreach ($categories as $category) {
-            Category::create([
-                'name' => $category,
-            ]);
-        }
+        Category::create([
+            'id' => 1,
+            'name' => 'Men',
+        ]);
+        Category::create([
+            'id' => 2,
+            'name' => 'Women',
+        ]);
     }
 }

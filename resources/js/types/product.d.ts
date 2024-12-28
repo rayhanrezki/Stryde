@@ -58,11 +58,11 @@ export interface Order {
     id: number;
     user_id: number;
     email: string;
-    firstName: string;
-    lastName: string;
+    first_name: string;
+    last_name: string;
     address: string;
     phone: string;
-    products_id: number;
+    product_id: number;
     quantity: number;
     total_amount: number;
     snap_token: string;

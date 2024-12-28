@@ -18,7 +18,7 @@ class MainController extends Controller
         return Inertia::render('Main', [
             'latestProducts' => $latestProducts,
             'auth' => [
-                'user' => Auth::user(), // Kirim data user
+                'user' => Auth::user(),
             ],
         ]);
     }

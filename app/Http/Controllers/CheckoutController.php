@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cart;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -173,59 +174,39 @@ class CheckoutController extends Controller
 
     public function showInvoice()
     {
-        // Contoh data auth user
         $user = Auth::user();
 
-        // Contoh data order
-        $order = [
-            [
-                'id' => 1,
-                'email' => $user->email,
-                'order_date' => now(),
-                'address' => 'Jl. Example ',
-                'phone' => '08123456789',
-                'products_id' => ['101'], // Assuming a single product ordered
-            ],
-        ];
 
-        // Contoh data cart
-        $cart = [
-            'items' => [
-                [
-                    'id' => 1,
-                    'product_id' => 101,
-                    'product_size_id' => 201,
-                    'quantity' => 2,
-                    'size' => 'M',
-                ],
-            ],
-        ];
+        $order = Order::where('user_id', $user->id)
+            ->with('products')
+            ->latest()
+            ->first();
 
-        // Contoh data produk
-        $products = [
-            [
-                'id' => 101,
-                'name' => 'Product 1',
-                'description' => 'Description for Product 1',
-                'price' => 150000,
-                'sizes' => [
-                    ['id' => 201, 'size' => 'M', 'stock' => 10],
-                ],
-                'categories' => [
-                    ['id' => 1, 'name' => 'Category 1'],
-                ],
-                'images' => [
-                    ['id' => 301, 'image_path' => '/images/product1.jpg'],
-                ],
-            ],
-        ];
+        if (!$order) {
+            return Inertia::render('Invoice', [
+                'auth' => $user,
+                'order' => [],
+                'cart' => [],
+                'products' => [],
+            ]);
+        }
 
-        // Render halaman dengan data
+
+        $cart = $user->cart;
+        $cartItems = $cart ? $cart->items : [];
+
+
+        $orderProductIds = $order->product_id;
+
+
+        $orderProducts = Product::whereIn('id', (array) $orderProductIds)->get();
+
+
         return Inertia::render('Invoice', [
             'auth' => $user,
-            'order' => $order, // Pass the order data to the component
+            'order' => [$order],
             'cart' => $cart,
-            'products' => $products, // Pass the products data to the component
+            'products' => $orderProducts,
         ]);
     }
 }

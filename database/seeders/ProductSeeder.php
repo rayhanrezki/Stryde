@@ -3,39 +3,70 @@
 namespace Database\Seeders;
 
 use App\Models\Product;
-use App\Models\Category;
 use Illuminate\Database\Seeder;
 
 class ProductSeeder extends Seeder
 {
     public function run()
     {
-        // Get the Men category ID
-        $menCategory = Category::where('name', 'Men')->first();
 
-        // Add products for men
         Product::create([
-            'category_id' => $menCategory->id,
-            'Title' => 'Nike Air Zoom Pegasus 39',
-            'Description' => 'The Nike Air Zoom Pegasus 39 brings the lightweight comfort you expect with a fresh design that lets you express your personal style.',
-            'Price' => 120.00,
-            'Slug' => 'nike-air-zoom-pegasus-39',
-            'image' => '/images/products/nike-pegasus-39.jpg',
+            'id' => 1,
+            'name' => 'Nike Air Force 1 07 Next Nature',
+            'description' => 'The Nike Air Force 1 07 Next Nature is a versatile and stylish sneaker with a streetwear-inspired design, offering a great blend of comfort and performance.',
+            'price' => 110.00,
+            'slug' => 'nike-air-force-1-07-next-nature',
         ]);
 
-        // Get the Women category ID
-        $womenCategory = Category::where('name', 'Women')->first();
 
-        // Add products for women
+
         Product::create([
-            'category_id' => $womenCategory->id,
-            'Title' => 'Nike Air Zoom Pegasus 38 Women',
-            'Description' => 'The Nike Air Zoom Pegasus 38 continues to put a spring in your step, using the same responsive foam as its predecessor.',
-            'Price' => 110.00,
-            'Slug' => 'nike-air-zoom-pegasus-38-women',
-            'image' => '/images/products/nike-pegasus-38-women.jpg',
+            'id' => 2,
+            'name' => 'nike air max 270',
+            'description' => 'nike air max 270 is a stylish and comfortable sneaker with the latest air cushioning technology designed for all-day wear.',
+            'price' => 149.99,
+            'slug' => 'nike-air-max-270',
         ]);
 
-        // Add more products as needed...
+        Product::create([
+            'id' => 3,
+            'name' => 'Nike React Phantom Run Flyknit 2',
+            'description' => 'the Nike React Phantom Run Flyknit 2 combination of plush cushioning and responsive energy return, perfect for long runs or casual wear.',
+            'price' => 179.99,
+            'slug' => 'nike-react-phantom-run-flyknit-2',
+        ]);
+
+
+        Product::create([
+            'id' => 4,
+            'name' => 'nike air zoom pegasus easyon',
+            'description' => 'the nike air zoom pegasus easyoncontinues to put a spring in your step, using the same responsive foam as its predecessor.',
+            'price' => 110.00,
+            'slug' => 'nike-air-zoom-pegasus-easyon',
+        ]);
+
+        Product::create([
+            'id' => 5,
+            'name' => 'nike air force 1',
+            'description' => 'The Nike Air Force 1 is a classic and iconic sneaker that offers both style and comfort, featuring a timeless design and durable build.',
+            'price' => 100.00,
+            'slug' => 'nike-air-force-1',
+        ]);
+
+        Product::create([
+            'id' => 6,
+            'name' => 'nike dunk low',
+            'description' => 'The Nike Dunk Low is a versatile and stylish sneaker with a streetwear-inspired design, offering a great blend of comfort and performance.',
+            'price' => 110.00,
+            'slug' => 'nike-dunk-low',
+        ]);
+
+        Product::create([
+            'name' => 7,
+            'name' => 'nike air zoom pegasus 41',
+            'description' => 'the nike air zoom pegasus 49 brings the lightweight comfort you expect with a fresh design that lets you express your personal style.',
+            'price' => 120.00,
+            'slug' => 'nike-air-zoom-pegasus-39',
+        ]);
     }
 }
