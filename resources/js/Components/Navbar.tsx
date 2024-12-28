@@ -101,7 +101,7 @@ export default function Navbar({ user, cartItems }: NavbarProps) {
                 <motion.div
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="mx-2"
+                    className="mx-3 lg:mx-20 lg:-ml-8"
                 >
                     <Link
                         href="/"

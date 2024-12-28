@@ -7,6 +7,7 @@ import Navbar from "@/Components/Navbar";
 import { PageProps } from "@/types";
 import axios from "axios";
 import { router } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
 
 // Helper function to format IDR
 const formatIDR = (amount: number) => {
@@ -129,7 +130,28 @@ export default function Checkout({ auth, cart, products }: Props) {
     };
 
     if (!cart || !cartItem || !product) {
-        return <div>No items in cart</div>;
+        return (
+            <div className="min-h-screen bg-[#e7e7e3] py-8">
+                <Navbar user={auth?.user} cartItems={cartItemsState} />
+                <div className="max-w-7xl mx-auto px-4 mt-14">
+                    <div className="text-center py-16">
+                        <h2 className="text-2xl font-semibold mb-4">
+                            Your cart is empty
+                        </h2>
+                        <p className="text-gray-600 mb-8">
+                            Looks like you haven't added anything to your cart
+                            yet.
+                        </p>
+                        <Link
+                            href="/"
+                            className="inline-block bg-black text-white px-6 py-3 rounded-md hover:bg-gray-800 transition-colors"
+                        >
+                            Continue Shopping
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     return (
