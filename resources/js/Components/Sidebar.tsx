@@ -39,10 +39,10 @@ export default function Sidebar() {
             active: route().current("products.index"),
         },
         {
-            href: "#",
+            href: route("orders.index"),
             icon: <ListOrdered size={20} />,
             text: "ORDER LIST",
-            active: false,
+            active: route().current("orders.index"),
         },
         {
             href: route("categories.index"),

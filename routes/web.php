@@ -18,6 +18,7 @@ use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\OrderController;
 
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
@@ -59,7 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
-    // Recommended products route for cart page
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
 
 })->name('cart');
 

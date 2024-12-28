@@ -6,6 +6,7 @@ interface Category {
     id: number;
     Title: string;
     image: string;
+    filterName: string;
 }
 
 const categories: Category[] = [
@@ -13,16 +14,13 @@ const categories: Category[] = [
         id: 1,
         Title: "LIFESTYLE SHOES",
         image: "/images/Categories/CATEGORY_LIFESTYLE.png",
+        filterName: "lifestyle",
     },
     {
         id: 2,
         Title: "BASKETBALL SHOES",
         image: "/images/Categories/CATEGORY_BASKETBALL.png",
-    },
-    {
-        id: 3,
-        Title: "SOCCER SHOES",
-        image: "/images/soccer.webp",
+        filterName: "basketball",
     },
 ];
 
@@ -76,8 +74,9 @@ const Categories = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-0">
                         {currentCategories.map((category, index) => (
-                            <div
+                            <Link
                                 key={category.id}
+                                href={`/products?category=${category.filterName}`}
                                 className={`relative group cursor-pointer bg-white overflow-hidden ${
                                     index === 0 ? "sm:rounded-tl-[48px]" : ""
                                 }`}
@@ -100,7 +99,7 @@ const Categories = () => {
                                         className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                     />
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
