@@ -8,6 +8,8 @@ import { Head } from "@inertiajs/react";
 import { Product } from "@/types/product";
 import { PageProps } from "@/types"; // Menggunakan PageProps untuk data autentikasi
 import Footer from "@/Components/Footer";
+import AboutUs from "@/Components/BannerProduct";
+import BannerProduct from "@/Components/BannerProduct";
 
 // Definisikan tipe CartItem dengan lebih jelas
 interface CartItem {
@@ -52,7 +54,8 @@ export default function Main({
                 <Hero />
                 <NewDrops products={latestProducts} />
                 <Categories />
-                <Reviews />
+                <Reviews/>
+                <BannerProduct />
                 <Footer />
             </div>
         </>
