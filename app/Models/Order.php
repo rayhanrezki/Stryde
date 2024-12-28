@@ -9,7 +9,6 @@ class Order extends Model
 {
     use HasFactory;
 
-
     protected $fillable = [
         'user_id',
         'email',
@@ -25,7 +24,10 @@ class Order extends Model
         'order_date',
     ];
 
-    // Defining relationships
+    protected $casts = [
+        'order_date' => 'date',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -34,16 +36,5 @@ class Order extends Model
     public function products()
     {
         return $this->belongsTo(Product::class, 'product_id');
-    }
-
-    public function payment()
-    {
-        return $this->belongsTo(Payment::class, 'payment_id');
-    }
-
-    // Optional: For adding the cart item relationship
-    public function cartItem()
-    {
-        return $this->belongsTo(CartItem::class);
     }
 }

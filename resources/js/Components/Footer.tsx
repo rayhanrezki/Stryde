@@ -1,6 +1,14 @@
 import { Instagram } from "lucide-react";
 import { Facebook } from "lucide-react";
 import { Twitter } from "lucide-react";
+import { Link } from "@inertiajs/react";
+
+interface Category {
+    id: number;
+    Title: string;
+    image: string;
+    filterName: string;
+}
 
 const Footer = () => {
     return (
@@ -13,7 +21,7 @@ const Footer = () => {
                             JOIN OUR STRYDE!
                         </h2>
                         <h3 className="text-3xl font-bold font-rubik mb-4">
-                            CLUB & GET 15% OFF
+                            CLUB & GET NOTIFIED FOR NEW PRODUCTS
                         </h3>
                         <p className="mb-4 font-open-sans">
                             Sign up for free! Join the community.
@@ -61,36 +69,20 @@ const Footer = () => {
                         </h4>
                         <ul className="space-y-2">
                             <li>
-                                <a
-                                    href="#"
-                                    className="text-gray-300 hover:text-white transition-colors"
-                                >
-                                    Runners
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    className="text-gray-300 hover:text-white transition-colors"
-                                >
-                                    Sneakers
-                                </a>
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/products?category=basketball"
                                     className="text-gray-300 hover:text-white transition-colors"
                                 >
                                     Basketball
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/products?category=lifestyle"
                                     className="text-gray-300 hover:text-white transition-colors"
                                 >
                                     Lifestyle
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>
