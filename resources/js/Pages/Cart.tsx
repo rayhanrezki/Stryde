@@ -182,7 +182,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     return (
         <div>
             <Head title="Shopping Cart" />
-            <Navbar user={auth?.user} cartItems={cartItemsState} />
+            <Navbar user={auth?.user} cartItems={cartItems} />
 
             <div className="min-h-screen bg-[#e7e7e3] p-4 sm:p-6 py-24">
                 <div className="max-w-6xl mx-auto">
