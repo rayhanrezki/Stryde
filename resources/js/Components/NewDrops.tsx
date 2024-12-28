@@ -62,7 +62,11 @@ export default function NewDrops({ products }: NewDropsProps) {
                                 <img
                                     src={
                                         product.images?.[0]?.image_path
-                                            ? `/storage/${product.images[0].image_path}`
+                                            ? product.images[0].image_path.startsWith(
+                                                  "images/"
+                                              )
+                                                ? `/${product.images[0].image_path}`
+                                                : `/storage/${product.images[0].image_path}`
                                             : "/placeholder.jpg"
                                     }
                                     alt={product.name}

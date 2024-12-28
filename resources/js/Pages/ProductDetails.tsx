@@ -181,7 +181,13 @@ export default function ProductDetails({
                                         <CarouselItem key={image.id}>
                                             <div className="aspect-square relative overflow-hidden rounded-xl">
                                                 <img
-                                                    src={`/storage/${image.image_path}`}
+                                                    src={
+                                                        image.image_path.startsWith(
+                                                            "images/"
+                                                        )
+                                                            ? `/${image.image_path}`
+                                                            : `/storage/${image.image_path}`
+                                                    }
                                                     alt={`${
                                                         product.name
                                                     } view ${index + 1}`}

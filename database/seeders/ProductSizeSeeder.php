@@ -157,8 +157,9 @@ class ProductSizeSeeder extends Seeder
             'size' => '42',
             'stock' => 30,
         ]);
+        
         ProductSize::create([
-            'id' => 21,
+            'id' => 22,
             'product_id' => 7,
             'size' => '42',
             'stock' => 30,
