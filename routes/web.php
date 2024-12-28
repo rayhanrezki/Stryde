@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\SocialiteController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\CheckoutController;
+use Illuminate\Http\Request;
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 // Public product routes
@@ -86,10 +87,18 @@ Route::get('/fetch-quote', [QuoteController::class, 'fetch'])
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout');
     Route::post('/checkout/process', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout/update-status', [CheckoutController::class, 'updateStatus'])
+        ->name('checkout.update-status');
 });
 
 Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
     ->name('cart.update-quantity')
     ->middleware(['auth']);
+
+Route::get('/payment/success', function (Request $request) {
+    return Inertia::render('PaymentSuccess', [
+        'orderDetails' => $request->orderDetails
+    ]);
+})->name('payment.success');
 
 require __DIR__ . '/auth.php';

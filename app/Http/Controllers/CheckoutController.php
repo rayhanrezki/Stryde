@@ -140,4 +140,36 @@ class CheckoutController extends Controller
             ], 500);
         }
     }
+
+    public function updateStatus(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'snapToken' => 'required',
+                'status' => 'required|string'
+            ]);
+
+            // Update the order status
+            Order::where('snap_token', $validated['snapToken'])
+                ->update([
+                    'status' => $validated['status'],
+                    'updated_at' => now()
+                ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Order status updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating order status', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTrace(),
+            ]);
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to update order status'
+            ], 500);
+        }
+    }
 }

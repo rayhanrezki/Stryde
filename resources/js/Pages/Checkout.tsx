@@ -6,6 +6,7 @@ import { Product, Cart, CartItem } from "@/types/product";
 import Navbar from "@/Components/Navbar";
 import { PageProps } from "@/types";
 import axios from "axios";
+import { router } from "@inertiajs/react";
 
 // Helper function to format IDR
 const formatIDR = (amount: number) => {
@@ -76,7 +77,6 @@ export default function Checkout({ auth, cart, products }: Props) {
         setIsProcessing(true);
 
         try {
-            // Get snap token from your backend
             const response = await axios.post("/checkout/process", {
                 ...formData,
                 paymentStatus: "pending",
@@ -86,16 +86,30 @@ export default function Checkout({ auth, cart, products }: Props) {
             if (response.data.snapToken) {
                 window.snap.pay(response.data.snapToken, {
                     onSuccess: function (result: any) {
-                        setPaymentResult(JSON.stringify(result, null, 2));
-                        // Handle success
+                        // Update order status to success/settlement
+                        axios
+                            .post("/checkout/update-status", {
+                                snapToken: response.data.snapToken, // Send the snap token to identify the order
+                                status: "settlement", // Update status to settlement
+                            })
+                            .then(() => {
+                                router.visit("/payment/success", {
+                                    method: "get",
+                                    data: {
+                                        orderDetails: {
+                                            orderId: result.order_id,
+                                            amount: result.gross_amount,
+                                            status: result.transaction_status,
+                                        },
+                                    },
+                                });
+                            });
                     },
                     onPending: function (result: any) {
                         setPaymentResult(JSON.stringify(result, null, 2));
-                        // Handle pending
                     },
                     onError: function (result: any) {
                         setPaymentResult(JSON.stringify(result, null, 2));
-                        // Handle error
                     },
                 });
             }
