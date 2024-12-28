@@ -17,6 +17,8 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\QuoteController;
 use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
+use App\Http\Controllers\InvoiceController;
+
 
 Route::get('/', [ProductController::class, 'main'])->name('main');
 // Public product routes
@@ -95,10 +97,14 @@ Route::post('/cart/update-quantity', [CartController::class, 'updateQuantity'])
     ->name('cart.update-quantity')
     ->middleware(['auth']);
 
+
 Route::get('/payment/success', function (Request $request) {
     return Inertia::render('PaymentSuccess', [
         'orderDetails' => $request->orderDetails
     ]);
 })->name('payment.success');
+
+Route::get('/invoice', [InvoiceController::class, 'index']);
+
 
 require __DIR__ . '/auth.php';
