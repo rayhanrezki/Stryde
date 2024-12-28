@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CheckoutForm } from "@/Components/checkout-form";
 import { OrderDetails } from "@/Components/order-details";
 import { OrderSummary } from "@/Components/order-summary";
@@ -20,6 +20,12 @@ const formatIDR = (amount: number) => {
 interface Props extends PageProps {
     cart: Cart;
     products: Product[];
+}
+
+declare global {
+    interface Window {
+        snap: any;
+    }
 }
 
 export default function Checkout({ auth, cart, products }: Props) {
@@ -52,29 +58,49 @@ export default function Checkout({ auth, cart, products }: Props) {
         formatPrice: formatIDR,
     };
 
-    const handleCheckout = async () => {
-        if (isProcessing) return; // Prevent multiple clicks
+    const [paymentResult, setPaymentResult] = useState<string>("");
+
+    useEffect(() => {
+        // Load Midtrans Snap script
+        const script = document.createElement("script");
+        script.src = "https://app.sandbox.midtrans.com/snap/snap.js";
+        script.setAttribute(
+            "data-client-key",
+            import.meta.env.VITE_MIDTRANS_CLIENT_KEY || ""
+        );
+        document.head.appendChild(script);
+    }, []);
+
+    const handlePayment = async () => {
+        if (isProcessing) return;
         setIsProcessing(true);
 
         try {
+            // Get snap token from your backend
             const response = await axios.post("/checkout/process", {
-                ...formData, // Send form data to the backend
-                paymentStatus: "pending", // Add default values as needed
-                paymentMethod: "transfer", // Add default values as needed
+                ...formData,
+                paymentStatus: "pending",
+                paymentMethod: "transfer",
             });
 
-            if (response.status === 200) {
-                alert(response.data.message); // Show success message
-            } else {
-                alert("Payment failed! Please try again.");
+            if (response.data.snapToken) {
+                window.snap.pay(response.data.snapToken, {
+                    onSuccess: function (result: any) {
+                        setPaymentResult(JSON.stringify(result, null, 2));
+                        // Handle success
+                    },
+                    onPending: function (result: any) {
+                        setPaymentResult(JSON.stringify(result, null, 2));
+                        // Handle pending
+                    },
+                    onError: function (result: any) {
+                        setPaymentResult(JSON.stringify(result, null, 2));
+                        // Handle error
+                    },
+                });
             }
-        } catch (error: any) {
-            alert(
-                `Error: ${
-                    error.response?.data?.message ||
-                    "An unexpected error occurred"
-                }`
-            );
+        } catch (error) {
+            console.error("Payment error:", error);
         } finally {
             setIsProcessing(false);
         }
@@ -93,18 +119,28 @@ export default function Checkout({ auth, cart, products }: Props) {
                         <CheckoutForm
                             isProcessing={isProcessing}
                             setIsProcessing={setIsProcessing}
-                            formData={formData} // Pass formData to the CheckoutForm
-                            setFormData={setFormData} // Pass setFormData to handle input changes
+                            formData={formData}
+                            setFormData={setFormData}
                         />
                         <button
-                            onClick={handleCheckout}
+                            onClick={handlePayment}
                             disabled={isProcessing}
                             className={`mt-4 w-full px-4 py-2 text-white ${
                                 isProcessing ? "bg-gray-400" : "bg-blue-500"
                             } rounded hover:bg-blue-600`}
                         >
-                            {isProcessing ? "Processing..." : "PAY"}
+                            {isProcessing ? "Processing..." : "Pay Now"}
                         </button>
+
+                        {paymentResult && (
+                            <pre className="mt-4 p-4 bg-gray-100 rounded">
+                                <div>
+                                    Payment Result:
+                                    <br />
+                                    {paymentResult}
+                                </div>
+                            </pre>
+                        )}
                     </div>
                     <div>
                         <OrderSummary summary={orderSummary} />

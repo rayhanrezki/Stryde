@@ -126,6 +126,7 @@ class CheckoutController extends Controller
             return response()->json([
                 'status' => 'success',
                 'message' => 'Payment successful!',
+                'snapToken' => $snapToken
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
