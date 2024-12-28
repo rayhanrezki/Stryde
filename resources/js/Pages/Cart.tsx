@@ -225,14 +225,17 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                         className="flex gap-6 mb-6"
                                     >
                                         <div className="w-32 h-32 bg-gray-100 rounded-lg overflow-hidden">
-                                            {/* Memastikan array images tidak kosong sebelum mengakses elemen pertama */}
                                             <img
                                                 src={
                                                     cartItem.product.images &&
                                                     cartItem.product.images
                                                         .length > 0
-                                                        ? `/storage/${cartItem.product.images[0].image_path}` // Menambahkan '/storage' untuk path gambar publik
-                                                        : "/public/imagesAIR-MAX-DN.png" // Gambar default jika tidak ada gambar produk
+                                                        ? cartItem.product.images[0].image_path.startsWith(
+                                                              "images/"
+                                                          )
+                                                            ? `/${cartItem.product.images[0].image_path}`
+                                                            : `/storage/${cartItem.product.images[0].image_path}`
+                                                        : "/placeholder.jpg"
                                                 }
                                                 alt={cartItem.product.name}
                                                 className="w-full h-full object-cover"

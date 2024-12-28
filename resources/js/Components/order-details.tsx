@@ -30,8 +30,12 @@ export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
                             <img
                                 src={
                                     product.images && product.images.length > 0
-                                        ? `/storage/${product.images[0].image_path}`
-                                        : "/public/imagesAIR-MAX-DN.png"
+                                        ? product.images[0].image_path.startsWith(
+                                              "images/"
+                                          )
+                                            ? `/${product.images[0].image_path}`
+                                            : `/storage/${product.images[0].image_path}`
+                                        : "/placeholder.jpg"
                                 }
                                 alt={product.name}
                                 className="w-full h-full object-cover"
