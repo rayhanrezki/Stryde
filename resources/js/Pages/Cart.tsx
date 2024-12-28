@@ -170,7 +170,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
             (acc, item) => acc + parseFloat(item.product.price) * item.quantity,
             0
         );
-        const delivery = 9000;
+        const delivery = 0;
         const salesTax = 0;
         const total = subtotal + delivery + salesTax;
 

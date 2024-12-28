@@ -37,7 +37,10 @@ class CheckoutController extends Controller
 
         // Validasi jika tidak ada item di cart
         if ($cartItems->isEmpty()) {
-            return redirect()->route('checkout.index')->withErrors(['message' => 'Cart is empty!']);
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Cart is empty!'
+            ], 400);
         }
 
         $validated = $request->validate([
@@ -45,55 +48,48 @@ class CheckoutController extends Controller
             'lastName' => 'required|string',
             'address' => 'required|string',
             'phone' => 'required|string',
-            'paymentStatus' => 'string|nullable', // Allow null or string
+            'paymentStatus' => 'string|nullable',
         ]);
 
         DB::beginTransaction();
 
-
-
-        $totalAmount = 0;
-
-        // Siapkan data untuk Midtrans
-        $items = [];
-        foreach ($cartItems as $item) {
-            $totalAmount += $item->product->price * $item->quantity;
-
-            $items[] = [
-                'id' => $item->product_id,
-                'price' => $item->product->price,
-                'quantity' => $item->quantity,
-                'name' => $item->product->name,
-            ];
-        }
-
-        // Set your Merchant Server Key
-        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
-        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-        \Midtrans\Config::$isProduction = false;
-        // Set sanitization on (default)
-        \Midtrans\Config::$isSanitized = true;
-        // Set 3DS transaction for credit card to true
-        \Midtrans\Config::$is3ds = true;
-
-        $params = array(
-            'transaction_details' => array(
-                'order_id' => rand(),
-                'gross_amount' => $totalAmount,
-            ),
-            'customer_details' => array(
-                'first_name' => $validated['firstName'],
-                'last_name' => $validated['lastName'],
-                'email' => $user->email,
-                'phone' => $validated['phone'],
-            ),
-
-        );
-
-        $snapToken = \Midtrans\Snap::getSnapToken($params);
-
         try {
+            $totalAmount = 0;
+            $items = [];
+            
+            foreach ($cartItems as $item) {
+                $totalAmount += $item->product->price * $item->quantity;
 
+                $items[] = [
+                    'id' => $item->product_id,
+                    'price' => $item->product->price,
+                    'quantity' => $item->quantity,
+                    'name' => $item->product->name,
+                ];
+            }
+
+            // Set Midtrans configuration
+            \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+            \Midtrans\Config::$isProduction = false;
+            \Midtrans\Config::$isSanitized = true;
+            \Midtrans\Config::$is3ds = true;
+
+            $params = array(
+                'transaction_details' => array(
+                    'order_id' => rand(),
+                    'gross_amount' => $totalAmount,
+                ),
+                'customer_details' => array(
+                    'first_name' => $validated['firstName'],
+                    'last_name' => $validated['lastName'],
+                    'email' => $user->email,
+                    'phone' => $validated['phone'],
+                ),
+            );
+
+            $snapToken = \Midtrans\Snap::getSnapToken($params);
+
+            // Create orders but don't delete cart items yet
             foreach ($cartItems as $item) {
                 $orderData = [
                     'user_id' => $user->id,
@@ -105,7 +101,7 @@ class CheckoutController extends Controller
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
                     'total_amount' => $totalAmount,
-                    'status' => $validated['paymentStatus'] ?? 'pending',  // Default value if null
+                    'status' => $validated['paymentStatus'] ?? 'pending',
                     'snap_token' => $snapToken,
                     'order_date' => Carbon::now(),
                     'created_at' => now(),
@@ -113,21 +109,16 @@ class CheckoutController extends Controller
                 ];
 
                 Order::create($orderData);
-
-                // Log untuk memeriksa data order
-                Log::info('Order data:', $orderData);
             }
-
-            // Hapus item dari cart jika semua order berhasil dibuat
-            CartItem::where('cart_id', $cart->id)->delete();
 
             DB::commit();
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Payment successful!',
+                'message' => 'Order created successfully!',
                 'snapToken' => $snapToken
             ]);
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error processing checkout', [
@@ -149,12 +140,20 @@ class CheckoutController extends Controller
                 'status' => 'required|string'
             ]);
 
-            // Update the order status
-            Order::where('snap_token', $validated['snapToken'])
-                ->update([
-                    'status' => $validated['status'],
-                    'updated_at' => now()
-                ]);
+            DB::transaction(function () use ($validated) {
+                // Update the order status
+                Order::where('snap_token', $validated['snapToken'])
+                    ->update([
+                        'status' => $validated['status'],
+                        'updated_at' => now()
+                    ]);
+
+                // Only delete cart items if payment is successful
+                if ($validated['status'] === 'settlement') {
+                    $user = Auth::user();
+                    CartItem::where('cart_id', $user->cart->id)->delete();
+                }
+            });
 
             return response()->json([
                 'status' => 'success',

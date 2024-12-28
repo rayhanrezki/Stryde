@@ -21,6 +21,7 @@ interface CheckoutFormProps {
         isOver13: boolean;
     };
     setFormData: (formData: any) => void;
+    handlePayment: () => Promise<void>;
 }
 
 export function CheckoutForm({
@@ -28,10 +29,11 @@ export function CheckoutForm({
     setIsProcessing,
     formData,
     setFormData,
+    handlePayment,
 }: CheckoutFormProps) {
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Form submitted:", formData);
+        await handlePayment();
     };
     const user = usePage().props.auth.user;
 
@@ -151,6 +153,7 @@ export function CheckoutForm({
                 <h2 className="text-2xl font-semibold mb-4">
                     Delivery Options
                 </h2>
+
                 <div className="space-y-4">
                     <label className="block p-4 border-2 border-black rounded-2xl cursor-pointer">
                         <input
@@ -171,45 +174,40 @@ export function CheckoutForm({
                     </label>
                 </div>
             </div>
-
             <div className="space-y-4">
                 <label className="flex items-start gap-2">
                     <input
                         type="checkbox"
-                        checked={formData.sameAsBilling}
-                        onChange={(e) =>
-                            setFormData({
-                                ...formData,
-                                sameAsBilling: e.target.checked,
-                            })
-                        }
-                        className="mt-1"
+                        required
+                        className="mt-1 h-4 w-4 rounded accent-black text-white checked:bg-black hover:checked:bg-black focus:ring-black"
                     />
                     <span>
-                        My billing and delivery information are the same
+                        My billing and delivery information are the same{" "}
+                        <span className="text-red-500">*</span>
                     </span>
                 </label>
                 <label className="flex items-start gap-2">
                     <input
                         type="checkbox"
-                        checked={formData.isOver13}
-                        onChange={(e) =>
-                            setFormData({
-                                ...formData,
-                                isOver13: e.target.checked,
-                            })
-                        }
-                        className="mt-1"
+                        required
+                        className="mt-1 h-4 w-4 rounded accent-black text-white checked:bg-black hover:checked:bg-black focus:ring-black"
                     />
-                    <span>I'm 13+ year old</span>
+                    <span>
+                        I'm 13+ year old <span className="text-red-500">*</span>
+                    </span>
                 </label>
             </div>
 
             <button
                 type="submit"
-                className="w-full bg-black text-white py-4 rounded-md hover:bg-gray-800 transition-colors font-rubik"
+                disabled={isProcessing}
+                className={`w-full py-4 rounded-md font-rubik transition-colors ${
+                    isProcessing
+                        ? "bg-gray-500 cursor-not-allowed"
+                        : "bg-black hover:bg-gray-800"
+                } text-white`}
             >
-                REVIEW AND PAY
+                {isProcessing ? "PROCESSING..." : "REVIEW AND PAY"}
             </button>
         </form>
     );

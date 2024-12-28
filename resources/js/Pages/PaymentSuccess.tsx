@@ -12,7 +12,7 @@ interface Props {
 export default function PaymentSuccess({ orderDetails }: Props) {
     return (
         <div className="min-h-screen bg-[#e7e7e3] flex items-center justify-center">
-            <Navbar />
+            <Navbar cartItems={[]} />
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full text-center">
                 <div className="mb-6">
                     <svg
@@ -34,12 +34,10 @@ export default function PaymentSuccess({ orderDetails }: Props) {
                     <div className="mb-6 text-gray-600">
                         <p>Order ID: {orderDetails.orderId}</p>
                         <p>Amount: ${orderDetails.amount}</p>
-                        <p>Status: {orderDetails.status}</p>
                     </div>
                 )}
                 <p className="text-gray-600 mb-6">
-                    Thank you for your purchase. You will receive a confirmation
-                    email shortly.
+                    Thank you for your purchase.
                 </p>
                 <div className="space-y-4">
                     <Link

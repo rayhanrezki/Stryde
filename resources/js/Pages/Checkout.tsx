@@ -52,10 +52,18 @@ export default function Checkout({ auth, cart, products }: Props) {
 
     const orderSummary = {
         items: cart?.items?.length || 0,
-        itemsTotal: Number(product?.price || 0),
+        itemsTotal:
+            cart?.items?.reduce((total, item) => {
+                const product = products.find((p) => p.id === item.product_id);
+                return total + Number(product?.price || 0) * item.quantity;
+            }, 0) || 0,
         delivery: 0,
         salesTax: 0,
-        total: Number(product?.price || 0),
+        total:
+            cart?.items?.reduce((total, item) => {
+                const product = products.find((p) => p.id === item.product_id);
+                return total + Number(product?.price || 0) * item.quantity;
+            }, 0) || 0,
         formatPrice: formatIDR,
     };
 
@@ -135,16 +143,8 @@ export default function Checkout({ auth, cart, products }: Props) {
                             setIsProcessing={setIsProcessing}
                             formData={formData}
                             setFormData={setFormData}
+                            handlePayment={handlePayment}
                         />
-                        <button
-                            onClick={handlePayment}
-                            disabled={isProcessing}
-                            className={`mt-4 w-full px-4 py-2 text-white ${
-                                isProcessing ? "bg-gray-400" : "bg-blue-500"
-                            } rounded hover:bg-blue-600`}
-                        >
-                            {isProcessing ? "Processing..." : "Pay Now"}
-                        </button>
 
                         {paymentResult && (
                             <pre className="mt-4 p-4 bg-gray-100 rounded">
@@ -158,7 +158,10 @@ export default function Checkout({ auth, cart, products }: Props) {
                     </div>
                     <div>
                         <OrderSummary summary={orderSummary} />
-                        <OrderDetails product={product} cartItem={cartItem} />
+                        <OrderDetails
+                            products={products}
+                            cartItems={cart.items}
+                        />
                     </div>
                 </div>
             </div>
