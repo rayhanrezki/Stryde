@@ -30,7 +30,7 @@ interface Order {
         name: string;
         avatar?: string;
     };
-    status: "Delivered" | "Canceled" | "settlement" | "pending";
+    status: "Delivered" | "Cancelled" | "settlement" | "pending";
     amount: number;
     items?: OrderItem[];
 }
@@ -71,10 +71,10 @@ export default function OrderDashboard({ orders }: Props) {
     const getStatusStyle = (status: string) => {
         switch (status.toLowerCase()) {
             case "settlement":
-                return "bg-green-100 text-black-800 font-rubik";
+                return "bg-green-100 text-lime-800 font-rubik";
             case "pending":
-                return "bg-yellow-100 text-black-800 font-rubik font-bold";
-            case "canceled":
+                return "bg-yellow-100 text-orange-800 font-rubik font-bold";
+            case "cancelled":
                 return "bg-red-100 text-orange-800 font-rubik font-bold";
             default:
                 return "bg-gray-100 text-gray-800";
