@@ -98,8 +98,8 @@ export default function Checkout({ auth, cart, products }: Props) {
                         // Update order status to success/settlement
                         axios
                             .post("/checkout/update-status", {
-                                snapToken: response.data.snapToken, // Send the snap token to identify the order
-                                status: "settlement", // Update status to settlement
+                                snapToken: response.data.snapToken,
+                                status: "settlement",
                             })
                             .then(() => {
                                 router.visit("/payment/success", {
@@ -119,6 +119,17 @@ export default function Checkout({ auth, cart, products }: Props) {
                     },
                     onError: function (result: any) {
                         setPaymentResult(JSON.stringify(result, null, 2));
+                    },
+                    onClose: function () {
+                        // Update order status to cancelled when payment window is closed
+                        axios
+                            .post("/checkout/update-status", {
+                                snapToken: response.data.snapToken,
+                                status: "cancelled",
+                            })
+                            .then(() => {
+                                setPaymentResult("Payment cancelled by user");
+                            });
                     },
                 });
             }
