@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('phone');       // Kolom baru
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->integer('quantity');
-            $table->decimal('total_amount', 10, 2);
+            $table->decimal('total_amount', 10, 3);
             $table->string('status')->default('pending');
             $table->string('snap_token')->nullable(); // Kolom baru
             $table->date('order_date');

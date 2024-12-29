@@ -256,12 +256,6 @@ export default function ProductDetails({
                                         ? "OUT OF STOCK"
                                         : "ADD TO CART"}
                                 </button>
-                                <button
-                                    className="w-full bg-[#4263EB] text-white py-3 px-4 rounded-md font-medium hover:bg-[#3653cc] transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
-                                    disabled={!selectedSize}
-                                >
-                                    BUY IT NOW
-                                </button>
                             </div>
 
                             {/* Deskripsi produk */}
