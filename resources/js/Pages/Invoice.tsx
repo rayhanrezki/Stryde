@@ -156,71 +156,34 @@ export default function Invoice({ auth, order, products, cart }: Props) {
                             </tr>
                         </thead>
                         <tbody className="bg-white">
-                            {Object.entries(
-                                orderProducts.reduce((acc, product) => {
-                                    const createdAt = orderDetails.created_at; // Gunakan created_at sebagai kunci
-                                    if (!acc[createdAt]) {
-                                        acc[createdAt] = [];
-                                    }
-                                    acc[createdAt].push(product); // Tambahkan produk ke grup berdasarkan created_at
-                                    return acc;
-                                }, {} as Record<string, Product[]>)
-                            ).map(([createdAt, products]) => (
-                                <React.Fragment key={createdAt}>
-                                    {/* Header untuk grup berdasarkan created_at */}
-                                    <tr>
-                                        <td
-                                            className="text-left font-bold text-gray-700 py-3 px-4"
-                                            colSpan={4}
-                                        >
-                                            Created At:{" "}
-                                            {new Date(createdAt).toLocaleString(
-                                                "id-ID",
-                                                {
-                                                    day: "2-digit",
-                                                    month: "2-digit",
-                                                    year: "numeric",
-                                                    hour: "2-digit",
-                                                    minute: "2-digit",
-                                                    second: "2-digit",
-                                                }
+                            {products.map((product) => {
+                                const quantity = orderItems.filter(
+                                    (id: string) => id === product.id.toString()
+                                ).length;
+                                const totalItemPrice = product.price * quantity;
+
+                                return (
+                                    <tr
+                                        key={product.id}
+                                        className="hover:bg-gray-100"
+                                    >
+                                        <td className="text-left text-gray-700 py-3 px-4">
+                                            {product.name}
+                                        </td>
+                                        <td className="text-right text-gray-700 py-3 px-4">
+                                            {formatIDR(product.price)}
+                                        </td>
+                                        <td className="text-right text-gray-700 py-3 px-4">
+                                            {orderDetails.quantity}
+                                        </td>
+                                        <td className="text-right text-gray-700 py-3 px-4">
+                                            {formatIDR(
+                                                orderDetails.total_amount
                                             )}
                                         </td>
                                     </tr>
-
-                                    {/* Tampilkan produk dalam grup */}
-                                    {products.map((product) => {
-                                        const quantity = orderItems.filter(
-                                            (id: string) =>
-                                                id === product.id.toString()
-                                        ).length;
-                                        const totalItemPrice =
-                                            product.price * quantity;
-
-                                        return (
-                                            <tr
-                                                key={product.id}
-                                                className="hover:bg-gray-100"
-                                            >
-                                                <td className="text-left text-gray-700 py-3 px-4">
-                                                    {product.name}
-                                                </td>
-                                                <td className="text-right text-gray-700 py-3 px-4">
-                                                    {formatIDR(product.price)}
-                                                </td>
-                                                <td className="text-right text-gray-700 py-3 px-4">
-                                                    {orderDetails.quantity}
-                                                </td>
-                                                <td className="text-right text-gray-700 py-3 px-4">
-                                                    {formatIDR(
-                                                        orderDetails.total_amount
-                                                    )}
-                                                </td>
-                                            </tr>
-                                        );
-                                    })}
-                                </React.Fragment>
-                            ))}
+                                );
+                            })}
                         </tbody>
                         <tfoot className="bg-gray-200">
                             <tr>

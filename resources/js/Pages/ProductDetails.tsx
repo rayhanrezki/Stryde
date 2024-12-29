@@ -137,7 +137,7 @@ export default function ProductDetails({
     return (
         <div className="min-h-screen bg-[#e7e7e3] pt-24">
             <Head title={product.name} />
-            <Navbar user={auth?.user} cartItems={cartItemsState} />
+            <Navbar user={auth?.user} cartItems={cartItems} />
             {alertState?.show && (
                 <div className="fixed inset-x-0 top-24 mx-auto z-50 max-w-md animate-in fade-in slide-in-from-top-2">
                     <Alert
@@ -264,12 +264,6 @@ export default function ProductDetails({
                                         : currentStock === 0
                                         ? "OUT OF STOCK"
                                         : "ADD TO CART"}
-                                </button>
-                                <button
-                                    className="w-full bg-[#4263EB] text-white py-3 px-4 rounded-md font-medium hover:bg-[#3653cc] transition-colors disabled:bg-blue-300 disabled:cursor-not-allowed"
-                                    disabled={!selectedSize}
-                                >
-                                    BUY IT NOW
                                 </button>
                             </div>
 

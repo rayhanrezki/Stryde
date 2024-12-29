@@ -1,6 +1,8 @@
 import { Head } from "@inertiajs/react";
 import { MoreVertical } from "lucide-react";
 import AdminLayout from "@/Layouts/AdminLayout";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 interface Order {
     id: string;
@@ -33,6 +35,42 @@ export default function OrderDashboard({ orders }: Props) {
         }
     };
 
+    const generatePDF = () => {
+        const doc = new jsPDF();
+        doc.text("Order Report", 10, 10);
+
+        const tableColumn = [
+            "Product",
+            "Order ID",
+            "Date",
+            "Customer Name",
+            "Status",
+            "Amount",
+        ];
+        const tableRows: string[][] = [];
+
+        orders.forEach((order) => {
+            const orderData = [
+                order.product_name,
+                `#${order.order_id}`,
+                order.date,
+                order.customer.name,
+                order.status,
+                `$${order.amount.toFixed(2)}`,
+            ];
+            tableRows.push(orderData);
+        });
+
+        // Menambahkan tabel ke PDF
+        autoTable(doc, {
+            head: [tableColumn],
+            body: tableRows,
+            startY: 20,
+        });
+
+        doc.save("order-report.pdf");
+    };
+
     return (
         <AdminLayout>
             <Head title="Order Dashboard" />
@@ -41,9 +79,17 @@ export default function OrderDashboard({ orders }: Props) {
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-semibold">Recent Orders</h2>
-                        <button className="p-2 hover:bg-gray-100 rounded-full">
-                            <MoreVertical className="w-5 h-5 text-gray-500" />
-                        </button>
+                        <div className="flex items-center gap-4">
+                            <button
+                                onClick={generatePDF}
+                                className=" bg-black text-white py-2 px-4 rounded hover:bg-gray-800 ]"
+                            >
+                                PDF Report
+                            </button>
+                            <button className="p-2 hover:bg-gray-100 rounded-full">
+                                <MoreVertical className="w-5 h-5 text-gray-500" />
+                            </button>
+                        </div>
                     </div>
 
                     <div className="overflow-x-auto">
