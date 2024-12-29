@@ -185,7 +185,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
             <Navbar user={auth?.user} cartItems={cartItems} />
 
             <div className="min-h-screen bg-[#e7e7e3] p-4 sm:p-6 py-24">
-                <div className="max-w-6xl mx-auto">
+                <div className="max-w-6xl mx-auto mt-24">
                     <div className="mb-8">
                         <h1 className="text-xl sm:text-2xl font-bold mb-2">
                             Step into Stryde

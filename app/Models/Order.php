@@ -16,8 +16,6 @@ class Order extends Model
         'last_name',
         'address',
         'phone',
-        'product_id',
-        'quantity',
         'total_amount',
         'status',
         'snap_token',
@@ -30,16 +28,17 @@ class Order extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 
-    public function product()
+    public function items()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->hasMany(OrderItem::class);
     }
 
     public function products()
     {
-        return $this->belongsTo(Product::class, 'product_id');
+        return $this->belongsToMany(Product::class, 'order_items')
+            ->withPivot('quantity', 'price');
     }
 }

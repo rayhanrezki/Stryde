@@ -12,6 +12,7 @@ use App\Models\CartItem;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Models\OrderItem;
 
 class CheckoutController extends Controller
 {
@@ -36,7 +37,6 @@ class CheckoutController extends Controller
         $cart = $user->cart;
         $cartItems = $cart->items;
 
-        // Validasi jika tidak ada item di cart
         if ($cartItems->isEmpty()) {
             return response()->json([
                 'status' => 'error',
@@ -60,7 +60,6 @@ class CheckoutController extends Controller
 
             foreach ($cartItems as $item) {
                 $totalAmount += $item->product->price * $item->quantity;
-
                 $items[] = [
                     'id' => $item->product_id,
                     'price' => $item->product->price,
@@ -90,26 +89,28 @@ class CheckoutController extends Controller
 
             $snapToken = \Midtrans\Snap::getSnapToken($params);
 
-            // Create orders but don't delete cart items yet
+            // Create single order
+            $order = Order::create([
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'first_name' => $validated['firstName'],
+                'last_name' => $validated['lastName'],
+                'address' => $validated['address'],
+                'phone' => $validated['phone'],
+                'total_amount' => $totalAmount,
+                'status' => $validated['paymentStatus'] ?? 'pending',
+                'snap_token' => $snapToken,
+                'order_date' => Carbon::now(),
+            ]);
+
+            // Create order items
             foreach ($cartItems as $item) {
-                $orderData = [
-                    'user_id' => $user->id,
-                    'email' => $user->email,
-                    'first_name' => $validated['firstName'],
-                    'last_name' => $validated['lastName'],
-                    'address' => $validated['address'],
-                    'phone' => $validated['phone'],
+                OrderItem::create([
+                    'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
-                    'total_amount' => $totalAmount,
-                    'status' => $validated['paymentStatus'] ?? 'pending',
-                    'snap_token' => $snapToken,
-                    'order_date' => Carbon::now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-
-                Order::create($orderData);
+                    'price' => $item->product->price
+                ]);
             }
 
             DB::commit();
