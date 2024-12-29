@@ -275,6 +275,12 @@ export default function ProductDetails({
                                 <p className="text-gray-600">
                                     {product.description}
                                 </p>
+                                <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
+                                    <li>Stryde.</li>
+                                    <li>
+                                     Embrace the chance, stride towards greatness!
+                                    </li>
+                                </ul>
                             </div>
                         </div>
                     </div>
