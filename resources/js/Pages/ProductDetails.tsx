@@ -275,10 +275,6 @@ export default function ProductDetails({
                                 <p className="text-gray-600">
                                     {product.description}
                                 </p>
-                                <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
-                                    <li>Pay using QRIS</li>
-
-                                </ul>
                             </div>
                         </div>
                     </div>
