@@ -277,10 +277,7 @@ export default function ProductDetails({
                                 </p>
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
                                     <li>Pay using QRIS</li>
-                                    <li>
-                                        Subhanallah, Walhamdulillah,
-                                        Walailahailallah
-                                    </li>
+
                                 </ul>
                             </div>
                         </div>
