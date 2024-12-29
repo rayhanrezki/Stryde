@@ -185,7 +185,7 @@ export default function Login({
                         )}
 
                         <motion.div
-                            className="mt-6 grid grid-cols-3 gap-4"
+                            className="mt-6 grid grid-cols-2 gap-4"
                             variants={slideUp}
                             transition={{ delay: 0.6 }}
                         >
@@ -206,14 +206,6 @@ export default function Login({
                             >
                                 <Github className="h-6 w-6" />
                             </motion.a>
-
-                            <motion.button
-                                className="flex items-center justify-center rounded-md border border-gray-300 px-4 py-2 transition-colors hover:bg-gray-50"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                <Facebook className="h-6 w-6 text-blue-600" />
-                            </motion.button>
                         </motion.div>
 
                         <motion.p
