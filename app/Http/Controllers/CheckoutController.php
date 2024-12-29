@@ -177,37 +177,47 @@ class CheckoutController extends Controller
     {
         $user = Auth::user();
 
-
         $order = Order::where('user_id', $user->id)
-            ->with('products')
+            ->with(['items.product']) // Pastikan relasi terhubung dengan item dan produk
             ->latest()
             ->first();
 
         if (!$order) {
             return Inertia::render('Invoice', [
                 'auth' => $user,
-                'order' => [],
-                'cart' => [],
+                'orders' => [],
+                'cart' => null,
                 'products' => [],
             ]);
         }
 
-
-        $cart = $user->cart;
-        $cartItems = $cart ? $cart->items : [];
-
-
-        $orderProductIds = $order->product_id;
-
-
-        $orderProducts = Product::whereIn('id', (array) $orderProductIds)->get();
-
+        // Format items untuk frontend
+        $orderItems = $order->items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'product_name' => $item->product->name,
+                'quantity' => $item->quantity,
+                'price' => $item->price,
+            ];
+        });
 
         return Inertia::render('Invoice', [
             'auth' => $user,
-            'order' => [$order],
-            'cart' => $cart,
-            'products' => $orderProducts,
+            'orders' => [[
+                'id' => $order->id,
+                'order_id' => $order->id,
+                'date' => $order->created_at->toDateString(),
+                'customer' => [
+                    'name' => "{$order->first_name} {$order->last_name}",
+                    'address' => $order->address,
+                    'phone' => $order->phone,
+                    'email' => $order->email,
+                ],
+                'items' => $orderItems,
+                'total' => $order->total_amount,
+            ]],
+            'cart' => $user->cart,
+            'products' => $order->items->pluck('product'), // Produk terkait
         ]);
     }
 }
