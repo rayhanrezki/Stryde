@@ -50,12 +50,6 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        console.log("Cart Items:", cartItemsState); // Lihat seluruh data
-        cartItemsState.forEach((item) => {
-            console.log("Size:", item.sizes); // Periksa apakah size tersedia
-        });
-    }, [cartItemsState]);
 
     const removeItem = (id: number) => {
         if (!confirm("Are you sure you want to remove this item?")) return;
