@@ -82,7 +82,7 @@ export default function OrderDashboard({ orders }: Props) {
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={generatePDF}
-                                className=" bg-black text-white py-2 px-4 rounded hover:bg-gray-800 px-4 py-2 rounded-lg"
+                                className=" bg-black text-white py-2 px-4 rounded hover:bg-gray-800 ]"
                             >
                                 PDF Report
                             </button>
