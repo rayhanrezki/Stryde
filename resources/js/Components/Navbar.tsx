@@ -3,22 +3,46 @@
 import { useState, useEffect } from "react";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { User as UserType } from "@/types";
 
 interface NavbarProps {
     user?: UserType;
-    cartItems: { id: number; product_id: number; quantity: number }[]; // CartItems with id, product_id, and quantity
+    cartItems: { id: number; product_id: number; quantity: number }[];
 }
 
-export default function Navbar({ user, cartItems }: NavbarProps) {
+export default function Navbar({
+    user,
+    cartItems: initialCartItems,
+}: NavbarProps) {
+    const [localCartItems, setLocalCartItems] = useState(initialCartItems);
+    const { props } = usePage();
+
+    // Update local cart items when the prop changes
+    useEffect(() => {
+        setLocalCartItems(initialCartItems);
+    }, [initialCartItems]);
+
+    // Listen for custom cart update events
+    useEffect(() => {
+        const handleCartUpdate = (e: CustomEvent) => {
+            setLocalCartItems(e.detail.cartItems);
+        };
+
+        window.addEventListener("cart-updated" as any, handleCartUpdate);
+
+        return () => {
+            window.removeEventListener("cart-updated" as any, handleCartUpdate);
+        };
+    }, []);
+
     const [isScrolled, setIsScrolled] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
         console.log("User:", user);
-        console.log("CartItems Nav:", cartItems); // Log cartItems for debugging
-    }, [user, cartItems]);
+        console.log("CartItems Nav:", localCartItems); // Log cartItems for debugging
+    }, [user, localCartItems]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -131,7 +155,9 @@ export default function Navbar({ user, cartItems }: NavbarProps) {
                             href={route("cart")}
                         />
                         <CartBadge
-                            itemCount={cartItems ? cartItems.length : 0}
+                            itemCount={
+                                localCartItems ? localCartItems.length : 0
+                            }
                         />
                     </div>
                 </div>
@@ -152,7 +178,9 @@ export default function Navbar({ user, cartItems }: NavbarProps) {
                             href={route("cart")}
                         />
                         <CartBadge
-                            itemCount={cartItems ? cartItems.length : 0}
+                            itemCount={
+                                localCartItems ? localCartItems.length : 0
+                            }
                         />
                     </div>
                 </div>

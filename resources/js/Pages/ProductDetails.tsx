@@ -96,7 +96,16 @@ export default function ProductDetails({
             post(route("cart.add"), {
                 preserveScroll: true,
                 preserveState: true,
-                onSuccess: (page) => {
+                onSuccess: (response) => {
+                    // Dispatch the cart-updated event with the new cart items
+                    window.dispatchEvent(
+                        new CustomEvent("cart-updated", {
+                            detail: {
+                                cartItems: response.props.cartItems,
+                            },
+                        })
+                    );
+
                     setAlertState({
                         show: true,
                         type: "success",

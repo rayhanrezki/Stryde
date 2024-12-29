@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import "@fontsource/rubik/600.css";
 import "@fontsource-variable/open-sans";
 import { Button } from "@/Components/ui/button";
+import { Link } from "@inertiajs/react";
 
 export default function Hero() {
     return (
@@ -35,15 +36,17 @@ export default function Hero() {
                             <div className="flex justify-between items-end">
                                 <div>
                                     <h2 className="text-2xl sm:text-3xl lg:text-5xl font-bold mb-2 text-white font-rubik">
-                                        NIKE AIR MAX
+                                        NIKE AIR FORCE X CARHARTT WIP
                                     </h2>
                                     <p className="text-xs sm:text-sm mb-4 text-white/90 font-open-sans font-semibold max-w-[280px] sm:max-w-none">
                                         Nike introducing the new air max for
                                         everyone's comfort
                                     </p>
-                                    <Button className="bg-blue-600 hover:bg-blue-700 text-white py-1 sm:py-2 px-4 sm:px-6 rounded-md text-xs sm:text-sm">
-                                        SHOP NOW
-                                    </Button>
+                                    <Link href="/products/nike-air-force-x-carhartt-wip">
+                                        <Button className="bg-blue-600 hover:bg-blue-700 text-white py-1 sm:py-2 px-4 sm:px-6 rounded-md text-xs sm:text-sm">
+                                            SHOP NOW
+                                        </Button>
+                                    </Link>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     {[1, 2].map((index) => (
