@@ -52,11 +52,10 @@ export function CheckoutForm({
         libraries: ["places"],
     });
 
-    console.log(isLoaded);
+    
 
     const handleOnPlacesChanged = () => {
         let address = inputref.current!.getPlaces();
-        console.log("address", address);
     };
 
     return (

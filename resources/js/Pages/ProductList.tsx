@@ -166,7 +166,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
                         <p className="text-sm mb-2">Sneaker Of The Year</p>
                         <h1 className="text-3xl sm:text-5xl font-bold mb-4">
-                            Get 30% off
+                         NIKE AIR FORCE
                         </h1>
                         <p className="max-w-md text-sm sm:text-base">
                             Sneakers made with your comfort in mind so you can

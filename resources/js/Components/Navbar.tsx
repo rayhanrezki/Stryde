@@ -40,11 +40,6 @@ export default function Navbar({
     const [isOpen, setIsOpen] = useState(false);
 
     useEffect(() => {
-        console.log("User:", user);
-        console.log("CartItems Nav:", localCartItems); // Log cartItems for debugging
-    }, [user, localCartItems]);
-
-    useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 20);
         };

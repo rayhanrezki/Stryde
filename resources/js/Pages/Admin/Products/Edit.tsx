@@ -44,16 +44,7 @@ export default function Edit({ product, categories }: Props) {
         e.preventDefault();
         setProcessing(true);
 
-        console.log("Submitting form data:", {
-            name: formData.name,
-            description: formData.description,
-            price: formData.price,
-            existingImages: formData.existingImages,
-            newImages: formData.images,
-            sizes: sizeStocks,
-            categories: formData.categories,
-        });
-
+       
         const submitData = new FormData();
         submitData.append("_method", "PUT");
         submitData.append("name", formData.name);
@@ -75,7 +66,7 @@ export default function Edit({ product, categories }: Props) {
 
         router.post(route("products.update", product.slug), submitData, {
             onSuccess: (page) => {
-                console.log("Success response:", page);
+                
                 setProcessing(false);
                 router.visit(route("products.index"));
             },
