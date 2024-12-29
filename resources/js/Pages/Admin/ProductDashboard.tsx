@@ -29,10 +29,13 @@ import {
 import { useState } from "react";
 import { Product } from "@/types/product";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Importing arrow icons
 
 interface Props {
     products: Product[];
 }
+
+const PRODUCTS_PER_PAGE = 6;
 
 export default function ProductDashboard({ products }: Props) {
     const [searchQuery, setSearchQuery] = useState("");
@@ -40,6 +43,7 @@ export default function ProductDashboard({ products }: Props) {
     const [showSuccessAlert, setShowSuccessAlert] = useState(false);
     const [showErrorAlert, setShowErrorAlert] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+    const [currentPage, setCurrentPage] = useState(1);
 
     const filteredProducts = products.filter(
         (product) =>
@@ -47,6 +51,13 @@ export default function ProductDashboard({ products }: Props) {
             product.description
                 .toLowerCase()
                 .includes(searchQuery.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+
+    const currentPageProducts = filteredProducts.slice(
+        (currentPage - 1) * PRODUCTS_PER_PAGE,
+        currentPage * PRODUCTS_PER_PAGE
     );
 
     const getStockPercentage = () => {
@@ -78,6 +89,12 @@ export default function ProductDashboard({ products }: Props) {
         }
     };
 
+    const handlePageChange = (page: number) => {
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
+    };
+
     return (
         <AdminLayout>
             <Head title="Products Dashboard" />
@@ -104,7 +121,7 @@ export default function ProductDashboard({ products }: Props) {
                     <div>
                         <h1 className="text-2xl font-bold">Products</h1>
                         <p className="text-gray-600">
-                            {filteredProducts.length} of {products.length}{" "}
+                            {currentPageProducts.length} of {products.length}{" "}
                             products
                         </p>
                     </div>
@@ -135,7 +152,7 @@ export default function ProductDashboard({ products }: Props) {
 
                 {/* Products Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredProducts.map((product) => (
+                    {currentPageProducts.map((product) => (
                         <div
                             key={product.id}
                             className="bg-white p-6 rounded-xl"
@@ -232,6 +249,27 @@ export default function ProductDashboard({ products }: Props) {
                             </div>
                         </div>
                     ))}
+                </div>
+
+                {/* Pagination with Arrows */}
+                <div className="flex justify-center items-center space-x-4 mt-6">
+                    <button
+                        className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <span className="text-sm text-gray-600">
+                        Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                        className="px-4 py-2 border rounded-lg disabled:opacity-50"
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        <ChevronRight size={20} />
+                    </button>
                 </div>
             </div>
 
