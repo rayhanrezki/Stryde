@@ -44,8 +44,22 @@ export interface ProductFormData {
 export interface CartItem {
     id: number;
     product_id: number;
+    product_size_id: number;
     quantity: number;
-    size: string;
+    product: {
+        id: number;
+        name: string;
+        description: string;
+        price: string;
+        sizes: { id: number; size: string; stock: number }[];
+        categories: { id: number; name: string }[];
+        images: { id: number; image_path: string }[];
+    };
+    product_size: {
+        id: number;
+        size: string;
+        stock: number;
+    };
 }
 
 export interface Cart {

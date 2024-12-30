@@ -48,8 +48,6 @@ const formatToIDR = (amount: number): string => {
 
 export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
-    const [loading, setLoading] = useState(false);
-
 
     const removeItem = (id: number) => {
         if (!confirm("Are you sure you want to remove this item?")) return;
@@ -239,11 +237,11 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                         <div className="flex-1 min-w-0">
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
                                                 <div>
-                                                    <h3 className="font-semibold text-lg truncate">
+                                                    <h3 className="font-semibold font-rubik text-lg truncate">
                                                         {cartItem.product.name}
                                                     </h3>
 
-                                                    <p className="text-sm text-gray-600">
+                                                    <p className="text-sm text-black-600 font-rubik">
                                                         {cartItem.product
                                                             .categories &&
                                                         cartItem.product
@@ -259,7 +257,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                         }
                                                     </p>
 
-                                                    <p className="text-sm text-gray-600">
+                                                    <p className="text-sm text-black-600 font-rubik">
                                                         Size:{" "}
                                                         {cartItem.product_size
                                                             ?.size || "N/A"}

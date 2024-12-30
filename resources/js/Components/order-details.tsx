@@ -15,6 +15,8 @@ interface OrderDetailsProps {
 }
 
 export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
+    console.log("OrderDetails cartItems:", cartItems);
+
     return (
         <div className="bg-white p-6 rounded-3xl shadow-sm mt-4 font-rubik">
             <h2 className="text-2xl font-semibold mb-4">Order Details</h2>
@@ -49,7 +51,9 @@ export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
                                 {product.description}
                             </p>
                             <div className="flex gap-4 mt-1">
-                                <span>Size: {cartItem.size}</span>
+                                <span>
+                                    Size: {cartItem.product_size?.size || "N/A"}
+                                </span>
                                 <span>Quantity: {cartItem.quantity}</span>
                             </div>
                             <p className="text-blue-600 font-semibold mt-1">

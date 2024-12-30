@@ -10,7 +10,7 @@ class Cart extends Model
 
     public function items()
     {
-        return $this->hasMany(CartItem::class);
+        return $this->hasMany(CartItem::class)->with('productSize');
     }
 
     public function user()
