@@ -5,12 +5,12 @@
         "api/index.php": { "runtime": "vercel-php@0.6.0" }
     },
     "routes": [
-        { "src": "/build/(.*)", "dest": "/dist/build/" },
+        { "src": "/build/(.*)", "dest": "/public/build/" },
         { "src": "/(.*)", "dest": "/api/index.php" }
     ],
     "public": true,
     "buildCommand": "vite build",
-    "outputDirectory": "dist",
+    "outputDirectory": "public",
     "env": {
         "APP_NAME": "Stryde",
         "APP_ENV": "local", 
