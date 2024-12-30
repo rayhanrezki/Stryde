@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Menu, ShoppingCart, User, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, usePage } from "@inertiajs/react";
 import { User as UserType } from "@/types";
@@ -76,12 +76,6 @@ export default function Navbar({
             >
                 Women
             </MobileNavLink>
-            <div className="pt-2 sm:pt-4 border-t border-gray-100">
-                <MobileNavLink href="/search" onClick={() => setIsOpen(false)}>
-                    <Search className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                    Search
-                </MobileNavLink>
-            </div>
         </motion.div>,
     ];
 
@@ -132,11 +126,6 @@ export default function Navbar({
 
                 {/* Desktop Icons */}
                 <div className="hidden lg:flex items-center space-x-4">
-                    <NavIcon
-                        icon={<Search className="w-5 h-5" />}
-                        label="Search"
-                    />
-
                     <NavIcon
                         icon={<User className="w-5 h-5" />}
                         label="User account"

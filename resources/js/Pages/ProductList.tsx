@@ -37,7 +37,9 @@ export default function ProductList({ auth, products, cartItems }: Props) {
     const [filters, setFilters] = useState({
         size: "",
         categories: [] as number[],
+        searchQuery: "",
     });
+    const [sortBy, setSortBy] = useState("price-desc");
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -79,9 +81,21 @@ export default function ProductList({ auth, products, cartItems }: Props) {
         }, [] as Category[]);
     }, [products]);
 
-    // Filtering logic
+    const sortProducts = (products: Product[]) => {
+        return [...products].sort((a, b) => {
+            switch (sortBy) {
+                case "price-asc":
+                    return Number(a.price) - Number(b.price);
+                case "price-desc":
+                    return Number(b.price) - Number(a.price);
+                default:
+                    return 0;
+            }
+        });
+    };
+
     const filteredProducts = useMemo(() => {
-        return products.filter((product) => {
+        const filtered = products.filter((product) => {
             const sizeMatch =
                 !filters.size ||
                 product.sizes.some((s) => s.size === filters.size);
@@ -90,11 +104,17 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                 product.categories.some((c: Category) =>
                     filters.categories.includes(c.id)
                 );
-            return sizeMatch && categoryMatch;
+            const searchMatch =
+                !filters.searchQuery ||
+                product.name
+                    .toLowerCase()
+                    .includes(filters.searchQuery.toLowerCase());
+            return sizeMatch && categoryMatch && searchMatch;
         });
-    }, [products, filters]);
 
-    // Filter handlers
+        return sortProducts(filtered);
+    }, [products, filters, sortBy]);
+
     const handleFilter = (
         type: "size" | "categories",
         value: string | number
@@ -138,7 +158,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
 
     const clearFilters = (type?: "size" | "categories") => {
         if (!type) {
-            setFilters({ size: "", categories: [] });
+            setFilters({ size: "", categories: [], searchQuery: "" });
             router.get(window.location.pathname, {}, { preserveState: true });
         } else {
             setFilters((prev) => ({
@@ -153,6 +173,17 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                 );
             }
         }
+    };
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setFilters((prev) => ({
+            ...prev,
+            searchQuery: e.target.value,
+        }));
+    };
+
+    const handleSort = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSortBy(e.target.value);
     };
 
     return (
@@ -191,34 +222,44 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                         <p className="text-gray-600 text-sm sm:text-base">
                             {filteredProducts.length} items
                             {(filters.size ||
-                                filters.categories.length > 0) && (
+                                filters.categories.length > 0 ||
+                                filters.searchQuery) && (
                                 <span className="ml-2">
                                     {filters.size && `(Size: ${filters.size})`}
                                     {filters.categories.length > 0 &&
                                         ` (${filters.categories.length} categories selected)`}
+                                    {filters.searchQuery &&
+                                        ` (Search: "${filters.searchQuery}")`}
                                 </span>
                             )}
                         </p>
                     </div>
-                    <div className="relative w-full sm:w-auto">
+                    <div className="w-full sm:w-auto flex gap-4 items-center">
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={filters.searchQuery}
+                            onChange={handleSearch}
+                            className="w-full sm:w-64 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+
                         <select
                             className="w-full sm:w-auto appearance-none bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 pr-8"
-                            defaultValue="trending"
+                            value={sortBy}
+                            onChange={handleSort}
                         >
-                            <option value="trending">TRENDING</option>
-                            <option value="newest">NEWEST</option>
-                            <option value="price-asc">
-                                PRICE: LOW TO HIGH
-                            </option>
                             <option value="price-desc">
                                 PRICE: HIGH TO LOW
+                            </option>
+                            <option value="price-asc">
+                                PRICE: LOW TO HIGH
                             </option>
                         </select>
                     </div>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-8">
-                    {/* Filters Sidebar - Make collapsible on mobile */}
+                    {/* Filters Sidebar */}
                     <div className="w-full sm:w-64 flex-shrink-0">
                         <div className="mb-6 bg-white sm:bg-transparent p-4 sm:p-0 rounded-lg">
                             <div className="flex justify-between items-center mb-4">

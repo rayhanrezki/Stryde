@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Link } from "@inertiajs/react";
+import { ArrowRight } from "lucide-react";
 
 interface Category {
     id: number;
@@ -25,55 +24,18 @@ const categories: Category[] = [
 ];
 
 const Categories = () => {
-    const [currentPage, setCurrentPage] = useState(0);
-    const [itemsPerPage, setItemsPerPage] = useState(2);
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
-
-    const handleNext = () => {
-        setCurrentPage((prev) => (prev + 1) % totalPages);
-    };
-
-    const handlePrev = () => {
-        setCurrentPage((prev) => (prev - 1 + totalPages) % totalPages);
-    };
-
-    const currentCategories = categories.slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-    );
-
     return (
         <section className="pt-4 md:pt-8 lg:pt-12 bg-[#1E1E1E]">
             <div className="px-4 mx-auto">
                 <div className="max-w-7xl mx-auto">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 sm:mb-6 lg:mb-8 gap-4">
+                    <div className="mb-4 sm:mb-6 lg:mb-8">
                         <h1 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
                             CATEGORIES
                         </h1>
-                        <div className="flex gap-2">
-                            <button
-                                onClick={handlePrev}
-                                className="bg-[#e7e7e3] p-1.5 sm:p-2 rounded-lg hover:bg-gray-600 transition-colors"
-                            >
-                                <ArrowLeft
-                                    size={20}
-                                    className="text-black sm:w-6 sm:h-6"
-                                />
-                            </button>
-                            <button
-                                onClick={handleNext}
-                                className="bg-[#e7e7e3] p-1.5 sm:p-2 rounded-lg hover:bg-gray-600 transition-colors"
-                            >
-                                <ArrowRight
-                                    size={20}
-                                    className="text-black sm:w-6 sm:h-6"
-                                />
-                            </button>
-                        </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-0">
-                        {currentCategories.map((category, index) => (
+                        {categories.map((category, index) => (
                             <Link
                                 key={category.id}
                                 href={`/products?category=${category.filterName}`}
