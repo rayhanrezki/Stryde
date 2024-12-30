@@ -15,8 +15,6 @@ interface OrderDetailsProps {
 }
 
 export function OrderDetails({ products, cartItems }: OrderDetailsProps) {
-    console.log("OrderDetails cartItems:", cartItems);
-
     return (
         <div className="bg-white p-6 rounded-3xl shadow-sm mt-4 font-rubik">
             <h2 className="text-2xl font-semibold mb-4">Order Details</h2>
