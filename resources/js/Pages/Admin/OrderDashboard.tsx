@@ -149,157 +149,198 @@ export default function OrderDashboard({ orders }: Props) {
                         </div>
                     </div>
 
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="border-b">
-                                    <th className="w-6 pb-3">
-                                        <input
-                                            type="checkbox"
-                                            className="rounded border-gray-300"
-                                        />
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Product
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Order ID
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Date
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Customer Name
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Status
-                                    </th>
-                                    <th className="text-left pb-3 text-gray-600 font-medium">
-                                        Amount
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order) => (
-                                    <>
-                                        <tr
-                                            key={order.id}
-                                            className="border-b hover:bg-gray-50"
-                                        >
-                                            <td className="py-4">
+                    <div className="relative overflow-x-auto sm:rounded-lg">
+                        <div className="min-w-full inline-block align-middle">
+                            <div className="overflow-hidden">
+                                <table className="min-w-full divide-y divide-gray-200">
+                                    <thead className="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" className="p-4 w-6">
                                                 <input
                                                     type="checkbox"
                                                     className="rounded border-gray-300"
                                                 />
-                                            </td>
-                                            <td className="py-4">
-                                                <div className="relative">
-                                                    <div
-                                                        className="flex items-center cursor-pointer"
-                                                        onClick={() =>
-                                                            setShowDropdown(
-                                                                showDropdown ===
-                                                                    order.id
-                                                                    ? null
-                                                                    : order.id
-                                                            )
-                                                        }
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Product
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Order ID
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Date
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Customer Name
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Status
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                                            >
+                                                Amount
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="bg-white divide-y divide-gray-200">
+                                        {orders.map((order) => (
+                                            <>
+                                                <tr
+                                                    key={order.id}
+                                                    className="hover:bg-gray-50"
+                                                >
+                                                    <td className="p-4 w-6">
+                                                        <input
+                                                            type="checkbox"
+                                                            className="rounded border-gray-300"
+                                                        />
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="relative">
+                                                            <div
+                                                                className="flex items-center cursor-pointer"
+                                                                onClick={() =>
+                                                                    setShowDropdown(
+                                                                        showDropdown ===
+                                                                            order.id
+                                                                            ? null
+                                                                            : order.id
+                                                                    )
+                                                                }
+                                                            >
+                                                                {
+                                                                    order.product_name
+                                                                }
+                                                                <ChevronDown
+                                                                    className={`w-4 h-4 ml-1 transition-transform ${
+                                                                        showDropdown ===
+                                                                        order.id
+                                                                            ? "transform rotate-180"
+                                                                            : ""
+                                                                    }`}
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        #{order.order_id}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        {order.date}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center gap-2">
+                                                            {order.customer
+                                                                .avatar && (
+                                                                <img
+                                                                    src={
+                                                                        order
+                                                                            .customer
+                                                                            .avatar
+                                                                    }
+                                                                    alt={
+                                                                        order
+                                                                            .customer
+                                                                            .name
+                                                                    }
+                                                                    className="w-6 h-6 rounded-full"
+                                                                />
+                                                            )}
+                                                            <span>
+                                                                {
+                                                                    order
+                                                                        .customer
+                                                                        .name
+                                                                }
+                                                            </span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span
+                                                            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusStyle(
+                                                                order.status
+                                                            )}`}
+                                                        >
+                                                            {order.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        {formatIDR(
+                                                            order.amount
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td
+                                                        colSpan={7}
+                                                        className="p-0"
                                                     >
-                                                        {order.product_name}
-                                                        <ChevronDown
-                                                            className={`w-4 h-4 ml-1 transition-transform ${
+                                                        <div
+                                                            className={`transition-all duration-200 ease-in-out overflow-hidden ${
                                                                 showDropdown ===
                                                                 order.id
-                                                                    ? "transform rotate-180"
-                                                                    : ""
+                                                                    ? "max-h-[500px] border-b"
+                                                                    : "max-h-0"
                                                             }`}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="py-4">
-                                                #{order.order_id}
-                                            </td>
-                                            <td className="py-4">
-                                                {order.date}
-                                            </td>
-                                            <td className="py-4">
-                                                <div className="flex items-center gap-2">
-                                                    {order.customer.avatar && (
-                                                        <img
-                                                            src={
-                                                                order.customer
-                                                                    .avatar
-                                                            }
-                                                            alt={
-                                                                order.customer
-                                                                    .name
-                                                            }
-                                                            className="w-6 h-6 rounded-full"
-                                                        />
-                                                    )}
-                                                    <span>
-                                                        {order.customer.name}
-                                                    </span>
-                                                </div>
-                                            </td>
-                                            <td className="py-4">
-                                                <span
-                                                    className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusStyle(
-                                                        order.status
-                                                    )}`}
-                                                >
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="py-4">
-                                                {formatIDR(order.amount)}
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colSpan={7} className="p-0">
-                                                <div
-                                                    className={`transition-all duration-200 ease-in-out overflow-hidden ${
-                                                        showDropdown ===
-                                                        order.id
-                                                            ? "max-h-[500px] border-b"
-                                                            : "max-h-0"
-                                                    }`}
-                                                >
-                                                    {order.items?.map(
-                                                        (item, index) => (
-                                                            <div
-                                                                key={index}
-                                                                className="px-4 py-3 bg-gray-50 flex justify-between items-center border-b last:border-b-0"
-                                                            >
-                                                                <div className="flex-1">
-                                                                    <div className="font-medium text-gray-900">
-                                                                        {
-                                                                            item.product_name
+                                                        >
+                                                            {order.items?.map(
+                                                                (
+                                                                    item,
+                                                                    index
+                                                                ) => (
+                                                                    <div
+                                                                        key={
+                                                                            index
                                                                         }
+                                                                        className="px-4 py-3 bg-gray-50 flex justify-between items-center border-b last:border-b-0"
+                                                                    >
+                                                                        <div className="flex-1">
+                                                                            <div className="font-medium text-gray-900">
+                                                                                {
+                                                                                    item.product_name
+                                                                                }
+                                                                            </div>
+                                                                            <div className="text-gray-500 text-sm">
+                                                                                Quantity:{" "}
+                                                                                {
+                                                                                    item.quantity
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        <div className="text-gray-900">
+                                                                            {formatIDR(
+                                                                                item.price
+                                                                            )}
+                                                                        </div>
                                                                     </div>
-                                                                    <div className="text-gray-500 text-sm">
-                                                                        Quantity:{" "}
-                                                                        {
-                                                                            item.quantity
-                                                                        }
-                                                                    </div>
-                                                                </div>
-                                                                <div className="text-gray-900">
-                                                                    {formatIDR(
-                                                                        item.price
-                                                                    )}
-                                                                </div>
-                                                            </div>
-                                                        )
-                                                    )}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </>
-                                ))}
-                            </tbody>
-                        </table>
+                                                                )
+                                                            )}
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
