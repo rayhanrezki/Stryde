@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Image;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class CartItem extends Model
@@ -18,17 +19,18 @@ class CartItem extends Model
         'quantity',
     ];
 
+    // Add with property to always load these relationships
+    protected $with = ['productSize'];
+
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function productSize()
+    public function productSize(): BelongsTo
     {
-        return $this->belongsTo(ProductSize::class, 'product_size_id');
+        return $this->belongsTo(ProductSize::class);
     }
-
-    // Dalam model CartItem
 
     public function images(): HasMany
     {

@@ -41,16 +41,16 @@ export default function PaymentSuccess({ orderDetails }: Props) {
                 </p>
                 <div className="space-y-4">
                     <Link
-                        href="/dashboard"
+                        href="/products"
                         className="block w-full bg-black text-white py-2 px-4 rounded hover:bg-gray-800"
                     >
-                        View Order Status
+                        Continue Shopping
                     </Link>
                     <Link
                         href="/invoice" // Update URL untuk mencetak invoice
                         className="block w-full border border-black text-black py-2 px-4 rounded hover:bg-gray-100"
                     >
-                        Cetak Invoice
+                        View Invoice
                     </Link>
                 </div>
             </div>

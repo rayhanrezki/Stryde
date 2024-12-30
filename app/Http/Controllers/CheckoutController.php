@@ -19,7 +19,7 @@ class CheckoutController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $cart = $user->cart;
+        $cart = $user->cart->load(['items.productSize']);
         $products = Product::with(['images', 'sizes', 'categories'])
             ->whereIn('id', $cart->items->pluck('product_id'))
             ->get();

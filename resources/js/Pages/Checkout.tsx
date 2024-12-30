@@ -178,16 +178,6 @@ export default function Checkout({ auth, cart, products }: Props) {
                             setFormData={setFormData}
                             handlePayment={handlePayment}
                         />
-
-                        {paymentResult && (
-                            <pre className="mt-4 p-4 bg-gray-100 rounded">
-                                <div>
-                                    Payment Result:
-                                    <br />
-                                    {paymentResult}
-                                </div>
-                            </pre>
-                        )}
                     </div>
                     <div>
                         <OrderSummary summary={orderSummary} />
