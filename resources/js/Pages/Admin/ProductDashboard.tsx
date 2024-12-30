@@ -242,7 +242,9 @@ export default function ProductDashboard({ products }: Props) {
                                     <div className="flex justify-between items-center">
                                         <span className="font-medium">
                                             Rp{" "}
-                                            {Number(product.price).toFixed(2)}
+                                            {new Intl.NumberFormat(
+                                                "id-ID"
+                                            ).format(product.price)}
                                         </span>
                                     </div>
                                 </div>

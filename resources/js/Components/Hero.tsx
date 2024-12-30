@@ -48,20 +48,6 @@ export default function Hero() {
                                         </Button>
                                     </Link>
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    {[1, 2].map((index) => (
-                                        <div
-                                            key={index}
-                                            className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-2 border-white/20 hidden sm:block"
-                                        >
-                                            <img
-                                                src="/images/NIKE_AIR_MAX.png"
-                                                alt={`Nike Air Max Thumbnail ${index}`}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
                         </div>
                     </div>
