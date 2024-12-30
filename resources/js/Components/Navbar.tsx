@@ -245,12 +245,12 @@ function NavIcon({
     return (
         <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
             {href ? (
-                <Link href={href} className="flex items-center">
+                <Link href={href} className="flex items-center relative">
                     {icon}
                     <span className="sr-only">{label}</span>
                 </Link>
             ) : (
-                <span className="flex items-center">
+                <span className="flex items-center relative">
                     {icon}
                     <span className="sr-only">{label}</span>
                 </span>
@@ -260,11 +260,14 @@ function NavIcon({
 }
 
 function CartBadge({ itemCount }: { itemCount: number }) {
-    if (itemCount === 0) return null; // Early return to avoid rendering empty badge
+    if (itemCount === 0) return null;
 
     return (
-        <div className="absolute top-0 right-0 -mr-2 -mt-2 h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
+        <Link
+            href={route("cart")}
+            className="absolute top-0 right-0 -mr-2 -mt-2 h-5 w-5 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center cursor-pointer"
+        >
             {itemCount > 99 ? "99+" : itemCount}
-        </div>
+        </Link>
     );
 }
