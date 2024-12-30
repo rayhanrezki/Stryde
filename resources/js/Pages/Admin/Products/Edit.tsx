@@ -44,7 +44,6 @@ export default function Edit({ product, categories }: Props) {
         e.preventDefault();
         setProcessing(true);
 
-       
         const submitData = new FormData();
         submitData.append("_method", "PUT");
         submitData.append("name", formData.name);
@@ -66,7 +65,6 @@ export default function Edit({ product, categories }: Props) {
 
         router.post(route("products.update", product.slug), submitData, {
             onSuccess: (page) => {
-                
                 setProcessing(false);
                 router.visit(route("products.index"));
             },
@@ -176,7 +174,13 @@ export default function Edit({ product, categories }: Props) {
                             {formData.existingImages.map((image) => (
                                 <div key={image.id} className="relative group">
                                     <img
-                                        src={`/storage/${image.image_path}`}
+                                        src={
+                                            image.image_path.startsWith(
+                                                "images/"
+                                            )
+                                                ? `/${image.image_path}`
+                                                : `/storage/${image.image_path}`
+                                        }
                                         alt="Product"
                                         className="w-32 h-32 object-cover rounded-lg"
                                     />
