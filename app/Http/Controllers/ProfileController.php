@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use App\Models\Order;
+use Carbon\Carbon;
 
 class ProfileController extends Controller
 {
@@ -21,6 +23,27 @@ class ProfileController extends Controller
         return Inertia::render('Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
+            'orders' => Order::where('user_id', $request->user()->id)
+                ->where('status', 'settlement')
+                ->with(['items.product'])
+                ->latest()
+                ->get()
+                ->map(function ($order) {
+                    return [
+                        'id' => $order->id,
+                        'order_id' => str_pad($order->id, 5, '0', STR_PAD_LEFT),
+                        'date' => Carbon::parse($order->order_date)->format('d M Y'),
+                        'status' => ucfirst($order->status),
+                        'amount' => (float) $order->total_amount,
+                        'items' => $order->items->map(function ($item) {
+                            return [
+                                'product_name' => $item->product->name,
+                                'quantity' => $item->quantity,
+                                'price' => (float) $item->price
+                            ];
+                        })
+                    ];
+                })
         ]);
     }
 

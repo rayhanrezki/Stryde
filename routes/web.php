@@ -109,4 +109,7 @@ Route::get('/payment/success', function (Request $request) {
 })->name('payment.success');
 
 
+Route::get('/invoice/{orderId}', [InvoiceController::class, 'show'])->name('invoice.show');
+
+
 require __DIR__ . '/auth.php';

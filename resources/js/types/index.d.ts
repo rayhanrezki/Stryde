@@ -13,3 +13,18 @@ export type PageProps<
         user: User;
     };
 };
+
+export interface OrderItem {
+    product_name: string;
+    quantity: number;
+    price: number;
+}
+
+export interface Order {
+    id: number;
+    order_id: string;
+    date: string;
+    status: string;
+    amount: number;
+    items: OrderItem[];
+}

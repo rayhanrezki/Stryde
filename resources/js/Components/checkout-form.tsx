@@ -52,10 +52,16 @@ export function CheckoutForm({
         libraries: ["places"],
     });
 
-    
-
     const handleOnPlacesChanged = () => {
-        let address = inputref.current!.getPlaces();
+        const places = inputref.current!.getPlaces();
+        if (places && places.length > 0) {
+            const place = places[0];
+            const formattedAddress = place.formatted_address;
+            setFormData({
+                ...formData,
+                address: formattedAddress,
+            });
+        }
     };
 
     return (
