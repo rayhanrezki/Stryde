@@ -50,14 +50,13 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
     const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
     const [loading, setLoading] = useState(false);
 
-
     const removeItem = (id: number) => {
         if (!confirm("Are you sure you want to remove this item?")) return;
 
         // Membuat form untuk mengirimkan data ke server
         const form = document.createElement("form");
         form.method = "POST";
-        form.action = "/cart/remove";
+        form.action = route("cart.remove");
 
         // Menambahkan CSRF token
         const csrfToken =
@@ -100,7 +99,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                 return;
             }
 
-            const response = await axios.post("/cart/update-quantity", {
+            const response = await axios.post(route("cart.update-quantity"), {
                 cart_item_id: cartItemId,
                 quantity: newQuantity,
             });

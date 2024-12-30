@@ -166,7 +166,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                     <div className="container mx-auto px-4 sm:px-6 py-8 sm:py-16 relative z-10">
                         <p className="text-sm mb-2">Sneaker Of The Year</p>
                         <h1 className="text-3xl sm:text-5xl font-bold mb-4">
-                         NIKE AIR FORCE
+                            NIKE AIR FORCE
                         </h1>
                         <p className="max-w-md text-sm sm:text-base">
                             Sneakers made with your comfort in mind so you can
@@ -355,9 +355,9 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                                             <button className="w-full bg-zinc-900 text-white h-8 sm:h-10 px-4 rounded-md hover:bg-zinc-900/90 text-xs sm:text-sm font-medium transition-colors flex items-center justify-center">
                                                 <span className="truncate">
                                                     VIEW PRODUCT - Rp{" "}
-                                                    {product.price.toLocaleString(
+                                                    {new Intl.NumberFormat(
                                                         "id-ID"
-                                                    )}
+                                                    ).format(product.price)}
                                                 </span>
                                             </button>
                                         </Link>

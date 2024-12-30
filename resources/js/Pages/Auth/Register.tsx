@@ -48,7 +48,7 @@ export default function Register() {
                     transition={{ duration: 0.5, delay: 0.2 }}
                 >
                     <div className="lg:hidden">
-                        <h1 className="mb-8 text-4xl font-black">KICKS</h1>
+                        <h1 className="mb-8 text-4xl font-rubik">Stryde</h1>
                     </div>
 
                     <motion.h2

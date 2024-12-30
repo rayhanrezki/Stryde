@@ -217,7 +217,10 @@ export default function ProductDetails({
                                 {product.name}
                             </h1>
                             <p className="text-2xl font-bold font-rubik text-blue-600">
-                                Rp {product.price.toLocaleString("id-ID")}
+                                Rp{" "}
+                                {new Intl.NumberFormat("id-ID").format(
+                                    product.price
+                                )}
                             </p>
 
                             <p className="text-gray-600">
@@ -278,7 +281,8 @@ export default function ProductDetails({
                                 <ul className="space-y-2 text-sm text-gray-600 font-open-sans">
                                     <li>Stryde.</li>
                                     <li>
-                                     Embrace the chance, stride towards greatness!
+                                        Embrace the chance, stride towards
+                                        greatness!
                                     </li>
                                 </ul>
                             </div>

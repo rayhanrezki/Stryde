@@ -42,7 +42,9 @@ export default function RecommendedProducts({ recommendedProducts }: Props) {
                                     </h3>
                                     <p className="text-blue-600 font-bold text-sm sm:text-base">
                                         Rp{" "}
-                                        {product.price.toLocaleString("id-ID")}
+                                        {new Intl.NumberFormat("id-ID").format(
+                                            product.price
+                                        )}
                                     </p>
                                 </div>
                                 <Link
