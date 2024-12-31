@@ -149,7 +149,7 @@ export default function Edit({ product, categories }: Props) {
                         className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                     >
                         <svg
-                            xmlns="https://www.w3.org/2000/svg"
+                            xmlns="http://www.w3.org/2000/svg"
                             width="16"
                             height="16"
                             viewBox="0 0 24 24"
