@@ -25,10 +25,3 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
-
-# Tambahkan diluar IfModule untuk memastikan akses
-<Directory /var/www/html>
-    Options -Indexes FollowSymLinks
-    AllowOverride All
-    Require all granted
-</Directory>
