@@ -84,10 +84,7 @@ export default function NewDrops({ products }: NewDropsProps) {
                                 </h3>
                                 <div className="w-full">
                                     <Link
-                                        href={route(
-                                            "products.show",
-                                            product.slug
-                                        )}
+                                        href={`/products/${product.slug}`}
                                         className="block"
                                     >
                                         <Button className="w-full bg-zinc-900 text-white hover:bg-zinc-900/90 font-rubik py-6">

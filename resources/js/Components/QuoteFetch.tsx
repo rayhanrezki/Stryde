@@ -8,7 +8,7 @@ const QuoteFetch = () => {
     const fetchQuote = async () => {
         try {
             const response = await axios.get(
-                "https://strydee.store/fetch-quote"
+                "http://strydee.store/fetch-quote"
             );
             if (response.data && response.data.length > 0) {
                 setQuote(response.data[0]?.quote || "No quote found");

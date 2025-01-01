@@ -29,7 +29,7 @@ import {
 import { useState } from "react";
 import { Product } from "@/types/product";
 import { Alert, AlertDescription } from "@/Components/ui/alert";
-import { ChevronLeft, ChevronRight } from "lucide-react"; // Importing arrow icons
+import { ChevronLeft, ChevronRight } from "lucide-react"
 
 interface Props {
     products: Product[];
@@ -155,7 +155,7 @@ export default function ProductDashboard({ products }: Props) {
                     {currentPageProducts.map((product) => (
                         <div
                             key={product.id}
-                            className="bg-white p-6 rounded-xl"
+                            className="bg-white p-6 rounded-xl flex flex-col h-full"
                         >
                             <div className="flex items-start justify-between mb-6">
                                 <div className="flex items-center gap-4">
@@ -222,7 +222,7 @@ export default function ProductDashboard({ products }: Props) {
                                 </DropdownMenu>
                             </div>
 
-                            <div className="space-y-4">
+                            <div className="space-y-4 flex-grow">
                                 <div>
                                     <div className="flex justify-between mb-2">
                                         <span className="text-sm text-gray-600">
@@ -237,16 +237,16 @@ export default function ProductDashboard({ products }: Props) {
                                         className="h-2"
                                     />
                                 </div>
+                            </div>
 
-                                <div className="pt-4 border-t">
-                                    <div className="flex justify-between items-center">
-                                        <span className="font-medium">
-                                            Rp{" "}
-                                            {new Intl.NumberFormat(
-                                                "id-ID"
-                                            ).format(product.price)}
-                                        </span>
-                                    </div>
+                            <div className="pt-4 border-t mt-auto">
+                                <div className="flex justify-between items-center">
+                                    <span className="font-medium">
+                                        Rp{" "}
+                                        {new Intl.NumberFormat(
+                                            "id-ID"
+                                        ).format(product.price)}
+                                    </span>
                                 </div>
                             </div>
                         </div>

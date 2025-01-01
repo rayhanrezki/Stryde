@@ -48,7 +48,7 @@ export default function RecommendedProducts({ recommendedProducts }: Props) {
                                     </p>
                                 </div>
                                 <Link
-                                    href={route("products.show", product.slug)}
+                                    href={`/products/${product.slug}`}
                                     className="block mt-2"
                                 >
                                     <button className="w-full bg-zinc-900 text-white py-2 sm:py-2.5 px-4 rounded-md hover:bg-zinc-900/90 text-xs sm:text-sm font-medium transition-colors">

@@ -37,6 +37,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Admin category routes
     Route::get('/admin/categories', [CategoryController::class, 'index'])->name('categories.index');
+    Route::get('/admin/categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::post('/admin/categories', [CategoryController::class, 'store'])->name('categories.store');
+    Route::get('/admin/categories/{category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+    Route::put('/admin/categories/{category}', [CategoryController::class, 'update'])->name('categories.update');
     Route::delete('/admin/categories/{category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
 
 
@@ -61,7 +65,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
-
 })->name('cart');
 
 // Route for Authenticated users
