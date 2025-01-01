@@ -1,8 +1,14 @@
 <IfModule mod_rewrite.c>
+    # Tambahkan izin dasar
+    Order Allow,Deny
+    Allow from all
+    Require all granted
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Pastikan RewriteEngine aktif
     RewriteEngine On
 
     # Handle Authorization Header
@@ -19,3 +25,10 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+
+# Tambahkan diluar IfModule untuk memastikan akses
+<Directory /var/www/html>
+    Options -Indexes FollowSymLinks
+    AllowOverride All
+    Require all granted
+</Directory>
