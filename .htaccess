@@ -1,2 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Tambahkan izin dasar
+Options +FollowSymLinks
+Options -Indexes
+Require all granted
+
 php_value upload_max_filesize 40M
 php_value post_max_size 50M 

@@ -1,8 +1,14 @@
 <IfModule mod_rewrite.c>
+    # Tambahkan izin dasar
+    Order Allow,Deny
+    Allow from all
+    Require all granted
+
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Pastikan RewriteEngine aktif
     RewriteEngine On
 
     # Handle Authorization Header

@@ -40,9 +40,7 @@ export default function CategoryDashboard({ auth, categories }: Props) {
                                     Categories
                                 </h2>
                                 <button
-                                    onClick={() =>
-                                        router.get("/admin/categories/create")
-                                    }
+                                    onClick={() => router.get("/admin/categories/create")}
                                     className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
                                 >
                                     Add New Category
