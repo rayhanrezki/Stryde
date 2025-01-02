@@ -43,7 +43,7 @@ export function CheckoutForm({
         console.log("address",address)
       }
 
-    return 
+    return (
         <form onSubmit={handleSubmit} className="space-y-6 font-rubik">
             <div>
                 <div className="space-y-4">
@@ -198,5 +198,5 @@ export function CheckoutForm({
                 REVIEW AND PAY
             </button>
         </form>
-    ;
+    );
 }
