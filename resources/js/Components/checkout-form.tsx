@@ -44,7 +44,8 @@ export function CheckoutForm({
         phone: user.phone,
     });
 
-    const apiKey = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
+    const apiKey = import.meta.env.VITE_GOOGLEMAPS_API_KEY || "";
+
     const inputref = useRef<any>(null);
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",

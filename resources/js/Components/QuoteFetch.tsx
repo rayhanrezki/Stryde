@@ -7,9 +7,14 @@ const QuoteFetch = () => {
 
     const fetchQuote = async () => {
         try {
-            const response = await axios.get(
-                "https://strydee.store/fetch-quote"
-            );
+            const response = await axios.get("/fetch-quote", {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    Accept: "application/json",
+                },
+                withCredentials: true,
+            });
+
             if (response.data && response.data.length > 0) {
                 setQuote(response.data[0]?.quote || "No quote found");
                 setAuthor(response.data[0]?.author || "Unknown");
@@ -17,8 +22,11 @@ const QuoteFetch = () => {
                 setQuote("No quote found");
                 setAuthor("Unknown");
             }
-        } catch (error) {
-            console.error("Error fetching quote:", error);
+        } catch (error: any) {
+            console.error(
+                "Error fetching quote:",
+                error.response?.data || error.message
+            );
             setQuote("Error fetching quote");
             setAuthor("Unknown");
         }
