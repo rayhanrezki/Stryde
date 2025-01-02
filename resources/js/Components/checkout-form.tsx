@@ -110,7 +110,7 @@ export function CheckoutForm({
                             }
                         />
                         <p className="text-sm text-gray-500 mt-1">
-                            Start typing your street address or zip code for suggestion
+                            Start typing your address
                         </p>
                     </div>
                 </StandaloneSearchBox>
