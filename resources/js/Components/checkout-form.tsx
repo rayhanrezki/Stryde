@@ -1,5 +1,5 @@
 import { useForm, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     GoogleMap,
     useJsApiLoader,
@@ -24,6 +24,8 @@ interface CheckoutFormProps {
     handlePayment: () => Promise<void>;
 }
 
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLEMAPS_API_KEY;
+
 export function CheckoutForm({
     isProcessing,
     setIsProcessing,
@@ -44,14 +46,21 @@ export function CheckoutForm({
         phone: user.phone,
     });
 
-    const apiKey = import.meta.env.VITE_GOOGLEMAPS_API_KEY || "";
-
     const inputref = useRef<any>(null);
     const { isLoaded } = useJsApiLoader({
         id: "google-map-script",
-        googleMapsApiKey: apiKey,
+        googleMapsApiKey: GOOGLE_MAPS_API_KEY || "",
         libraries: ["places"],
     });
+
+    const [mapError, setMapError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!GOOGLE_MAPS_API_KEY) {
+            setMapError("Google Maps API key is not configured");
+            console.error("Google Maps API key is missing");
+        }
+    }, []);
 
     const handleOnPlacesChanged = () => {
         const places = inputref.current!.getPlaces();
@@ -118,7 +127,7 @@ export function CheckoutForm({
                     />
                 </div>
 
-                {isLoaded && (
+                {isLoaded && !mapError ? (
                     <StandaloneSearchBox
                         onLoad={(ref) => (inputref.current = ref)}
                         onPlacesChanged={handleOnPlacesChanged}
@@ -142,6 +151,19 @@ export function CheckoutForm({
                             </p>
                         </div>
                     </StandaloneSearchBox>
+                ) : (
+                    <input
+                        type="text"
+                        placeholder="Delivery Address*"
+                        className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 mt-4 font-rubik"
+                        value={formData.address}
+                        onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                address: e.target.value,
+                            })
+                        }
+                    />
                 )}
 
                 <input
