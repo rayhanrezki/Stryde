@@ -109,7 +109,8 @@ class CheckoutController extends Controller
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'quantity' => $item->quantity,
-                    'price' => $item->product->price
+                    'price' => $item->product->price,
+                    'size' => $item->productSize->size
                 ]);
             }
 
@@ -198,6 +199,7 @@ class CheckoutController extends Controller
                 'product_name' => $item->product->name,
                 'quantity' => $item->quantity,
                 'price' => $item->price,
+                'size' => $item->size
             ];
         });
 

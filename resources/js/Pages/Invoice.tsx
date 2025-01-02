@@ -19,6 +19,7 @@ interface OrderItem {
     product_name: string;
     quantity: number;
     price: number;
+    size: string;
 }
 
 interface Order {
@@ -138,6 +139,9 @@ export default function Invoice({ auth, orders, products, cart }: Props) {
                                 <th className="text-left font-bold text-gray-700 py-3 px-4">
                                     Description
                                 </th>
+                                <th className="text-left font-bold text-gray-700 py-3 px-4">
+                                    Size
+                                </th>
                                 <th className="text-right font-bold text-gray-700 py-3 px-4">
                                     Amount
                                 </th>
@@ -155,6 +159,9 @@ export default function Invoice({ auth, orders, products, cart }: Props) {
                                     <td className="text-left text-gray-700 py-3 px-4">
                                         {item.product_name}
                                     </td>
+                                    <td className="text-left text-gray-700 py-3 px-4">
+                                        {item.size}
+                                    </td>
                                     <td className="text-right text-gray-700 py-3 px-4">
                                         {formatIDR(item.price)}
                                     </td>
@@ -171,7 +178,7 @@ export default function Invoice({ auth, orders, products, cart }: Props) {
                             <tr>
                                 <td
                                     className="text-left font-bold text-gray-700 py-3 px-4"
-                                    colSpan={3}
+                                    colSpan={4}
                                 >
                                     Total
                                 </td>
