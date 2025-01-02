@@ -12,11 +12,26 @@ class QuoteController extends Controller
         try {
             $response = Http::withHeaders([
                 'X-Api-Key' => env('NINJA_QUOTES_API_KEY')
-            ])->get('https://api.api-ninjas.com/v1/quotes?category=inspirational');
+            ])->get('https://api.api-ninjas.com/v1/quotes');
 
-            return response()->json($response->json());
+            if (!$response->successful()) {
+                return response()->json([
+                    ['quote' => 'Could not fetch quote', 'author' => 'System']
+                ], $response->status());
+            }
+
+            $data = $response->json();
+            if (empty($data)) {
+                return response()->json([
+                    ['quote' => 'No quotes available', 'author' => 'System']
+                ]);
+            }
+
+            return response()->json($data);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to fetch quote'], 500);
+            return response()->json([
+                ['quote' => 'Error fetching quote', 'author' => 'System']
+            ], 500);
         }
     }
 } 

@@ -47,5 +47,7 @@ return [
         'redirect' => env('GITHUB_URL'),
     ],
 
-
+    'ninja_quotes' => [
+        'key' => env('NINJA_QUOTES_API_KEY'),
+    ],
 ];
