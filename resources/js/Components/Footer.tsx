@@ -12,29 +12,27 @@ interface Category {
 
 const Footer = () => {
     return (
-        <footer className="bg-[#1a1a1a] text-white w-[90%] mx-auto rounded-3xl overflow-hidden mb-8">
+        <footer className="bg-[#1a1a1a] text-white w-[90%] mx-auto rounded-3xl overflow-hidden mb-8 mt-12">
             {/* Newsletter Signup Section */}
             <div className="bg-[#4169E1] p-4 md:p-8 relative">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="w-full md:w-auto">
                         <h2 className="text-xl md:text-3xl font-bold font-rubik mb-2 text-center md:text-left">
-                            JOIN OUR STRYDE!
+                            STEP INTO YOUR STYLE!
                         </h2>
                         <h3 className="text-lg md:text-xl font-bold font-rubik mb-4 text-center md:text-left">
-                            CLUB & GET NOTIFIED FOR NEW PRODUCTS
+                            DISCOVER YOUR CHARACTER WITH STRYDE
                         </h3>
                         <p className="mb-4 font-open-sans text-center md:text-left">
-                            Sign up for free! Join the community.
+                            Premium Quality, Unmatched Style
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <input
-                                type="email"
-                                placeholder="Email address"
-                                className="flex-grow p-3 rounded bg-[#5479E8] text-white placeholder-white/70 w-full"
-                            />
-                            <button className="px-6 py-3 bg-black text-white rounded hover:bg-black/90 w-full sm:w-auto">
-                                SUBMIT
-                            </button>
+                            <Link
+                                href="/products"
+                                className="px-6 py-3 bg-black text-white rounded hover:bg-black/90 text-center transition-colors"
+                            >
+                                EXPLORE COLLECTION
+                            </Link>
                         </div>
                     </div>
                     <div className="text-4xl md:text-6xl font-bold font-rubik mt-4 md:mt-0">
@@ -48,7 +46,7 @@ const Footer = () => {
 
             {/* Main Footer Content */}
             <div className="relative">
-                <div className="absolute bottom-0 w-full text-[8rem] md:text-[20rem] font-bold font-rubik text-white/5 leading-none">
+                <div className="absolute bottom-0 w-full text-[8rem] md:text-[20rem] font-bold font-rubik text-white/5 leading-none select-none pointer-events-none">
                     STRYDE
                 </div>
                 <div className="max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 relative z-10">

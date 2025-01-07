@@ -52,7 +52,7 @@ export default function Main({
                 <Hero />
                 <NewDrops products={latestProducts} />
                 <Categories />
-                <Reviews />
+                {/* <Reviews /> */}
                 <Footer />
             </div>
         </>

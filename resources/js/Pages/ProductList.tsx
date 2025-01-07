@@ -39,7 +39,7 @@ export default function ProductList({ auth, products, cartItems }: Props) {
         categories: [] as number[],
         searchQuery: "",
     });
-    const [sortBy, setSortBy] = useState("price-desc");
+    const [sortBy, setSortBy] = useState("latest");
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -88,6 +88,8 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                     return Number(a.price) - Number(b.price);
                 case "price-desc":
                     return Number(b.price) - Number(a.price);
+                case "latest":
+                    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
                 default:
                     return 0;
             }
@@ -248,12 +250,9 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                             value={sortBy}
                             onChange={handleSort}
                         >
-                            <option value="price-desc">
-                                PRICE: HIGH TO LOW
-                            </option>
-                            <option value="price-asc">
-                                PRICE: LOW TO HIGH
-                            </option>
+                            <option value="latest">LATEST PRODUCTS</option>
+                            <option value="price-desc">PRICE: HIGH TO LOW</option>
+                            <option value="price-asc">PRICE: LOW TO HIGH</option>
                         </select>
                     </div>
                 </div>
