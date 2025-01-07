@@ -18,6 +18,8 @@ export interface Product {
     price: number;
     images: ProductImage[];
     sizes: ProductSize[];
+    created_at: string;
+    updated_at: string;
 }
 
 export interface Category {
