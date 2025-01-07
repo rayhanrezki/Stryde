@@ -12,7 +12,7 @@ interface Category {
 
 const Footer = () => {
     return (
-        <footer className="bg-[#1a1a1a] text-white w-[90%] mx-auto rounded-3xl overflow-hidden mb-8">
+        <footer className="bg-[#1a1a1a] text-white w-[90%] mx-auto rounded-3xl overflow-hidden mb-8 mt-12">
             {/* Newsletter Signup Section */}
             <div className="bg-[#4169E1] p-4 md:p-8 relative">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
@@ -48,7 +48,7 @@ const Footer = () => {
 
             {/* Main Footer Content */}
             <div className="relative">
-                <div className="absolute bottom-0 w-full text-[8rem] md:text-[20rem] font-bold font-rubik text-white/5 leading-none">
+                <div className="absolute bottom-0 w-full text-[8rem] md:text-[20rem] font-bold font-rubik text-white/5 leading-none select-none pointer-events-none">
                     STRYDE
                 </div>
                 <div className="max-w-6xl mx-auto p-4 md:p-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 relative z-10">
