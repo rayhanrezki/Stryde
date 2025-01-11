@@ -16,7 +16,6 @@ import Footer from "@/Components/Footer";
 import { Alert, AlertTitle, AlertDescription } from "@/Components/ui/alert";
 
 interface CartItem {
-    sizes(arg0: string, sizes: any): unknown;
     id: number;
     product_id: number;
     product_size_id: number;
