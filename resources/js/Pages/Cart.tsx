@@ -19,6 +19,7 @@ interface CartItem {
     product: {
         id: number;
         name: string;
+        slug: string;
         description: string;
         price: string;
         sizes: { id: number; size: string; stock: number }[];
@@ -219,7 +220,7 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                         <Link
                                             href={route(
                                                 "products.show",
-                                                cartItem.product.id
+                                                cartItem.product.slug
                                             )}
                                             className="w-full sm:w-32 h-48 sm:h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 hover:opacity-75 transition-opacity"
                                         >
@@ -246,7 +247,8 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                     <Link
                                                         href={route(
                                                             "products.show",
-                                                            cartItem.product.id
+                                                            cartItem.product
+                                                                .slug
                                                         )}
                                                         className="hover:text-blue-600 transition-colors"
                                                     >
