@@ -216,7 +216,13 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                         key={cartItem.id}
                                         className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 border-b pb-6 last:border-b-0"
                                     >
-                                        <div className="w-full sm:w-32 h-48 sm:h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                                        <Link
+                                            href={route(
+                                                "products.show",
+                                                cartItem.product.id
+                                            )}
+                                            className="w-full sm:w-32 h-48 sm:h-32 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 hover:opacity-75 transition-opacity"
+                                        >
                                             <img
                                                 src={
                                                     cartItem.product.images &&
@@ -232,14 +238,25 @@ export default function Cart({ recommendedProducts, cartItems, auth }: Props) {
                                                 alt={cartItem.product.name}
                                                 className="w-full h-full object-cover object-center"
                                             />
-                                        </div>
+                                        </Link>
 
                                         <div className="flex-1 min-w-0">
                                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-0">
                                                 <div>
-                                                    <h3 className="font-semibold font-rubik text-lg truncate">
-                                                        {cartItem.product.name}
-                                                    </h3>
+                                                    <Link
+                                                        href={route(
+                                                            "products.show",
+                                                            cartItem.product.id
+                                                        )}
+                                                        className="hover:text-blue-600 transition-colors"
+                                                    >
+                                                        <h3 className="font-semibold font-rubik text-lg truncate">
+                                                            {
+                                                                cartItem.product
+                                                                    .name
+                                                            }
+                                                        </h3>
+                                                    </Link>
 
                                                     <p className="text-sm text-black-600 font-rubik">
                                                         {cartItem.product
