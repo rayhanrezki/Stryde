@@ -6,7 +6,6 @@ import Footer from "@/Components/Footer";
 import { PageProps } from "@/types";
 
 interface CartItem {
-    sizes(arg0: string, sizes: any): unknown;
     id: number;
     product_id: number;
     product_size_id: number;
@@ -16,9 +15,15 @@ interface CartItem {
         name: string;
         description: string;
         price: string;
-        sizes: { id: number; size: string; stock: number }[];
-        categories: { id: number; name: string }[];
-        images: { id: number; image_path: string }[];
+        sizes: { id: number; 
+            size: string; 
+            stock: number 
+        }[];
+        categories: { id: number; 
+            name: string 
+        }[];
+        images: { id: number; 
+            image_path: string }[];
     };
     product_size: {
         id: number;
@@ -250,9 +255,15 @@ export default function ProductList({ auth, products, cartItems }: Props) {
                             value={sortBy}
                             onChange={handleSort}
                         >
-                            <option value="latest">LATEST PRODUCTS</option>
-                            <option value="price-desc">PRICE: HIGH TO LOW</option>
-                            <option value="price-asc">PRICE: LOW TO HIGH</option>
+                            <option value="latest">
+                                LATEST PRODUCTS
+                            </option>
+                            <option value="price-desc">
+                                PRICE: HIGH TO LOW
+                            </option>
+                            <option value="price-asc">
+                                PRICE: LOW TO HIGH
+                            </option>
                         </select>
                     </div>
                 </div>

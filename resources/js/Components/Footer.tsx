@@ -13,7 +13,6 @@ interface Category {
 const Footer = () => {
     return (
         <footer className="bg-[#1a1a1a] text-white w-[90%] mx-auto rounded-3xl overflow-hidden mb-8 mt-12">
-            {/* Newsletter Signup Section */}
             <div className="bg-[#4169E1] p-4 md:p-8 relative">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="w-full md:w-auto">
@@ -27,7 +26,7 @@ const Footer = () => {
                             Premium Quality, Unmatched Style
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4">
-                            <Link
+                        <Link
                                 href="/products"
                                 className="px-6 py-3 bg-black text-white rounded hover:bg-black/90 text-center transition-colors"
                             >

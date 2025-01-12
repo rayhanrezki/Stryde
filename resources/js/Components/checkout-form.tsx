@@ -37,7 +37,25 @@ export function CheckoutForm({
         e.preventDefault();
         await handlePayment();
     };
+    
     const user = usePage().props.auth.user;
+
+    // Gunakan useEffect untuk mengisi form data saat komponen dimuat
+    useEffect(() => {
+        // Memisahkan nama lengkap menjadi first name dan last name
+        const nameParts = user.name ? user.name.split(' ') : ['', ''];
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ');
+
+        setFormData((prevData: typeof formData) => ({
+            ...prevData,
+            email: user.email || prevData.email,
+            firstName: firstName || prevData.firstName,
+            lastName: lastName || prevData.lastName,
+            address: user.address || prevData.address,
+            phone: user.phone || prevData.phone,
+        }));
+    }, [user]);
 
     const { data } = useForm({
         name: user.name,
@@ -55,6 +73,7 @@ export function CheckoutForm({
 
     const [mapError, setMapError] = useState<string | null>(null);
 
+    // Cek API Key Google Maps
     useEffect(() => {
         if (!GOOGLE_MAPS_API_KEY) {
             setMapError("Google Maps API key is not configured");
@@ -62,6 +81,7 @@ export function CheckoutForm({
         }
     }, []);
 
+    // Fungsi untuk menangani perubahan lokasi
     const handleOnPlacesChanged = () => {
         const places = inputref.current!.getPlaces();
         if (places && places.length > 0) {
@@ -88,7 +108,7 @@ export function CheckoutForm({
                         type="email"
                         placeholder="Email"
                         className="w-full p-3 bg-[#e7e7e3] border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-gray-400 placeholder-gray-500 font-rubik"
-                        value={data.email}
+                        value={formData.email}
                         onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
                         }

@@ -6,10 +6,9 @@ import Categories from "@/Components/Categories";
 import Reviews from "@/Components/Reviews";
 import { Head } from "@inertiajs/react";
 import { Product } from "@/types/product";
-import { PageProps } from "@/types"; // Menggunakan PageProps untuk data autentikasi
+import { PageProps } from "@/types";
 import Footer from "@/Components/Footer";
 
-// Definisikan tipe CartItem dengan lebih jelas
 interface CartItem {
     id: number;
     product_id: number;
@@ -32,7 +31,6 @@ interface CartItem {
     };
 }
 
-// Perbarui Props agar cartItems adalah array CartItem
 interface Props extends PageProps {
     latestProducts: Product[];
     cartItems: CartItem[]; // cartItems sekarang array
