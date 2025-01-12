@@ -25,9 +25,17 @@ interface CartItem {
         name: string;
         description: string;
         price: string;
-        sizes: { id: number; size: string; stock: number }[];
-        categories: { id: number; name: string }[];
-        images: { id: number; image_path: string }[];
+        sizes: { 
+            id: number; 
+            size: string; 
+            stock: number 
+        }[];
+        categories: { 
+            id: number; 
+            name: string }[];
+        images: { 
+            id: number; 
+            image_path: string }[];
     };
     product_size: {
         id: number;
@@ -49,14 +57,15 @@ export default function ProductDetails({
     cartItems,
 }: Props) {
     const [selectedSize, setSelectedSize] = useState<number | null>(null); // Ukuran yang dipilih
-    const [quantity, setQuantity] = useState<number>(1);
-    const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems);
+    const [quantity, setQuantity] = useState<number>(1); // Jumlah produk yang dipilih
+    const [cartItemsState, setCartItems] = useState<CartItem[]>(cartItems); // Keranjang produk
     const [alertState, setAlertState] = useState<{
         show: boolean;
         type: "success" | "destructive";
         message: string;
     } | null>(null);
 
+    // Form untuk menambahkan produk ke keranjang
     const { data, setData, post, processing, errors } = useForm({
         product_id: product.id,
         product_size_id: null as number | null, // ID ukuran awal (null hingga ukuran dipilih)
