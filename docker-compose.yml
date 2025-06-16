@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: stryde-app
+    container_name: stryde_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+    networks:
+      - stryde-net
+
+  web:
+    image: nginx:alpine
+    container_name: stryde_web
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/conf.d:/etc/nginx/conf.d
+    depends_on:
+      - app
+    networks:
+      - stryde-net
+
+  db:
+    image: mysql:8.0
+    container_name: stryde_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Stryde
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - stryde-net
+
+  redis:
+    image: redis:alpine
+    container_name: stryde_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - stryde-net
+
+volumes:
+  dbdata:
+
+networks:
+  stryde-net:
+    driver: bridge
